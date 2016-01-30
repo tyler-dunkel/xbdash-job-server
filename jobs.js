@@ -4,76 +4,97 @@ var DDPlogin = require('ddp-login');
 var Client = require('mongodb').MongoClient
 var format = require('util').format;
 var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
+var xboxApiCaller = require('xbox-api/xbox-api-caller');
 
-var ddp = new DDP({
-	host: "127.0.0.1",
-	port: 3000,
-	use_ejson: true
+var gameUrl = '2533274805933072/gamercard';
+
+xboxApiCaller(gameUrl, function(err, res) {
+	if (err) {
+		console.log(err);
+		throw err;
+	}
+	if (res) {
+		console.log(res);
+	}
 });
 
-Job.setDDP(ddp);
+// var ddp = new DDP({
+// 	host: "127.0.0.1",
+// 	port: 3000,
+// 	use_ejson: true
+// });
 
-ddp.connect(function (err) {
-	if (err) throw err;
-	DDPlogin(ddp, function (err, token) {
-		if (err) throw err;
-		var checkGamesWorker = Job.processJobs('xbdjobscollection', 'checkGamesJob', function (job, db) {
-			if (job) {
-				Client.connect(meteorUrl, function (err, db) {
-					if (err) throw err;
+// Job.setDDP(ddp);
 
-					var userGames = db.collection('usergames');
-					var xbdGame = db.collection('xbdgames');
+// ddp.connect(function (err) {
+// 	if (err) throw err;
+// 	Client.connect(meteorUrl, function (err, db) {
+// 		DDPlogin(ddp, function (err, token) {
+// 			if (err) {
+// 				db.close();
+// 				throw err;
+// 			};
 
-					userGames.find({ completed: false }).count(function(err, count) {
-						if (err) throw err;
-						if (count < 1) return;
-					});
-					userGames.find({ completed: false }).each(function(err, game) {
-						if (game == null) {
-							db.close();
-							job.done();
-							return;
-						}
-						xbdGame.findOne({ _id: game.gameId }, {}, function(err, doc) {
-							if (err) throw err;
-							if (game.currentGamerscore === doc.maxGamerscore) {
-								userGames.updateOne({ _id: game._id }, { $set: { completed: true } });
-							}
-						});
-					});
-				});
-			}
-		});
+// 			var checkGamesWorker = Job.processJobs('xbdjobscollection', 'checkGamesJob', function (job, callback) {
+// 				if (job) {
+// 					if (err) throw err;
 
-		var checkAchievementsWorker = Job.processJobs('xbdjobscollection', 'checkAchievementsJob', function (job, db) {
-			if (job) {
-				Client.connect(meteorUrl, function (err, db) {
-					if (err) throw err;
+// 					var userGames = db.collection('usergames');
+// 					var xbdGame = db.collection('xbdgames');
+// 					var stream = userGames.find({ completed: false }).stream();
 
-					var users = db.collection('users').find({ xuid: { $exists: true } });
-					var userAchievements = db.collection('userachievements');
-					var xbdAchievements = db.collection('xbdachievements');
+// 					userGames.find({ completed: false }, { timeout: false }).count(function(err, count) {
+// 						if (err) throw err;
+// 						if (count < 1) return;
+// 					});
 
-					users.count(function(err, userCount) {
-						if (err) throw err;
-						xbdAchievements.find({}).each(function(err, doc) {
-							if (err) return;
-							if (doc == null) {
-								db.close();
-								job.done();
-								return;
-							}
-							userAchievements.find({ achievementId: doc._id, progressState: true }).count(function(err, achiCount) {
-								if (err) throw err;
-								console.log('acheivement count is ' + achiCount + ' for acheivement ' + doc.name);
-								var achievementUnlockPercentage = Math.round((achiCount/userCount) * 100);
-								xbdAchievements.updateOne({ _id: doc._id }, {$set: { userPercentage: achievementUnlockPercentage }});
-							});
-						});
-					});
-				});
-			}
-		});
-	});
-});
+// 					stream.on('data', function(doc) {
+// 						xbdGame.findOne({ _id: doc.gameId }, {}, function(err, game) {
+// 							if (err) throw err;
+// 							console.log(game.name + ' is not complete');
+// 							if (doc.currentGamerscore === game.maxGamerscore) {
+// 								userGames.updateOne({ _id: game._id }, { $set: { completed: true } });
+// 							}
+// 						});
+// 					});
+
+// 					stream.on('end', function() {
+// 						console.log('stream is done');
+// 						job.done();
+// 						callback();
+// 					});
+// 				}
+// 			});
+
+// 			var checkAchievementsWorker = Job.processJobs('xbdjobscollection', 'checkAchievementsJob', function (job, callback) {
+// 				if (job) {
+// 					if (err) throw err;
+
+// 					var users = db.collection('users').find({ xuid: { $exists: true } }, { timeout: false });
+// 					var userAchievements = db.collection('userachievements');
+// 					var xbdAchievements = db.collection('xbdachievements');
+// 					var stream = xbdAchievements.find({}).stream();
+
+// 					users.count(function(err, userCount) {
+// 						if (err) throw err;
+
+// 						stream.on('data', function(doc) {
+// 							console.log('running job for: ' + doc.name);
+// 							userAchievements.find({ achievementId: doc._id, progressState: true }).count(function(err, achiCount) {
+// 								if (err) throw err;
+// 								var achievementUnlockPercentage = Math.round((achiCount/userCount) * 100);
+// 								xbdAchievements.updateOne({ _id: doc._id }, {$set: { userPercentage: achievementUnlockPercentage }});
+// 							});
+// 						});
+
+// 						stream.on('end', function() {
+// 							console.log('achi job is done');
+// 							job.done();
+// 							callback();
+// 						});
+// 					});
+// 				}
+// 			});
+// 		});
+// 	});
+// });
