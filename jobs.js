@@ -4,11 +4,20 @@ var DDPlogin = require('ddp-login');
 var Client = require('mongodb').MongoClient
 var format = require('util').format;
 var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
-var xboxApiPrivate = require('xbox-api/xbox-api-private');
+// var xboxApiPrivate = require('./xbox-api-private.js');
+var xboxApiObject = require('./xbox-api.js');
 
-var gameUrl = '2533274805933072/gamercard';
+// xboxApiPrivate._updateXboxOneAchievementsData('yKpFiaEwnnvNSLsvF', '1161890004', function(err, res) {
+// 	if (err) {
+// 		console.log(err);
+// 		throw err;
+// 	}
+// 	if (res) {
+// 		console.log(res);
+// 	}
+// });
 
-xboxApiPrivate._updateXboxOneAchievementsData('yKpFiaEwnnvNSLsvF', '1161890004', function(err, res) {
+xboxApiObject.updateGamercard('yKpFiaEwnnvNSLsvF', function (err, res) {
 	if (err) {
 		console.log(err);
 		throw err;
