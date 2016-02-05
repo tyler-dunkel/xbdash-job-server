@@ -33,15 +33,20 @@ xboxApiObject.updateXboxOneGames = function(userId, callback) {
 
 				data.titles.forEach(function(game) {
 					if (game.maxGamerscore ===  0) return;
-	
+
 					var gameId = game.titleId.toString();
 
-					xboxApiPrivate._updateXboxOneAchievementsData(userId, gameId);
-					xboxApiPrivate._updateXboxOneGameData(userId, game, gameId);
-					xboxApiPrivate._updateXboxOneGameDetails(userId, game, gameId);
-
-					db.close();
-					callback(null, game);
+					xboxApiPrivate._updateXboxOneAchievementsData(userId, gameId, function(err, res) {
+						if (err) throw err;
+						xboxApiPrivate._updateXboxOneGameData(userId, game, gameId, function(err, res) {
+							if (err) throw err;
+							xboxApiPrivate._updateXboxOneGameDetails(userId, game, gameId, function(err, res) {
+								if (err) throw err;
+								db.close();
+								callback(null, res);
+							});
+						});
+					});
 				});
 			});
 		});
@@ -67,15 +72,20 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 
 				data.titles.forEach(function(game) {
 					if (game.maxGamerscore ===  0) return;
-	
+
 					var gameId = game.titleId.toString();
 
-					xboxApiPrivate._updateXbox360AchievementsData(userId, gameId);
-					xboxApiPrivate._updateXbox360GameData(userId, game, gameId);
-					xboxApiPrivate._updateXbox360GameDetails(userId, game, gameId);
-
-					db.close();
-					callback(null, game);
+					xboxApiPrivate._updateXbox360AchievementsData(userId, gameId, function(err, res) {
+						if (err) throw err;
+						xboxApiPrivate._updateXbox360GameData(userId, game, gameId, function(err, res) {
+							if (err) throw err;
+							xboxApiPrivate._updateXbox360GameDetails(userId, game, gameId, function(err, res) {
+								if (err) throw err;
+								db.close();
+								callback(null, res);
+							});
+						});
+					});
 				});
 			});
 		});
@@ -110,20 +120,34 @@ xboxApiObject.updateGamercard = function(userId, callback) {
 	});
 }
 
-// below this line has not been converted to async yet
+xboxApiObject.updateUserStats = function(userId, callback) {
+	if (typeof userId !== 'string') return;
 
-xboxApiObject.updateUserStats = function(userId) {
-	var user = Meteor.users.findOne(userId);
-	
-	if (!user || !user.gamertagScanned || !user.gamertagScanned.status || user.gamertagScanned.status === 'building') return;
+	Client.connect(meteorUrl, function (err, db) {
+		if (err) throw err;
 
-	Meteor.users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'updating' } });
+		var users = db.collection('users');
 
-	this.updateXboxOneGames(userId);
-	this.updateXbox360Data(userId);
-	
-	Meteor.users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } });
+		users.find({ _id: userId }).limit(1).next(function(err, user) {			
+			if (!user || !user.gamertagScanned || !user.gamertagScanned.status || user.gamertagScanned.status === 'building') return;
+
+			users.updateOne({ _id: userId }, { $set: { 'gamertagScanned.status': 'updating' } });
+
+			this.updateXboxOneGames(userId, function(err, res) {
+				this.updateXbox360Data(userId, function(err, res) {
+					if (err) throw err;
+
+					users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } });
+
+					db.close();
+					callback(null, res);
+				});
+			});
+		});
+	});
 }
+
+// below this line has not been converted to async yet
 
 xboxApiObject.dirtyUpdateUserStats = function(userId) {
 	var user = Meteor.users.findOne(userId);
