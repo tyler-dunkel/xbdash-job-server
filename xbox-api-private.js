@@ -6,14 +6,19 @@ var xboxApiCaller = require('./xbox-api-caller.js');
 var xboxApiPrivate = xboxApiPrivate || {};
 
 xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callback) {
+	if (typeof userId !== 'string' || typeof gameId !== 'string') return;
+
 	Client.connect(meteorUrl, function (err, db) {
 		if (err) throw err;
 
-		db.collection('users').find({ _id: userId }).limit(1).next(function(err, user) {
+		var users = db.collection('users');
+
+		users.find({ _id: userId }).limit(1).next(function(err, user) {
 			if (err) {
 				db.close();
 				throw err;
 			}
+			if (!user || !user.gamertagScanned) return;
 
 			var url = user.xuid + '/achievements/' + gameId;
 			var xbdAchievements = db.collection('xbdachievements');
@@ -21,66 +26,55 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 
 			xboxApiCaller(url, function(err, data) {
 				if (err) throw err;
-				// if (!res || !res.read) return;
-				// if (typeof res.read !== 'function') return;
+
+				data.forEach(function(achievement) {
+					console.log(achievement.progressState);
+					// var achievementCheck = xbdAchievements.find({ gameId: gameId, name: achievement.name }).limit(1).next(function(err, achievement) {
+					// 	console.log(achievement);
+					// 	var achievementCheck = xbdAchievements.findOne({ gameId: gameId, name: achievement.name });
+					// });
+					// var achievementCheck = xbdAchievements.findOne({ gameId: gameId, name: achievement.name });
+					// var progressState = (achievement.progressState !== 'NotStarted') ? true : false;
+					// var progression = achievement.progression.timeUnlocked;
+					// progression = new Date(progression);
+					// var achievementInserted = false;
+					// var achievementValue = achievement.rewards && achievement.rewards.length ? achievement.rewards[0].value : achievement.value;
+
+					// if (!achievementCheck) {
+					// 	var singleAchievement = {
+					// 		gameId: gameId,
+					// 		name: achievement.name,
+					// 		mediaAssets: achievement.mediaAssets[0].url,
+					// 		isSecret: achievement.isSecret,
+					// 		description: achievement.description,
+					// 		lockedDescription: achievement.lockedDescription,
+					// 		value: achievementValue,
+					// 		userPercentage: 0
+					// 	};
+					// 	achievementCheck = xbdAchievements.insert(singleAchievement);
+					// 	achievementInserted = true;
+					// }
+
+					// if (!achievementInserted) {
+					// 	achievementCheck = achievementCheck._id;
+					// }
+
+					// var userAchievement = {
+					// 	achievementId: achievementCheck,
+					// 	userId: userId,
+					// 	progressState: progressState,
+					// 	progression: progression
+					// };
+
+					// userAchievements.upsert({ achievementId: achievementCheck, userId: userId }, { $set: userAchievement });
+				});
 
 				// for (var achievement in res) {
 				// 	console.log(achievement+": "+res[achievement]);
 				// }
 
-				// var data = process.stdout.write(chunk);
-				console.log(data);
+				// console.log('test');
 			});
-
-				// res.on('data', function(chunk) {
-				// 	process.stdout.write(chunk);
-				// });
-
-					// stream.on('data', function (achievement) {
-					// 	// var data = process.stdout.write(chunk);
-					// 	var achievementCheck = xbdAchievements.find({ gameId: gameId, name: achievement.name });
-					// 	var progressState = (achievement.progressState !== 'NotStarted') ? true : false;
-					// 	var progression = achievement.progression.timeUnlocked;
-					// 	console.log(progression);
-					// 	// progression = new Date(progression);
-					// 	var achievementInserted = false;
-					// 	var achievementValue = achievement.rewards && achievement.rewards.length ? achievement.rewards[0].value : achievement.value;
-
-					// 	if (!achievementCheck) {
-					// 		var singleAchievement = {
-					// 			gameId: gameId,
-					// 			name: achievement.name,
-					// 			mediaAssets: achievement.mediaAssets[0].url,
-					// 			isSecret: achievement.isSecret,
-					// 			description: achievement.description,
-					// 			lockedDescription: achievement.lockedDescription,
-					// 			value: achievementValue,
-					// 			userPercentage: 0
-					// 		};
-					// 		achievementCheck = xbdAchievements.insert(singleAchievement);
-					// 		achievementInserted = true;
-					// 	}
-
-					// 	if (!achievementInserted) {
-					// 		achievementCheck = achievementCheck._id;
-					// 	}
-
-					// 	var userAchievement = {
-					// 		achievementId: achievementCheck,
-					// 		userId: userId,
-					// 		progressState: progressState,
-					// 		progression: progression
-					// 	};
-					// 	userAchievements.upsert({ achievementId: achievementCheck, userId: userId }, { $set: userAchievement });
-					// });
-				// });
-						
-				// res.on('end', function() {
-				// 	console.log('stream is done');
-				// 	job.done();
-				// 	callback();
-				// });
-			// });
 		});
 
 		if (err) {

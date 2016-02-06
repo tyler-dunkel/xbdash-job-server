@@ -35,8 +35,8 @@ var xboxApiCaller = function(url, callback) {
 	});
 };
 
-xboxApiCaller('2533274805933072/gamercard', function(err, res) {
-	console.log(res);
-});
+// xboxApiCaller('2533274805933072/gamercard', function(err, res) {
+// 	console.log(res);
+// });
 
 module.exports = xboxApiCaller;
