@@ -1,31 +1,32 @@
 var DDP = require('ddp');
 var Job = require('meteor-job');
 var DDPlogin = require('ddp-login');
-var Client = require('mongodb').MongoClient
-var format = require('util').format;
+var mongoJS = require('mongojs');
 var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
-var xboxApiPrivate = require('./xbox-api-private.js');
-// var xboxApiObject = require('./xbox-api.js');
+var xboxApiObject = require('./xbox-api.js');
+// var xboxApiPrivate = require('./xbox-api-private.js');
 
-xboxApiPrivate._updateXboxOneAchievementsData('yKpFiaEwnnvNSLsvF', '1161890004', function(err, res) {
-	if (err) {
-		console.log(err);
-		throw err;
-	}
-	if (res) {
-		console.log(res);
-	}
-});
+var db = mongoJS(meteorUrl);
 
-// xboxApiObject.dirtyUpdateUserStats('yKpFiaEwnnvNSLsvF', function (err, res) {
+// xboxApiObject.updateXboxOneData('mMk9BBNF6deJGjMBu', function (err, res) {
 // 	if (err) {
-// 		console.log(err);
-// 		throw err;
+// 		console.log(JSON.stringify(err));
+// 		return;
 // 	}
 // 	if (res) {
 // 		console.log(res);
 // 	}
 // });
+
+xboxApiObject.updateXbox360Data('mMk9BBNF6deJGjMBu', function (err, res) {
+	if (err) {
+		console.log(JSON.stringify(err));
+		return;
+	}
+	if (res) {
+		console.log(res);
+	}
+});
 
 // var ddp = new DDP({
 // 	host: "127.0.0.1",

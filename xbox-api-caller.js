@@ -17,8 +17,7 @@ var xboxApiCaller = function(url, callback) {
 			if (res.statusCode !== 200 && res.statusCode !== 201) {
 				console.log('we shouldnt be in here if status is 200');
 				console.log('status is: ' + res.statusCode);
-				var error = new Error("404", "Server is not responding.");
-				callback(error, null);
+				callback({ reason: 'the api did not respond OK 200', data: { head: res.headers, statusMessage: res.statusMessage } }, null);
 				return;
 			}
 			var rateLimitRemaining = res.headers['x-ratelimit-remaining'];
@@ -26,12 +25,11 @@ var xboxApiCaller = function(url, callback) {
 				console.log("Calls Left: " + rateLimitRemaining);
 				callback(null, JSON.parse(body));
 			} else {
-				var error = new Error("rateLimitExpired", "Rate limit has expired.");
-				callback(error, null);
+				callback({reason: 'we are out of API calls', data: res}, null);
 			}
 		});
 	}).on('error', function(error) {
-		callback(error, null);
+		callback({reason: 'there is an error with the api', data: error}, null);
 	});
 };
 
