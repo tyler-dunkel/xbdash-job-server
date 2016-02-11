@@ -157,6 +157,11 @@ xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callba
 			return;
 		}
 
+		if (!result || !result.Items || !result.Items[0]) {
+			callback({reason: 'data does not have Items', data: err}, null);
+			return;
+		}
+
 		var gameDetail = {
 			gameName: game.name,
 			gameDescription: result.Items[0].Description,
@@ -279,6 +284,10 @@ xboxApiPrivate._updateXbox360GameData = function(userId, game, gameId, callback)
 	var gameInserted = false;
 
 	xbdGames.findOne({ _id: gameId }, function(err, gameCheck) {
+		if (err) {
+			callback({ reason: 'the db find has an error', data: err }, null);
+			return;
+		}
 		if (!gameCheck) {
 			var singleGame = {
 				_id: gameId,
@@ -328,10 +337,11 @@ xboxApiPrivate._updateXbox360GameDetails = function(userId, game, gameId, callba
 			return;
 		}
 		if (gameCheck) {
-			callback(null, { reason: 'the game exists', data: gameCheck });
+			callback();
 			return;
 		} else {
 			var hexId = game.titleId.toString(16);
+			console.log(hexId);
 			var url = 'game-details-hex/' + hexId;
 
 			xboxApiCaller(url, function(err, result) {
@@ -339,12 +349,6 @@ xboxApiPrivate._updateXbox360GameDetails = function(userId, game, gameId, callba
 					callback(err, null);
 					return;
 				}
-
-				if (typeof result.forEach !== 'function') {
-					callback({reason: 'data does not have a forEach, is not an array', data: result}, null);
-					return;
-				}
-
 				if (result && result.Items) {
 					var releaseDate = (typeof result.Items[0].ReleaseDate !== 'undefined') ? result.Items[0].ReleaseDate : result.Items[0].Updated;
 					releaseDate = new Date(parseInt(releaseDate.substr(6)));
@@ -386,7 +390,6 @@ xboxApiPrivate._updateXbox360GameDetails = function(userId, game, gameId, callba
 						gameAllTimeAverageRating: 0
 					};
 				}
-				console.log(gameDetail);
 				gameDetails.insert(gameDetail, function(err, res) {
 					if (err) {
 						callback({ reason: 'error updating xbox one game details', data: err }, null);
@@ -406,7 +409,11 @@ xboxApiPrivate._dirtyCheckXboxOneGames = function(user, callback) {
 		callback({ reason: 'type err STRING line 405'}, null);
 		return;
 	}
-	
+	if (!user || !user.gamertagScanned) {
+		callback({ reason: 'the users gamertag was not scanned' }, null);
+		return;
+	}
+
 	var self = this;
 	var url = user.xuid + '/xboxonegames';
 	var userLastUpdate = user.gamertagScanned.lastUpdate;
@@ -416,7 +423,10 @@ xboxApiPrivate._dirtyCheckXboxOneGames = function(user, callback) {
 			callback(err, null);
 			return;
 		}
-
+		if (!result.titles || typeof result.titles.forEach !== 'function') {
+			callback({reason: 'there are no games in the result'}, null);
+			return;
+		}
 		result.titles.forEach(function (game) {
 			if (game.maxGamerscore ===  0) return;
 			
@@ -431,16 +441,28 @@ xboxApiPrivate._dirtyCheckXboxOneGames = function(user, callback) {
 				return;
 			}
 
-			xboxApiPrivate._updateXboxOneAchievementsData(user._id, gameId);
-			xboxApiPrivate._updateXboxOneGameData(user._id, game, gameId);
-			xboxApiPrivate._updateXboxOneGameDetails(user._id, game, gameId);
+			xboxApiPrivate._updateXboxOneAchievementsData(user._id, gameId, function(err, result) {
+				if (err) {
+					callback(err, null);
+				}
+			});
+			xboxApiPrivate._updateXboxOneGameData(user._id, game, gameId, function(err, result) {
+				if (err) {
+					callback(err, null);
+				}
+			});
+			xboxApiPrivate._updateXboxOneGameDetails(user._id, game, gameId, function(err, result) {
+				if (err) {
+					callback(err, null);
+				}
+			});
 		});
 
 	});
 	callback();
 }
 
-xboxApiPrivate._dirtyCheckXbox360Games = function (user) {
+xboxApiPrivate._dirtyCheckXbox360Games = function (user, callback) {
 	if (typeof user !== 'string') {
 		callback({ reason: 'type err STRING line 443'}, null);
 		return;
@@ -455,7 +477,10 @@ xboxApiPrivate._dirtyCheckXbox360Games = function (user) {
 			callback(err, null);
 			return;
 		}
-
+		if (!result.titles || typeof result.titles.forEach !== 'function') {
+			callback({reason: 'there are no titles in the result'}, null);
+			return;
+		}
 		result.titles.forEach(function (game) {
 			if (game.totalGamerscore ===  0) return;
 
@@ -467,9 +492,21 @@ xboxApiPrivate._dirtyCheckXbox360Games = function (user) {
 				return;
 			}
 
-			xboxApiPrivate._updateXbox360AchievementsData(user._id, gameId);
-			xboxApiPrivate._updateXbox360GameData(user._id, game, gameId);
-			xboxApiPrivate._updateXbox360GameDetails(user._id, game, gameId);
+			xboxApiPrivate._updateXbox360AchievementsData(user._id, gameId, function(err, result) {
+				if (err) {
+					callback(err, null);
+				}
+			});
+			xboxApiPrivate._updateXbox360GameData(user._id, game, gameId, function(err, result) {
+				if (err) {
+					callback(err, null);
+				}
+			});
+			xboxApiPrivate._updateXbox360GameDetails(userId, game, gameId, function(err, result) {
+				if (err) {
+					callback(err, null);
+				}
+			});
 		});
 
 	});
