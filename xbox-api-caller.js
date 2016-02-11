@@ -17,6 +17,7 @@ var xboxApiCaller = function(url, callback) {
 			if (res.statusCode !== 200 && res.statusCode !== 201) {
 				console.log('we shouldnt be in here if status is 200');
 				console.log('status is: ' + res.statusCode);
+				console.log('the end point we want to hit is: ' + url);
 				callback({ reason: 'the api did not respond OK 200', data: { head: res.headers, statusMessage: res.statusMessage } }, null);
 				return;
 			}
@@ -32,9 +33,5 @@ var xboxApiCaller = function(url, callback) {
 		callback({reason: 'there is an error with the api', data: error}, null);
 	});
 };
-
-// xboxApiCaller('2533274805933072/gamercard', function(err, res) {
-// 	console.log(res);
-// });
 
 module.exports = xboxApiCaller;

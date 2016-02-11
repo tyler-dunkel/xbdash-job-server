@@ -10,76 +10,78 @@ var xboxApiObject = xboxApiObject || {};
 xboxApiObject.chkGamertag = function(gamertag, callback) {
 	var url = 'xuid/' + gamertag;
 	xboxApiCaller(url, function(err, data) {
-		if (err) throw err;
+		if (err) {
+			callback({ reason: 'error retrieving gamertag', data: err }, null);
+			return;
+		}
 		callback(null, data);
 	});
 }
 
-// xbox one DONE
+xboxApiObject.updateXboxOneData = function(userId, callback) {
+	if (typeof userId !== 'string') return;
 
-// xboxApiObject.updateXboxOneData = function(userId, callback) {
-// 	if (typeof userId !== 'string') return;
+	var users = db.collection('users');
 
-// 	db.collection('users').findOne({ _id: userId }, function(err, user) {
-// 		if (err) {
-// 			callback({reason: 'the db findOne failed', data: err}, null);
-// 			return;
-// 		}
-// 		if (!user || !user.gamertagScanned) {
-// 			callback({reason: 'the users gamertag isnt scanned'}, null);
-// 			return;
-// 		}
+	users.findOne({ _id: userId }, function(err, user) {
+		if (err) {
+			callback({ reason: 'the db findOne failed', data: err }, null);
+			return;
+		}
+		if (!user || !user.gamertagScanned) {
+			callback({ reason: 'the users gamertag isnt scanned'}, null);
+			return;
+		}
 
-// 		var url = user.xuid + '/xboxonegames';
+		var url = user.xuid + '/xboxonegames';
 
-// 		xboxApiCaller(url, function(err, data) {
-// 			if (err) {
-// 				callback(err, null);
-// 				return;
-// 			}
+		xboxApiCaller(url, function(err, data) {
+			if (err) {
+				callback(err, null);
+				return;
+			}
 
-// 			if (!data.titles || typeof data.titles.forEach !== 'function') {
-// 				callback({reason: 'api responsed with an error', data: data}, null);
-// 				return;
-// 			}
+			if (!data.titles || typeof data.titles.forEach !== 'function') {
+				callback({ reason: 'api responsed with an error', data: data}, null);
+				return;
+			}
 
-// 			data.titles.forEach(function(game) {
-// 				if (game.maxGamerscore ===  0) return;
+			data.titles.forEach(function(game) {
+				if (game.maxGamerscore ===  0) return;
 
-// 				var gameId = game.titleId.toString();
+				var gameId = game.titleId.toString();
 
-// 				xboxApiPrivate._updateXboxOneAchievementsData(userId, gameId, function(err, result) {
-// 					if (err) {
-// 						callback(err, null);
-// 					}
-// 				});
-// 				xboxApiPrivate._updateXboxOneGameData(userId, game, gameId, function(err, result) {
-// 					if (err) {
-// 						callback(err, null);
-// 					}
-// 				});
-// 				xboxApiPrivate._updateXboxOneGameDetails(userId, game, gameId, function(err, result) {
-// 					if (err) {
-// 						callback(err, null);
-// 					}
-// 				});
-// 			});
-// 		});
-// 	});
-
-// 	callback();
-// }
+				xboxApiPrivate._updateXboxOneAchievementsData(userId, gameId, function(err, result) {
+					if (err) {
+						callback(err, null);
+					}
+				});
+				xboxApiPrivate._updateXboxOneGameData(userId, game, gameId, function(err, result) {
+					if (err) {
+						callback(err, null);
+					}
+				});
+				xboxApiPrivate._updateXboxOneGameDetails(userId, game, gameId, function(err, result) {
+					if (err) {
+						callback(err, null);
+					}
+				});
+			});
+		});
+	});
+	callback();
+}
 
 xboxApiObject.updateXbox360Data = function(userId, callback) {
 	if (typeof userId !== 'string') return;
 
 	db.collection('users').findOne({ _id: userId }, function(err, user) {
 		if (err) {
-			callback({reason: 'the db findOne failed', data: err}, null);
+			callback({ reason: 'the db findOne failed', data: err }, null);
 			return;
 		}
 		if (!user || !user.gamertagScanned) {
-			callback({reason: 'the users gamertag isnt scanned'}, null);
+			callback({ reason: 'the users gamertag isnt scanned'}, null);
 			return;
 		}
 
@@ -91,7 +93,7 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 				return;
 			}
 			if (!data.titles || typeof data.titles.forEach !== 'function') {
-				callback({reason: 'api responsed with an error', data: data}, null);
+				callback({ reason: 'api responsed with an error', data: data}, null);
 				return;
 			}
 
@@ -100,16 +102,16 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 
 				var gameId = game.titleId.toString();
 				
-				// xboxApiPrivate._updateXbox360AchievementsData(userId, gameId, function(err, result) {
-				// 	if (err) {
-				// 		callback(err, null);
-				// 	}
-				// });
-				// xboxApiPrivate._updateXbox360GameData(userId, game, gameId, function(err, result) {
-				// 	if (err) {
-				// 		callback(err, null);
-				// 	}
-				// });
+				xboxApiPrivate._updateXbox360AchievementsData(userId, gameId, function(err, result) {
+					if (err) {
+						callback(err, null);
+					}
+				});
+				xboxApiPrivate._updateXbox360GameData(userId, game, gameId, function(err, result) {
+					if (err) {
+						callback(err, null);
+					}
+				});
 				xboxApiPrivate._updateXbox360GameDetails(userId, game, gameId, function(err, result) {
 					if (err) {
 						callback(err, null);
@@ -118,101 +120,163 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 			});
 		});
 	});
-
 	callback();
 }
 
-// xboxApiObject.updateGamercard = function(userId, callback) {
-// 	if (typeof userId !== 'string') return;
+xboxApiObject.updateGamercard = function(userId, callback) {
+	if (typeof userId !== 'string') return;
 
-// 	var users = db.collection('users');
+	var users = db.collection('users');
 
-// 	db.collection('users').findOne({ _id: userId }, function(err, user) {
-// 		if (err) {
-// 			throw err;
-// 		}
-// 		if (!user || !user.gamertagScanned || !user.gamertagScanned.status === 'true') return;
+	users.findOne({ _id: userId, xuid: { $exists: true } }, function(err, user) {
+		if (err) {
+			callback({ reason: 'db find error', data: err }, null);
+			return;
+		}
+		if (!user) {
+			callback({ reason: 'user does not have an xuid' }, null);
+			return;
+		}
 
-// 		var url = user.xuid + '/gamercard';
+		var url = user.xuid + '/gamercard';
 
-// 		xboxApiCaller(url, function(err, result) {
-// 			if (err) throw err;
-// 			users.update({ _id: userId }, { $set: { gamercard: result.data } });
-// 			console.log('updated user gamercard');
-// 		});
-// 	});
+		xboxApiCaller(url, function(err, result) {
+			if (err) {
+				callback(err, null);
+				return;
+			}
+			if (!result || !result.gamertag) {
+				callback({ reason: 'gamercard or gamertag does not exist', data: result }, null);
+				return;
+			}
+			users.update({ _id: userId }, { $set: { gamercard: result } }, function(err, res) {
+				if (err) {
+					callback({ reason: 'error setting user gamercard', data: err }, null);
+					return;
+				}
+			});
+			console.log('updated user gamercard');
+		});
+	});
+	callback();
+}
 
-// 	callback();
-// }
+xboxApiObject.updateUserStats = function(userId, callback) {
+	if (typeof userId !== 'string') return;
 
-// xboxApiObject.updateUserStats = function(userId, callback) {
-// 	if (typeof userId !== 'string') return;
+	var users = db.collection('users');
 
-// 	var users = db.collection('users');
+	users.findOne({ _id: userId }, function(err, user) {
+		if (err) {
+			callback({ reason: 'error finding user', data: err }, null);
+			return;
+		}
+		if (!user || !user.gamertagScanned || !user.gamertagScanned.status || user.gamertagScanned.status === 'building') return;
 
-// 	db.collection('users').findOne({ _id: userId }, function(err, user) {
-// 		if (err) {
-// 			throw err;
-// 		}
-// 		if (!user || !user.gamertagScanned || !user.gamertagScanned.status || user.gamertagScanned.status === 'building') return;
+		users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'updating' } }, function(err, res) {
+			if (err) {
+				callback({ reason: 'error setting gamertag status to "updating" user stats', data: err }, null);
+				return;
+			}
+		});
 
-// 		users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'updating' } });
+		xboxApiObject.updateXboxOneData(userId, function(err, result) {
+			if (err) {
+				callback({ reason: 'error with xbox one data update', data: err }, null);
+				return;
+			}
+			console.log('updated one users xbox one data');
+		});
+		xboxApiObject.updateXbox360Data(userId, function(err, result) {
+			if (err) {
+				callback({ reason: 'error with xbox 360 data update', data: err }, null);
+				return;
+			}
+			console.log('updated one users xbox 360 data');
+		});
 
-// 		xboxApiObject.updateXboxOneGames(userId, function(err, result) {
-// 			if (err) throw err;
-// 			console.log('updated one users xbox one data');
-// 		});
-// 		xboxApiObject.updateXbox360Data(userId, function(err, result) {
-// 			if (err) throw err;
-// 			console.log('updated one users xbox 360 data');
-// 		});
+		users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
+			if (err) {
+				callback({ reason: 'error setting gamertag status to true / setting last update', data: err }, null);
+				return;
+			}
+		});
+	});
+	callback();
+}
 
-// 		users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } });
-// 	});
+xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
+	if (typeof userId !== 'string') {
+		callback({ reason: 'type error userId not a string'}, null);
+		return;
+	}
 
-// 	callback();
-// }
+	console.log('dirty function started');
 
-// xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
-// 	if (typeof userId !== 'string') return;
+	var users = db.collection('users');
 
-// 	var users = db.collection('users');
+	users.findOne({ _id: userId }, function(err, user) {
+		if (err) {
+			callback({ reason: 'error with the db find', data: err }, null);
+			return;
+		}
+		if (!user || !user.gamertagScanned || !user.gamertagScanned.status || user.gamertagScanned.status === 'building') {
+			callback({ reason: 'the users gamertag is not scanned or is building', data: user }, null);
+			return;
+		} 
 
-// 	db.collection('users').findOne({ _id: userId }, function(err, user) {
-// 		if (err) {
-// 			throw err;
-// 		}
-// 		if (!user || !user.gamertagScanned || !user.gamertagScanned.status === 'true') return;
+		var url = user.xuid + '/gamercard';
 
-// 		var url = user.xuid + '/gamercard';
-
-// 		xboxApiCaller(url, function(err, result) {
-// 			if (err) throw err;
-
-// 			if (result && result.gamerscore) {
-// 				if (user.gamercard.gamerscore < result.gamerscore) {
-// 					console.log('the gamerscore on record is lower than on the api');
-// 					users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'updating' } });
-// 					users.update({ _id: userId }, { $set: { gamercard: result }});
-// 					xboxApiPrivate._dirtyCheckXboxOneGames(user, function(err, result) {
-// 						if (err) throw err;
-// 						console.log('dirty check for xbox one games');
-// 					});
-// 					xboxApiPrivate._dirtyCheckXbox360Games(user, function(err, result) {
-// 						if (err) throw err;
-// 						console.log('dirty check for xbox 360 games');
-// 					});
-// 					users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } });
-// 				} else {
-// 					callback(err, null);
-// 				}
-// 			} else {
-// 				callback(err, null);
-// 			}
-// 		});
-// 	});
-	
-// 	callback();
-// }
+		xboxApiCaller(url, function(err, result) {
+			if (err) {
+				callback(err, null);
+				return;
+			}
+			console.log('api has been hit in dirty');
+			if (result && result.gamerscore) {
+				console.log('dirty function has gotten a gamerscore from the api');
+				if (user.gamercard.gamerscore < result.gamerscore) {
+					console.log('the gamerscore on record is lower than on the api');
+					users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'updating' } }, function(err, res) {
+						if (err) {
+							callback({ reason: 'error setting user status to updating', data: err }, null);
+							return;
+						}
+					});
+					users.update({ _id: userId }, { $set: { gamercard: result }}, function(err, res) {
+						if (err) {
+							callback({ reason: 'error with db updating', data: err }, null);
+							return;
+						}
+					});
+					xboxApiPrivate._dirtyCheckXboxOneGames(user, function(err, result) {
+						if (err) {
+							callback({ reason: 'there is an error with the x1 game function', data: err }, null);
+							return;
+						}
+					});
+					xboxApiPrivate._dirtyCheckXbox360Games(user, function(err, result) {
+						if (err) {
+							callback({ reason: 'there is an error with the x360 game function', data: err }, null);
+							return;
+						}
+					});
+					users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
+						if (err) {
+							callback({ reason: 'error dirty updating user stats', data: err }, null);
+							return;
+						}
+					});
+				} else {
+					callback();
+					return;
+				}
+			} else {
+				callback({ reason: 'no result gamerscore from the api' }, null);
+			}
+		});
+	});
+	callback();
+}
 
 module.exports = xboxApiObject;
