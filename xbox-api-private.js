@@ -2,6 +2,7 @@ var randomstring = require("randomstring");
 var mongoJS = require('mongojs');
 var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var xboxApiCaller = require('./xbox-api-caller.js');
+var async = require('async');
 
 var db = mongoJS(meteorUrl);
 
@@ -9,18 +10,22 @@ var xboxApiPrivate = xboxApiPrivate || {};
 
 xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callback) {
 	if (typeof userId !== 'string' || typeof gameId !== 'string') {
-		callback({reason: 'type err STRING LINE 11'}, null);
+		console.log('callback on line 12 called (x1 achi)');
+		//callback({reason: 'type err STRING LINE 11'}, null);
 		return;
 	}
 
 	var users = db.collection('users');
+	console.log('starting achievement update');
 
 	db.collection('users').findOne({ _id: userId }, function(err, user) {
 		if (err) {
+			console.log('callback on line 21 called (x1 achi)');
 			callback({ reason: 'the db find was an error', data: err }, null);
 			return;
 		}
 		if (!user || !user.gamertagScanned) {
+			console.log('callback on line 26 called (x1 achi)');
 			callback({ reason: 'the users gamertag was not scanned' }, null);
 			return;
 		}
@@ -31,11 +36,12 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 
 		xboxApiCaller(url, function(err, data) {
 			if (err) {
+				console.log('callback on line 37 called (x1 achi)');
 				callback(err, null);
 				return;
 			}
 
-			data.forEach(function(achievement) {
+			var processAchievement = function(achievement, asyncCallback) {
 				var progressState = (achievement.progressState !== 'NotStarted') ? true : false;
 				var progression = achievement.progression.timeUnlocked;
 				progression = new Date(progression);
@@ -45,7 +51,8 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 				
 				xbdAchievements.findOne({ gameId: gameId, name: achievement.name }, function(err, achievementCheck) {
 					if (err) {
-						callback({ reason: 'xbdAcheivemnts find failed', data: err }, null);
+						console.log('callback on line 52 called (x1 achi)');
+						//callback({ reason: 'xbdAcheivemnts find failed', data: err }, null);
 					}
 					//console.log('checked achievement');
 
@@ -79,22 +86,35 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 
 						userAchievements.update({ achievementId: achievementCheck, userId: userId }, { $set: userAchievement, $setOnInsert: {_id: userAchievementId} }, { upsert: true }, function(err, res) {
 							if (err) {
+								console.log('callback on line 87 called (x1 achi)');
 								callback({ reason: 'error updating user acheivements', data: err }, null);
 								return;
+							} else {
+								asyncCallback();
+								console.log('callback should be called here');
 							}
+							//console.log('achievements updated');
 							// console.log('user achievements updated');
 						});
+						//asyncCallback();
 					}
 				});
+			}
+
+			//dataTest = [1, 2, 3];
+			async.each(data, processAchievement, function(err) {
+				callback();
+				console.log('every acheivement is inserted');
 			});
 		});
 	});
-
-	callback();
+	//console.log('callback on line 98 called (x1 achi)');
+	//callback();
 }
 
 xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback) {
 	if (typeof userId !== 'string' || typeof gameId !== 'string') {
+		console.log('callback on line 104 called (x1 game)');
 		callback({ reason: 'type err STRING line 93'}, null);
 		return;
 	}
@@ -108,6 +128,7 @@ xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback)
 
 	xbdGames.findOne({ _id: gameId }, function(err, gameCheck) {
 		if (err) {
+			console.log('callback on line 118 called (x1 game)');
 			callback({ reason: 'the db find has an error', data: err }, null);
 			return;
 		}
@@ -138,13 +159,15 @@ xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback)
 
 		userGames.update({ gameId: gameId, userId: userId }, { $set: userGame, $setOnInsert: {_id: _id} }, { upsert: true }, function(err, res) {
 			if (err) {
+				console.log('callback on line 149 called (x1 game)');
 				callback({ reason: 'error updating user xbox one games', data: err }, null);
 				return;
 			}
 			console.log('user xbox one games updated' + res);
+			console.log('callback on line 154 called (x1 game)');
+			callback();
 		});
 	});
-	callback();
 }
 
 xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callback) {
@@ -193,11 +216,11 @@ xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callba
 				callback({ reason: 'error updating xbox one game details', data: err }, null);
 				return;
 			}
+			console.log('callback called line 206 (x1 gamedetail');
+			callback();
 			console.log('xbox one game details updated');
 		});
 	});
-	
-	callback();
 }
 
 xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callback) {

@@ -40,13 +40,15 @@ var profileBuilder = function(job, callback) {
 		users.findOne({_id: userId}, function(err, user) {
 			if (!user || !user.xuid) {
 				console.log('there is no xuid');
-				job.done();
-				callback();
+				// job.done();
+				// callback();
 			}
 			xboxApiObject.updateGamercard(userId, function(err, res) {
 				if (err) {
 					console.log('error with update gamercard');
 				}
+				job.done();
+				callback();
 				xboxApiObject.updateXboxOneData(userId, function(err, res) {
 					if (err) {
 						console.log('error with update x1 games');
@@ -56,17 +58,16 @@ var profileBuilder = function(job, callback) {
 							console.log('error with update 360 games');
 						}
 						console.log('all jobs done');
+						users.update({_id: userId}, {$set: {'gamertagScanned.status': "true", 'gamertagScanned.lastUpdate': new Date()}}, function(err, res) {
+							if (err) {
+								console.log('error in db update');
+							}
+							console.log('ending job');
+						});
 					});
 				});
 			});
 		});
-		users.update({_id: userId}, {$set: {'gamertagScanned.status': "true", 'gamertagScanned.lastUpdate': new Date()}}, function(err, res) {
-			if (err) {
-				console.log('error in db update');
-			}
-		});
-		job.done();
-		callback();
 	}
 }
 

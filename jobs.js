@@ -6,6 +6,7 @@ var mongoJS = require('mongojs');
 var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var xboxApiObject = require('./xbox-api.js');
 var workers = require('./workers.js');
+var async = require('async');
 // var xboxApiPrivate = require('./xbox-api-private.js');
 
 var db = mongoJS(meteorUrl);
@@ -16,17 +17,30 @@ if (typeof workers.profileBuilder === 'function') {
 	console.log('nope');
 }
 
-// xboxApiObject.updateXboxOneData('mMk9BBNF6deJGjMBu', function (err, res) {
-// 	if (err) {
-// 		console.log(JSON.stringify(err));
-// 		return;
-// 	}
-// 	if (res) {
-// 		console.log(res);
-// 	}
-// });
+// var processAchievementTest = function(achievement, cb) {
+// 	cb();
+// }
 
-// xboxApiObject.updateXbox360Data('mMk9BBNF6deJGjMBu', function (err, res) {
+// for (var i = 0; i < 20; i++) {
+// 	dataTest = [1, 2, 3];
+// 	console.log('hello');
+// 	async.each(dataTest, processAchievementTest, function(err) {
+// 		//callback();
+// 		console.log('every acheivement is inserted');
+// 	});
+// }
+
+xboxApiObject.updateXboxOneData('vEXNkj8Mkf6PMSCWY', function (err, res) {
+	if (err) {
+		console.log(JSON.stringify(err));
+		return;
+	}
+	if (res) {
+		console.log(res);
+	}
+});
+
+// xboxApiObject.updateXbox360Data('vEXNkj8Mkf6PMSCWY', function (err, res) {
 // 	if (err) {
 // 		console.log(JSON.stringify(err));
 // 		return;
@@ -46,53 +60,53 @@ if (typeof workers.profileBuilder === 'function') {
 // 	}
 // });
 
-var ddp = new DDP({
-	host: "127.0.0.1",
-	port: 3000,
-	use_ejson: true
-});
+// var ddp = new DDP({
+// 	host: "127.0.0.1",
+// 	port: 3000,
+// 	use_ejson: true
+// });
 
-Job.setDDP(ddp);
+// Job.setDDP(ddp);
 
-ddp.connect(function (err) {
-	if (err) throw err;
-	DDPlogin(ddp, function (err, token) {
-		if (err) {
-			db.close();
-			throw err;
-		}
+// ddp.connect(function (err) {
+// 	if (err) throw err;
+// 	DDPlogin(ddp, function (err, token) {
+// 		if (err) {
+// 			db.close();
+// 			throw err;
+// 		}
 
-		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
+// 		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
 
-		// var checkGamesWorker = Job.processJobs('xbdjobscollection', 'checkGamesJob', function (job, callback) {
-		// 	if (job) {
-		// 		if (err) throw err;
+// 		// var checkGamesWorker = Job.processJobs('xbdjobscollection', 'checkGamesJob', function (job, callback) {
+// 		// 	if (job) {
+// 		// 		if (err) throw err;
 
-		// 		var userGames = db.collection('usergames');
-		// 		var xbdGame = db.collection('xbdgames');
+// 		// 		var userGames = db.collection('usergames');
+// 		// 		var xbdGame = db.collection('xbdgames');
 
-		// 		userGames.find({ completed: false }).pipe(function(game) {
-		// 			console.log(game);
-		// 		});
+// 		// 		userGames.find({ completed: false }).pipe(function(game) {
+// 		// 			console.log(game);
+// 		// 		});
 
-		// 		pipe.on('data', function(doc) {
-		// 			xbdGame.findOne({ _id: doc.gameId }, {}, function(err, game) {
-		// 				if (err) throw err;
-		// 				console.log(game.name + ' is not complete');
-		// 				if (doc.currentGamerscore === game.maxGamerscore) {
-		// 					userGames.updateOne({ _id: game._id }, { $set: { completed: true } });
-		// 				}
-		// 			});
-		// 		});
+// 		// 		pipe.on('data', function(doc) {
+// 		// 			xbdGame.findOne({ _id: doc.gameId }, {}, function(err, game) {
+// 		// 				if (err) throw err;
+// 		// 				console.log(game.name + ' is not complete');
+// 		// 				if (doc.currentGamerscore === game.maxGamerscore) {
+// 		// 					userGames.updateOne({ _id: game._id }, { $set: { completed: true } });
+// 		// 				}
+// 		// 			});
+// 		// 		});
 
-		// 		pipe.on('end', function() {
-		// 			console.log('pipe is done');
-		// 			job.done();
-		// 			callback();
-		// 		});
-		// 	}
-		// });
+// 		// 		pipe.on('end', function() {
+// 		// 			console.log('pipe is done');
+// 		// 			job.done();
+// 		// 			callback();
+// 		// 		});
+// 		// 	}
+// 		// });
 
-		//var checkAchievementsWorker = Job.processJobs('xbdjobscollection', 'checkAchievementsJob', achievementWorker);
-	});
-});
+// 		//var checkAchievementsWorker = Job.processJobs('xbdjobscollection', 'checkAchievementsJob', achievementWorker);
+// 	});
+// });

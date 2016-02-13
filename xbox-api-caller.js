@@ -8,6 +8,9 @@ var xboxApiCaller = function(url, callback) {
 			'X-AUTH': 'e9b6206816485c97bd0b0844073723988a848b3f'
 		}
 	};
+	console.log('the args are: ' + arguments[2]);
+	var retries = typeof arguments[2] === 'number' ? arguments[2] + 1 : 0;
+	console.log(retries);
 	https.get(xbUrl, function (res) {
 		var body = '';
 		res.on('data', function(data) {
@@ -17,6 +20,18 @@ var xboxApiCaller = function(url, callback) {
 			if (res.statusCode !== 200 && res.statusCode !== 201) {
 				console.log('we shouldnt be in here if status is 200');
 				console.log('status is: ' + res.statusCode);
+				if (res.statusCode === 503) {
+					if (retries > 5) {
+						callback({reason: 'the api must be down, over 5 retries with a 503', data: { head: res.headers } }, null);
+						return;
+					}
+					console.log('503 status, retrying the function, retries under 5: ' + retries);
+					setTimeout(function() {
+						console.log('called after 1 second wait');
+						xboxApiCaller(url, callback, retries);
+					}, 10000);
+					return;
+				}
 				console.log('the end point we want to hit is: ' + url);
 				callback({ reason: 'the api did not respond OK 200', data: { head: res.headers, statusMessage: res.statusMessage } }, null);
 				return;
