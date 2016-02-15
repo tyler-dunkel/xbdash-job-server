@@ -3,6 +3,7 @@ var mongoJS = require('mongojs');
 var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var xboxApiCaller = require('./xbox-api-caller.js');
 var async = require('async');
+var slug = require('slug');
 
 var db = mongoJS(meteorUrl);
 
@@ -11,7 +12,7 @@ var xboxApiPrivate = xboxApiPrivate || {};
 xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callback) {
 	if (typeof userId !== 'string' || typeof gameId !== 'string') {
 		console.log('callback on line 12 called (x1 achi)');
-		//callback({reason: 'type err STRING LINE 11'}, null);
+		callback({reason: 'type err STRING LINE 11'}, null);
 		return;
 	}
 
@@ -52,9 +53,8 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 				xbdAchievements.findOne({ gameId: gameId, name: achievement.name }, function(err, achievementCheck) {
 					if (err) {
 						console.log('callback on line 52 called (x1 achi)');
-						//callback({ reason: 'xbdAcheivemnts find failed', data: err }, null);
+						asyncCallback && asyncCallback();
 					}
-					//console.log('checked achievement');
 
 					if (!achievementCheck) {
 						var singleAchievement = {
@@ -84,19 +84,15 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 							progression: progression
 						};
 
-						userAchievements.update({ achievementId: achievementCheck, userId: userId }, { $set: userAchievement, $setOnInsert: {_id: userAchievementId} }, { upsert: true }, function(err, res) {
-							if (err) {
-								console.log('callback on line 87 called (x1 achi)');
-								callback({ reason: 'error updating user acheivements', data: err }, null);
-								return;
-							} else {
-								asyncCallback();
-								console.log('callback should be called here');
-							}
-							//console.log('achievements updated');
-							// console.log('user achievements updated');
+						userAchievements.update({ achievementId: achievementCheck, userId: userId }, 
+							{ $set: userAchievement, $setOnInsert: {_id: userAchievementId} }, { upsert: true }, function(err, res) {
+								if (err) {
+									console.log('callback on line 87 called (x1 achi)');
+									asyncCallback && asyncCallback();
+									return;
+								}
+								asyncCallback && asyncCallback();
 						});
-						//asyncCallback();
 					}
 				});
 			}
@@ -108,8 +104,6 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 			});
 		});
 	});
-	//console.log('callback on line 98 called (x1 achi)');
-	//callback();
 }
 
 xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback) {
@@ -165,13 +159,14 @@ xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback)
 			}
 			console.log('user xbox one games updated' + res);
 			console.log('callback on line 154 called (x1 game)');
-			callback();
+			callback && callback();
 		});
 	});
 }
 
 xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callback) {
 	if (typeof userId !== 'string' || typeof gameId !== 'string') {
+		console.log('callback in game details getting called');
 		callback({reason: 'type err STRING LINE 146'}, null);
 		return;
 	}
@@ -187,38 +182,46 @@ xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callba
 		}
 
 		if (!result || !result.Items || !result.Items[0]) {
+			console.log('xbox one game details are an error');
 			callback({reason: 'data does not have Items', data: err}, null);
 			return;
 		}
 
-		var _id = randomstring.generate(17);
+		gameDetails.findOne({gameId: gameId}, function(err, gameCheck) {
 
-		var gameDetail = {
-			gameName: game.name,
-			gameDescription: result.Items[0].Description,
-			gameReducedDescription: result.Items[0].ReducedDescription,
-			gameReducedName: result.Items[0].ReducedName,
-			gameReleaseDate: result.Items[0].ReleaseDate,
-			gameId: gameId,
-			gameGenre: result.Items[0].Genres,
-			gameArt: result.Items[0].Images,
-			gamePublisherName: result.Items[0].PublisherName,
-			gameParentalRating: result.Items[0].ParentalRating,
-			gameAllTimePlayCount: result.Items[0].AllTimePlayCount,
-			gameSevenDaysPlayCount: result.Items[0].SevenDaysPlayCount,
-			gameThirtyDaysPlayCount: result.Items[0].ThirtyDaysPlayCount,
-			gameAllTimeRatingCount: result.Items[0].AllTimeRatingCount,
-			gameAllTimeAverageRating: result.Items[0].AllTimeAverageRating
-		};
+			if (!gameCheck) {
+				console.log('no xbox one game details');
+				var _id = randomstring.generate(17);
 
-		gameDetails.update({ gameId: gameId }, { $set: gameDetail, $setOnInsert: { _id: _id } }, { upsert: true }, function(err, res) {
-			if (err) {
-				callback({ reason: 'error updating xbox one game details', data: err }, null);
-				return;
+				var gameDetail = {
+					_id: _id,
+					gameName: game.name,
+					gameDescription: result.Items[0].Description,
+					gameReducedDescription: result.Items[0].ReducedDescription,
+					gameReducedName: result.Items[0].ReducedName,
+					gameReleaseDate: result.Items[0].ReleaseDate,
+					gameId: gameId,
+					gameGenre: result.Items[0].Genres,
+					gameArt: result.Items[0].Images,
+					gamePublisherName: result.Items[0].PublisherName,
+					gameParentalRating: result.Items[0].ParentalRating,
+					gameAllTimePlayCount: result.Items[0].AllTimePlayCount,
+					gameSevenDaysPlayCount: result.Items[0].SevenDaysPlayCount,
+					gameThirtyDaysPlayCount: result.Items[0].ThirtyDaysPlayCount,
+					gameAllTimeRatingCount: result.Items[0].AllTimeRatingCount,
+					gameAllTimeAverageRating: result.Items[0].AllTimeAverageRating
+				};
+
+				gameDetails.insert(gameDetail, function(err) {
+					if (err) {
+						console.log('db insert error');
+						callback && callback();
+					}
+					callback && callback();
+				});
+			} else {
+				callback && callback();
 			}
-			console.log('callback called line 206 (x1 gamedetail');
-			callback();
-			console.log('xbox one game details updated');
 		});
 	});
 }
@@ -253,15 +256,16 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 				callback({reason: 'data does not have a forEach, is not an array', data: data}, null);
 				return;
 			}
-			
-			data.forEach(function(achievement) {
+
+			var processAchievement = function(achievement, asyncCallback) {
 				var progressState = (achievement.unlocked !== false) ? true : false;
 				var progression = new Date(achievement.timeUnlocked);
 				var achievementInserted = false;
 
 				xbdAchievements.findOne({ gameId: gameId, name: achievement.name }, function(err, achievementCheck) {
 					if (err) {
-						callback({ reason: 'xbdAchievements find failed', data: err }, null);
+						asyncCallback && asyncCallback();
+						return;
 					}
 
 					if (!achievementCheck) {
@@ -294,16 +298,25 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 
 					userAchievements.update({ achievementId: achievementCheck, userId: userId }, { $set: userAchievement, $setOnInsert: { _id: userAchievementId } }, { upsert: true }, function(err, res) {
 						if (err) {
-							callback({ reason: 'error updating user acheivements', data: err }, null);
+							asyncCallback && asyncCallback();
 							return;
 						}
 						// console.log('user achievements updated');
+						asyncCallback && asyncCallback();
 					});
 				});
+			}
+
+			async.each(data, processAchievement, function(err) {
+				if (err) {
+					console.log('async each error x360');
+				}
+				console.log('async done');
+				callback && callback();
 			});
 		});
 	});
-	callback();
+	// callback();
 }
 
 xboxApiPrivate._updateXbox360GameData = function(userId, game, gameId, callback) {
@@ -435,12 +448,13 @@ xboxApiPrivate._updateXbox360GameDetails = function(userId, game, gameId, callba
 						return;
 					}
 					console.log('xbox 360 or other game details inserted');
+					callback && callback();
 				});
 
 			});
 		}
 	});
-	callback();
+	//callback();
 }
 
 xboxApiPrivate._dirtyCheckXboxOneGames = function(user, callback) {

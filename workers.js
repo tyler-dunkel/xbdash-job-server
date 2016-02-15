@@ -47,24 +47,29 @@ var profileBuilder = function(job, callback) {
 				if (err) {
 					console.log('error with update gamercard');
 				}
-				job.done();
-				callback();
+				console.log('update gamercard done, moving to x1');
+				// job.done();
+				// callback();
 				xboxApiObject.updateXboxOneData(userId, function(err, res) {
 					if (err) {
 						console.log('error with update x1 games');
 					}
-					xboxApiObject.updateXbox360Data(userId, function(err, res) {
-						if (err) {
-							console.log('error with update 360 games');
-						}
-						console.log('all jobs done');
-						users.update({_id: userId}, {$set: {'gamertagScanned.status': "true", 'gamertagScanned.lastUpdate': new Date()}}, function(err, res) {
-							if (err) {
-								console.log('error in db update');
-							}
-							console.log('ending job');
-						});
-					});
+					console.log('update xbox one data done, moving to x360');
+					// xboxApiObject.updateXbox360Data(userId, function(err, res) {
+					// 	if (err) {
+					// 		console.log('error with update 360 games');
+					// 	}
+					// 	console.log('updated x360 data');
+					// 	console.log('all jobs done');
+					// 	users.update({_id: userId}, {$set: {'gamertagScanned.status': "true", 'gamertagScanned.lastUpdate': new Date()}}, function(err, res) {
+					// 		if (err) {
+					// 			console.log('error in db update');
+					// 		}
+					// 		job.done && job.done();
+					// 		callback && callback();
+					// 		console.log('ending job');
+					// 	});
+					// });
 				});
 			});
 		});
