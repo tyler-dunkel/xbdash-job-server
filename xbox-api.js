@@ -26,8 +26,6 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 		return;
 	}
 
-	console.log('here we go');
-
 	var users = db.collection('users');
 
 	users.findOne({ _id: userId }, function(err, user) {
@@ -65,38 +63,39 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 				console.log('xbox one processing game');
 				async.parallel([
 					function(callback) {
-						callback();
-						// xboxApiPrivate._updateXboxOneAchievementsData(userId, gameId, function(err, result) {
-						// 	if (err) {
-						// 		callback(err, null);
-						// 		console.log('error in x1 achi data');
-						// 		return;
-						// 	}
-						// 	callback();
-						// });
+						//callback();
+						console.log('calling acheivement function for: ' + game.name);
+						xboxApiPrivate._updateXboxOneAchievementsData(userId, gameId, function(err, result) {
+							if (err) {
+								callback(err, null);
+								console.log('error in x1 achi data');
+								return;
+							}
+							callback();
+						});
 					},
 					function(callback) {
-						callback();
-						// xboxApiPrivate._updateXboxOneGameData(userId, game, gameId, function(err, result) {
-						// 	if (err) {
-						// 		callback(err, null);
-						// 		console.log('error in update x1 game data');
-						// 		return;
-						// 	}
-						// 	callback();
-						// });
+						//callback();
+						xboxApiPrivate._updateXboxOneGameData(userId, game, gameId, function(err, result) {
+							if (err) {
+								callback(err, null);
+								console.log('error in update x1 game data');
+								return;
+							}
+							callback();
+						});
 					},
 					function(callback) {
-						callback();
-						// xboxApiPrivate._updateXboxOneGameDetails(userId, game, gameId, function(err, result) {
-						// 	if (err) {
-						// 		callback(err, null);
-						// 		console.log('error in xbox one game details');
-						// 		return;
-						// 	}
-						// 	console.log('xbox one game details updated');
-						// 	callback();
-						// });
+						//callback();
+						xboxApiPrivate._updateXboxOneGameDetails(userId, game, gameId, function(err, result) {
+							if (err) {
+								callback(err, null);
+								console.log('error in xbox one game details');
+								return;
+							}
+							console.log('xbox one game details updated');
+							callback();
+						});
 					}
 				], function(err, result) {
 					console.log('xbox 1 async done');
@@ -110,8 +109,6 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 				q.push(game, function(err) {
 					console.log('adding ' + game.name + ' to the queue');
 				});
-				console.log(q.paused);
-				console.log(q.length());
 			});
 
 			q.drain = function(err) {
@@ -129,9 +126,12 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 
 xboxApiObject.updateXbox360Data = function(userId, callback) {
 	if (typeof userId !== 'string') {
+		console.log('user 360 data problem');
 		callback && callback();
 		return;
 	}
+
+	console.log('user 360 data running');
 
 	db.collection('users').findOne({ _id: userId }, function(err, user) {
 		if (err) {
@@ -139,18 +139,23 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 			return;
 		}
 		if (!user || !user.gamertagScanned) {
+			console.log('user gmamertag not scanned');
 			callback({ reason: 'the users gamertag isnt scanned'}, null);
 			return;
 		}
+
+		console.log('user.xuid');
 
 		var url = user.xuid + '/xbox360games';
 
 		xboxApiCaller(url, function(err, data) {
 			if (err) {
+				console.log('xbox api error');
 				callback(err, null);
 				return;
 			}
 			if (!data.titles || typeof data.titles.forEach !== 'function') {
+				console.log('data doesnt have what we need in x360');
 				callback({ reason: 'api responsed with an error', data: data}, null);
 				return;
 			}
@@ -229,16 +234,27 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 }
 
 xboxApiObject.updateGamercard = function(userId, callback) {
-	if (typeof userId !== 'string') return;
+	console.log('update gamercard: ' + userId);
+	if (typeof userId !== 'string') {
+		console.log('error in update gamercar');
+		callback('username not a string', null);
+		return;
+	}
+
+	console.log('running gamertag update');
 
 	var users = db.collection('users');
 
-	users.findOne({ _id: userId, xuid: { $exists: true } }, function(err, user) {
+	users.findOne({ _id: userId }, function(err, user) {
 		if (err) {
+			console.log('error finding user');
 			callback({ reason: 'db find error', data: err }, null);
 			return;
 		}
-		if (!user) {
+		console.log(user);
+		if (!user || !user.xuid) {
+			console.log(user);
+			console.log('user is null: ' + user);
 			callback({ reason: 'user does not have an xuid' }, null);
 			return;
 		}

@@ -2,6 +2,7 @@ var randomstring = require("randomstring");
 var mongoJS = require('mongojs');
 var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var xboxApiObject = require('./xbox-api.js');
+var async = require('async');
 
 var db = mongoJS(meteorUrl);
 
@@ -37,12 +38,17 @@ var profileBuilder = function(job, callback) {
 	if (job) {
 		var userId = job.data.userId;
 		var users = db.collection('users');
+		console.log(userId);
 		users.findOne({_id: userId}, function(err, user) {
 			if (!user || !user.xuid) {
 				console.log('there is no xuid');
-				// job.done();
-				// callback();
+				job.done();
+				callback();
+				return;
 			}
+
+			// async.each('')
+			console.log('calling update gamercard');
 			xboxApiObject.updateGamercard(userId, function(err, res) {
 				if (err) {
 					console.log('error with update gamercard');
@@ -55,21 +61,21 @@ var profileBuilder = function(job, callback) {
 						console.log('error with update x1 games');
 					}
 					console.log('update xbox one data done, moving to x360');
-					// xboxApiObject.updateXbox360Data(userId, function(err, res) {
-					// 	if (err) {
-					// 		console.log('error with update 360 games');
-					// 	}
-					// 	console.log('updated x360 data');
-					// 	console.log('all jobs done');
-					// 	users.update({_id: userId}, {$set: {'gamertagScanned.status': "true", 'gamertagScanned.lastUpdate': new Date()}}, function(err, res) {
-					// 		if (err) {
-					// 			console.log('error in db update');
-					// 		}
-					// 		job.done && job.done();
-					// 		callback && callback();
-					// 		console.log('ending job');
-					// 	});
-					// });
+					xboxApiObject.updateXbox360Data(userId, function(err, res) {
+						if (err) {
+							console.log('error with update 360 games');
+						}
+						console.log('updated x360 data');
+						console.log('all jobs done');
+						users.update({_id: userId}, {$set: {'gamertagScanned.status': "true", 'gamertagScanned.lastUpdate': new Date()}}, function(err, res) {
+							if (err) {
+								console.log('error in db update');
+							}
+							job.done && job.done();
+							callback && callback();
+							console.log('ending job');
+						});
+				    });
 				});
 			});
 		});

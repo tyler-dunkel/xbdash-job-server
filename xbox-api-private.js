@@ -46,7 +46,6 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 				var progressState = (achievement.progressState !== 'NotStarted') ? true : false;
 				var progression = achievement.progression.timeUnlocked;
 				progression = new Date(progression);
-				var achievementInserted = false;
 				var achievementValue = achievement.rewards && achievement.rewards.length ? achievement.rewards[0].value : achievement.value;
 				var _id = randomstring.generate(17);
 				
@@ -54,6 +53,30 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 					if (err) {
 						console.log('callback on line 52 called (x1 achi)');
 						asyncCallback && asyncCallback();
+					}
+
+					var insertUserAchievement = function(doc, cb) {
+						var userAchievementId = randomstring.generate(17);
+
+						var userAchievement = {
+							achievementId: doc._id,
+							userId: userId,
+							progressState: progressState,
+							progression: progression
+						};
+
+						console.log('inserting user achievement');
+						console.log(userAchievement);
+						userAchievements.update({ achievementId: doc._id, userId: doc.userId }, 
+							{ $set: userAchievement, $setOnInsert: {_id: userAchievementId} }, { upsert: true }, function(err, res) {
+								if (err) {
+									console.log('callback on line 87 called (x1 achi)');
+									cb && cb();
+									return;
+								}
+								console.log('acheivement has been inserted');
+								cb && cb();
+						});
 					}
 
 					if (!achievementCheck) {
@@ -68,36 +91,27 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 							value: achievementValue,
 							userPercentage: 0
 						};
-						achievementCheck = xbdAchievements.insert(singleAchievement);
-						achievementInserted = true;
-					} else {
-						if (!achievementInserted) {
-							achievementCheck = achievementCheck._id;
-						}
-
-						var userAchievementId = randomstring.generate(17);
-
-						var userAchievement = {
-							achievementId: achievementCheck,
-							userId: userId,
-							progressState: progressState,
-							progression: progression
-						};
-
-						userAchievements.update({ achievementId: achievementCheck, userId: userId }, 
-							{ $set: userAchievement, $setOnInsert: {_id: userAchievementId} }, { upsert: true }, function(err, res) {
-								if (err) {
-									console.log('callback on line 87 called (x1 achi)');
-									asyncCallback && asyncCallback();
-									return;
-								}
+						achievementCheck = xbdAchievements.insert(singleAchievement, function(err, doc) {
+							if (err) {
 								asyncCallback && asyncCallback();
+								return;
+							}
+							insertUserAchievement(doc, function() {
+								asyncCallback && asyncCallback();
+							});
+							return;
+						});
+					} else {
+
+						insertUserAchievement(achievementCheck, function() {
+							asyncCallback && asyncCallback();
 						});
 					}
 				});
 			}
 
 			//dataTest = [1, 2, 3];
+			console.log('achievement async for achievements about to start');
 			async.each(data, processAchievement, function(err) {
 				callback();
 				console.log('every acheivement is inserted');
@@ -268,6 +282,30 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 						return;
 					}
 
+					var insertUserAchievement = function(doc, cb) {
+						var userAchievementId = randomstring.generate(17);
+
+						var userAchievement = {
+							achievementId: doc._id,
+							userId: userId,
+							progressState: progressState,
+							progression: progression
+						};
+
+						console.log('inserting user achievement');
+						console.log(userAchievement);
+						userAchievements.update({ achievementId: doc._id, userId: doc.userId }, 
+							{ $set: userAchievement, $setOnInsert: {_id: userAchievementId} }, { upsert: true }, function(err, res) {
+								if (err) {
+									console.log('callback on line 87 called (x360 achi)');
+									cb && cb();
+									return;
+								}
+								console.log('acheivement has been inserted');
+								cb && cb();
+						});
+					}
+
 					if (!achievementCheck) {
 						var _id = randomstring.generate(17);
 						var singleAchievement = {
@@ -281,29 +319,19 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 							value: achievement.gamerscore,
 							userPercentage: 0
 						};
-						achievementCheck = xbdAchievements.insert(singleAchievement);
-						achievementInserted = true;
-					}
-
-					if (!achievementInserted) {
-						achievementCheck = achievementCheck._id;
-					}
-					var userAchievementId = randomstring.generate(17);
-					var userAchievement = {
-						achievementId: achievementCheck,
-						userId: userId,
-						progressState: progressState,
-						progression: progression
-					};
-
-					userAchievements.update({ achievementId: achievementCheck, userId: userId }, { $set: userAchievement, $setOnInsert: { _id: userAchievementId } }, { upsert: true }, function(err, res) {
-						if (err) {
+						xbdAchievements.insert(singleAchievement, function(err, doc) {
+							if (err) {
+								asyncCallback && asyncCallback();
+							}
+							insertUserAchievement(doc, function() {
+								asyncCallback && asyncCallback();
+							});
+						});
+					} else {
+						insertUserAchievement(achievementCheck, function() {
 							asyncCallback && asyncCallback();
-							return;
-						}
-						// console.log('user achievements updated');
-						asyncCallback && asyncCallback();
-					});
+						});
+					}
 				});
 			}
 
