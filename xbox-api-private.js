@@ -3,7 +3,8 @@ var mongoJS = require('mongojs');
 var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var xboxApiCaller = require('./xbox-api-caller.js');
 var async = require('async');
-var slug = require('slug');
+var slugBuilder = require('./slug-builder.js');
+var userPercentageFunc = require('./user-achievement-percentage.js');
 
 var db = mongoJS(meteorUrl);
 
@@ -11,22 +12,21 @@ var xboxApiPrivate = xboxApiPrivate || {};
 
 xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callback) {
 	if (typeof userId !== 'string' || typeof gameId !== 'string') {
-		console.log('callback on line 12 called (x1 achi)');
+		console.log('callback on line 15 called (x1 achi)');
 		callback({reason: 'type err STRING LINE 11'}, null);
 		return;
 	}
 
-	var users = db.collection('users');
 	console.log('starting achievement update');
 
 	db.collection('users').findOne({ _id: userId }, function(err, user) {
 		if (err) {
-			console.log('callback on line 21 called (x1 achi)');
+			console.log('callback on line 24 called (x1 achi)');
 			callback({ reason: 'the db find was an error', data: err }, null);
 			return;
 		}
 		if (!user || !user.gamertagScanned) {
-			console.log('callback on line 26 called (x1 achi)');
+			console.log('callback on line 29 called (x1 achi)');
 			callback({ reason: 'the users gamertag was not scanned' }, null);
 			return;
 		}
@@ -37,7 +37,7 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 
 		xboxApiCaller(url, function(err, data) {
 			if (err) {
-				console.log('callback on line 37 called (x1 achi)');
+				console.log('callback on line 40 called (x1 achi)');
 				callback(err, null);
 				return;
 			}
@@ -70,12 +70,17 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 						userAchievements.update({ achievementId: doc._id, userId: doc.userId }, 
 							{ $set: userAchievement, $setOnInsert: {_id: userAchievementId} }, { upsert: true }, function(err, res) {
 								if (err) {
-									console.log('callback on line 87 called (x1 achi)');
+									console.log('callback on line 73 called (x1 achi)');
 									cb && cb();
 									return;
 								}
 								console.log('acheivement has been inserted');
-								cb && cb();
+								userPercentageFunc(doc._id, function(err) {
+									if (err) {
+										cb && cb();
+									}
+									cb && cb();
+								});
 						});
 					}
 
@@ -91,15 +96,18 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 							value: achievementValue,
 							userPercentage: 0
 						};
-						achievementCheck = xbdAchievements.insert(singleAchievement, function(err, doc) {
-							if (err) {
-								asyncCallback && asyncCallback();
+						slugBuilder('xbdachievements', singleAchievement, function(err, nameSlug) {
+							singleAchievement.slug = nameSlug;
+							achievementCheck = xbdAchievements.insert(singleAchievement, function(err, doc) {
+								if (err) {
+									asyncCallback && asyncCallback();
+									return;
+								}
+								insertUserAchievement(doc, function() {
+									asyncCallback && asyncCallback();
+								});
 								return;
-							}
-							insertUserAchievement(doc, function() {
-								asyncCallback && asyncCallback();
 							});
-							return;
 						});
 					} else {
 
@@ -122,7 +130,7 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 
 xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback) {
 	if (typeof userId !== 'string' || typeof gameId !== 'string') {
-		console.log('callback on line 104 called (x1 game)');
+		console.log('callback on line 133 called (x1 game)');
 		callback({ reason: 'type err STRING line 93'}, null);
 		return;
 	}
@@ -136,7 +144,7 @@ xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback)
 
 	xbdGames.findOne({ _id: gameId }, function(err, gameCheck) {
 		if (err) {
-			console.log('callback on line 118 called (x1 game)');
+			console.log('callback on line 147 called (x1 game)');
 			callback({ reason: 'the db find has an error', data: err }, null);
 			return;
 		}
@@ -149,8 +157,11 @@ xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback)
 				titleType: game.titleType,
 				maxGamerscore: game.maxGamerscore
 			};
-			gameCheck = xbdGames.insert(singleGame);
-			gameInserted = true;
+			slugBuilder('xbdgames', singleGame, function(err, slugName) {
+				singleGame.slug = slugName;
+				gameCheck = xbdGames.insert(singleGame);
+				gameInserted = true;
+			});
 		}
 
 		var completed = game.maxGamerscore > game.currentGamerscore ? false : true;
@@ -167,12 +178,12 @@ xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback)
 
 		userGames.update({ gameId: gameId, userId: userId }, { $set: userGame, $setOnInsert: {_id: _id} }, { upsert: true }, function(err, res) {
 			if (err) {
-				console.log('callback on line 149 called (x1 game)');
+				console.log('callback on line 181 called (x1 game)');
 				callback({ reason: 'error updating user xbox one games', data: err }, null);
 				return;
 			}
 			console.log('user xbox one games updated' + res);
-			console.log('callback on line 154 called (x1 game)');
+			console.log('callback on line 186 called (x1 game)');
 			callback && callback();
 		});
 	});
@@ -181,7 +192,7 @@ xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback)
 xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callback) {
 	if (typeof userId !== 'string' || typeof gameId !== 'string') {
 		console.log('callback in game details getting called');
-		callback({reason: 'type err STRING LINE 146'}, null);
+		callback({ reason: 'type err STRING LINE 195' }, null);
 		return;
 	}
 
@@ -197,7 +208,7 @@ xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callba
 
 		if (!result || !result.Items || !result.Items[0]) {
 			console.log('xbox one game details are an error');
-			callback({reason: 'data does not have Items', data: err}, null);
+			callback({ reason: 'data does not have Items', data: err }, null);
 			return;
 		}
 
@@ -242,7 +253,7 @@ xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callba
 
 xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callback) {
 	if (typeof userId !== 'string' || typeof gameId !== 'string') {
-		callback({reason: 'type err STRING LINE 193'}, null);
+		callback({ reason: 'type err STRING LINE 256' }, null);
 		return;
 	}
 
@@ -267,7 +278,7 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 			}
 
 			if (typeof data.forEach !== 'function') {
-				callback({reason: 'data does not have a forEach, is not an array', data: data}, null);
+				callback({ reason: 'data does not have a forEach, is not an array', data: data }, null);
 				return;
 			}
 
@@ -295,14 +306,16 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 						console.log('inserting user achievement');
 						console.log(userAchievement);
 						userAchievements.update({ achievementId: doc._id, userId: doc.userId }, 
-							{ $set: userAchievement, $setOnInsert: {_id: userAchievementId} }, { upsert: true }, function(err, res) {
+							{ $set: userAchievement, $setOnInsert: { _id: userAchievementId } }, { upsert: true }, function(err, res) {
 								if (err) {
-									console.log('callback on line 87 called (x360 achi)');
+									console.log('callback on line 311 called (x360 achi)');
 									cb && cb();
 									return;
 								}
 								console.log('acheivement has been inserted');
-								cb && cb();
+								userPercentageFunc(doc._id, function(err) {
+									cb && cb();
+								});
 						});
 					}
 
@@ -319,12 +332,17 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 							value: achievement.gamerscore,
 							userPercentage: 0
 						};
-						xbdAchievements.insert(singleAchievement, function(err, doc) {
-							if (err) {
-								asyncCallback && asyncCallback();
-							}
-							insertUserAchievement(doc, function() {
-								asyncCallback && asyncCallback();
+						slugBuilder('xbdachievements', singleAchievement, function(err, nameSlug) {
+							singleAchievement.slug = nameSlug;
+							achievementCheck = xbdAchievements.insert(singleAchievement, function(err, doc) {
+								if (err) {
+									asyncCallback && asyncCallback();
+									return;
+								}
+								insertUserAchievement(doc, function() {
+									asyncCallback && asyncCallback();
+								});
+								return;
 							});
 						});
 					} else {
@@ -370,8 +388,11 @@ xboxApiPrivate._updateXbox360GameData = function(userId, game, gameId, callback)
 				titleType: game.titleType,
 				maxGamerscore: game.totalGamerscore
 			};
-			gameCheck = xbdGames.insert(singleGame);
-			gameInserted = true;
+			slugBuilder('xbdgames', singleGame, function(err, slugName) {
+				singleGame.slug = slugName;
+				gameCheck = xbdGames.insert(singleGame);
+				gameInserted = true;
+			});
 		}
 		
 		var lastPlayed = new Date(game.lastPlayed);

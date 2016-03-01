@@ -10,7 +10,7 @@ var async = require('async');
 
 var db = mongoJS(meteorUrl);
 
-// xboxApiObject.updateXboxOneData('ohMSnhTSpkyMzaz2S', function (err, res) {
+// xboxApiObject.updateXboxOneData('G7P77WqDsCuYjbvQG', function (err, res) {
 // 	if (err) {
 // 		console.log(JSON.stringify(err));
 // 		return;
@@ -18,7 +18,7 @@ var db = mongoJS(meteorUrl);
 // 	console.log('xbox one updated');
 // });
 
-// xboxApiObject.updateXbox360Data('ohMSnhTSpkyMzaz2S', function (err, res) {
+// xboxApiObject.updateXbox360Data('G7P77WqDsCuYjbvQG', function (err, res) {
 // 	if (err) {
 // 		console.log(JSON.stringify(err));
 // 		return;
