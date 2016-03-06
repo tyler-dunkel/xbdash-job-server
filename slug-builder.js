@@ -1,16 +1,16 @@
 var mongoJS = require('mongojs');
 var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
-var slug = require('slug');
+var tr = require('transliteration');
+var slugify = require('transliteration').slugify;
 
 var db = mongoJS(meteorUrl);
 
 var slugBuilder = function(collectionName, record, cb) {
-	slug.charmap['®'] = '';
-	slug.charmap['registered'] = '';
-	slug.charmap['©'] = '';
-	slug.charmap['™'] = '';
-	var nameSlug = slug(record.name, { lower: true });
+	recordName = tr(record.name).replace(/\((r)\)|\((c)\)|\((tm)\)|®|©|™|'|ʼ/g, ''); // ® © ™ ' ʼ
+	
+	var nameSlug = slugify(recordName, { lowercase: true });
 	var collection = db.collection(collectionName);
+	
 	collection.find({ slug: nameSlug }, function(err, docs) {
 		if (err) {
 			cb && cb(err, null);
