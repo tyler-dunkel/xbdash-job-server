@@ -1,6 +1,5 @@
 var mongoJS = require('mongojs');
 var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
-var async = require('async');
 
 var db = mongoJS(meteorUrl);
 

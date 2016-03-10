@@ -67,20 +67,19 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 
 						console.log('inserting user achievement');
 						console.log(userAchievement);
-						userAchievements.update({ achievementId: doc._id, userId: doc.userId }, 
-							{ $set: userAchievement, $setOnInsert: {_id: userAchievementId} }, { upsert: true }, function(err, res) {
+						userAchievements.update({ achievementId: doc._id, userId: doc.userId }, { $set: userAchievement, $setOnInsert: { _id: userAchievementId } }, { upsert: true }, function(err, res) {
+							if (err) {
+								console.log('callback on line 73 called (x1 achi)');
+								cb && cb();
+								return;
+							}
+							console.log('acheivement has been inserted');
+							userPercentageFunc(doc._id, function(err) {
 								if (err) {
-									console.log('callback on line 73 called (x1 achi)');
 									cb && cb();
-									return;
 								}
-								console.log('acheivement has been inserted');
-								userPercentageFunc(doc._id, function(err) {
-									if (err) {
-										cb && cb();
-									}
-									cb && cb();
-								});
+								cb && cb();
+							});
 						});
 					}
 
@@ -110,15 +109,12 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 							});
 						});
 					} else {
-
 						insertUserAchievement(achievementCheck, function() {
 							asyncCallback && asyncCallback();
 						});
 					}
 				});
 			}
-
-			//dataTest = [1, 2, 3];
 			console.log('achievement async for achievements about to start');
 			async.each(data, processAchievement, function(err) {
 				callback();
@@ -137,7 +133,6 @@ xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback)
 
 	var xbdGames = db.collection('xbdgames');
 	var userGames = db.collection('usergames');
-
 	var lastUnlock = game.lastUnlock;
 	lastUnlock = new Date(lastUnlock);
 	var gameInserted = false;
@@ -166,7 +161,6 @@ xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback)
 
 		var completed = game.maxGamerscore > game.currentGamerscore ? false : true;
 		var _id = randomstring.generate(17);
-
 		var userGame = {
 			lastUnlock: lastUnlock,
 			gameId: gameId,
@@ -205,7 +199,6 @@ xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callba
 			callback(err, null);
 			return;
 		}
-
 		if (!result || !result.Items || !result.Items[0]) {
 			console.log('xbox one game details are an error');
 			callback({ reason: 'data does not have Items', data: err }, null);
@@ -295,27 +288,24 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 
 					var insertUserAchievement = function(doc, cb) {
 						var userAchievementId = randomstring.generate(17);
-
 						var userAchievement = {
 							achievementId: doc._id,
 							userId: userId,
 							progressState: progressState,
 							progression: progression
 						};
-
 						console.log('inserting user achievement');
 						console.log(userAchievement);
-						userAchievements.update({ achievementId: doc._id, userId: doc.userId }, 
-							{ $set: userAchievement, $setOnInsert: { _id: userAchievementId } }, { upsert: true }, function(err, res) {
-								if (err) {
-									console.log('callback on line 311 called (x360 achi)');
-									cb && cb();
-									return;
-								}
-								console.log('acheivement has been inserted');
-								userPercentageFunc(doc._id, function(err) {
-									cb && cb();
-								});
+						userAchievements.update({ achievementId: doc._id, userId: doc.userId }, { $set: userAchievement, $setOnInsert: { _id: userAchievementId } }, { upsert: true }, function(err, res) {
+							if (err) {
+								console.log('callback on line 311 called (x360 achi)');
+								cb && cb();
+								return;
+							}
+							console.log('acheivement has been inserted');
+							userPercentageFunc(doc._id, function(err) {
+								cb && cb();
+							});
 						});
 					}
 
@@ -398,7 +388,6 @@ xboxApiPrivate._updateXbox360GameData = function(userId, game, gameId, callback)
 		var lastPlayed = new Date(game.lastPlayed);
 		var completed = game.totalGamerscore > game.currentGamerscore ? false : true;
 		var _id = randomstring.generate(17);
-
 		var userGame = {
 			lastUnlock: lastPlayed,
 			gameId: gameId,
@@ -452,7 +441,6 @@ xboxApiPrivate._updateXbox360GameDetails = function(userId, game, gameId, callba
 					releaseDate = releaseDate.toISOString();
 					var allTimeAverageRating = (typeof result.Items[0].AllTimeAverageRating !== 'undefined') ? result.Items[0].AllTimeAverageRating : 0;
 					var _id = randomstring.generate(17);
-
 					var gameDetail = {
 						_id: _id,
 						gameName: game.name,
@@ -534,7 +522,6 @@ xboxApiPrivate._dirtyCheckXboxOneGames = function(user, callback) {
 
 			// console.log(game.name + " last unlock is " + gameLastUnlock);
 			// console.log("user last update is " + userLastUpdate);
-
 			if (gameLastUnlock < userLastUpdate) {
 				// console.log(game.name + " does not need updating");
 				userGames.find({gameId: gameId}, function(err, gameCheck) {
@@ -582,7 +569,6 @@ xboxApiPrivate._dirtyCheckXboxOneGames = function(user, callback) {
 }
 
 xboxApiPrivate._dirtyCheckXbox360Games = function (user, callback) {
-	
 	var self = this;
 	var url = user.xuid + '/xbox360games';
 	var userLastUpdate = user.gamertagScanned.lastUpdate;
@@ -600,8 +586,8 @@ xboxApiPrivate._dirtyCheckXbox360Games = function (user, callback) {
 			if (game.totalGamerscore ===  0) return;
 
 			var gameId = game.titleId.toString();
-
 			var gameLastPlayed = new Date(game.lastPlayed);
+			
 			if (gameLastPlayed < userLastUpdate) {
 				// console.log(game.name + " does not need updating");
 				return;
