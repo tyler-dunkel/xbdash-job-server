@@ -3,6 +3,7 @@ var mongoJS = require('mongojs');
 var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var xboxApiObject = require('./xbox-api.js');
 var async = require('async');
+var welcomeEmailSend = require('./mailer-welcome.js');
 
 var db = mongoJS(meteorUrl);
 
@@ -67,13 +68,18 @@ var profileBuilder = function(job, callback) {
 						}
 						console.log('updated x360 data');
 						console.log('all jobs done');
-						users.update({_id: userId}, {$set: {'gamertagScanned.status': "true", 'gamertagScanned.lastUpdate': new Date()}}, function(err, res) {
+						users.update({ _id: userId }, { $set: { 'gamertagScanned.status': "true", 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
 							if (err) {
 								console.log('error in db update');
 							}
 							job.done && job.done();
-							callback && callback();
-							console.log('ending job');
+							welcomeEmailSend(userId, function(err, result) {
+								if (err) {
+									console.log('error sending welcome email');
+								}
+								callback && callback();
+								console.log('ending job');
+							});
 						});
 				    });
 				});

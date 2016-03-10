@@ -45,7 +45,6 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 				callback(err, null);
 				return;
 			}
-
 			if (!data.titles || typeof data.titles.forEach !== 'function') {
 				callback({ reason: 'api responsed with an error', data: data}, null);
 				return;
@@ -115,7 +114,6 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 				console.log('all queue items done');
 				callback && callback();
 			}
-
 			// async.each(data.titles, processGame, function(err) {
 			// 	console.log('async done, should only run once');
 			// 	callback && callback('this is bullshit', null);
@@ -220,7 +218,6 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 				console.log('all 360 queue items done');
 				callback && callback();
 			}
-
 			// async.each(data.titles, processGame, function(err) {
 			// 	if (err) {
 			// 		console.log('async each error xbox 1 ');
@@ -240,7 +237,6 @@ xboxApiObject.updateGamercard = function(userId, callback) {
 		callback('username not a string', null);
 		return;
 	}
-
 	console.log('running gamertag update');
 
 	var users = db.collection('users');
@@ -270,6 +266,7 @@ xboxApiObject.updateGamercard = function(userId, callback) {
 				callback({ reason: 'gamercard or gamertag does not exist', data: result }, null);
 				return;
 			}
+
 			users.update({ _id: userId }, { $set: { gamercard: result } }, function(err, res) {
 				if (err) {
 					callback({ reason: 'error setting user gamercard', data: err }, null);
@@ -331,7 +328,6 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 		callback({ reason: 'type error userId not a string'}, null);
 		return;
 	}
-
 	console.log('dirty function started');
 
 	var users = db.collection('users');
