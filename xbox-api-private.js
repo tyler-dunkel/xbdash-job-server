@@ -1,8 +1,8 @@
-var randomstring = require("randomstring");
 var mongoJS = require('mongojs');
 var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var xboxApiCaller = require('./xbox-api-caller.js');
 var async = require('async');
+var randomstring = require("randomstring");
 var slugBuilder = require('./slug-builder.js');
 var userPercentageFunc = require('./user-achievement-percentage.js');
 

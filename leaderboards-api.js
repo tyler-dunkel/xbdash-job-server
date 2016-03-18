@@ -8,60 +8,6 @@ var db = mongoJS(meteorUrl);
 
 var leaderboardsApi = leaderboardsApi || {};
 
-leaderboardsApi.buildUserRanks = function(userId, callback) {
-	if (typeof userId !== 'string') {
-		console.log('userId is not a string');
-		callback && callback(err, null);
-		return;
-	}
-
-	var users = db.collection('users');
-	var userLeaderboards = db.collection('userleaderboards');
-
-	users.findOne({ _id: userId }, function(err, user) {
-		if (err) {
-			callback({ reason: 'error retrieving user', data: err }, null);
-			return;
-		}
-		if (!user || !user.gamertagScanned) {
-			callback({ reason: 'the users gamertag isnt scanned' }, null);
-			return;
-		}
-		if (user.gamertagScanned.status === 'false' || user.gamertagScanned.status === 'building') {
-			return;
-		}
-		userLeaderboards.find({ userId: userId }, function(err, userStat) {
-			if (err) {
-				callback({ reason: 'error retrieving user', data: err }, null);
-				return;
-			}
-			userStat.count(function(err, userCount) {
-				if (err) {
-					callback && callback(err, null);
-					return;
-				}
-				if (userCount > 0) return;
-
-				var userStats = {
-					userId: userId,
-					overallRank: 0,
-					dailyRank: { value: 0, rank: 0 },
-					completedGames: { count: 0, rank: 0 },
-					completedAchievements: { count: 0, rank: 0 },
-					totalAchievements: { count: 0, rank: 0 },
-					commonAchievements: { count: 0, rank: 0 },
-					rareAchievements: { count: 0, rank: 0 },
-					epicAchievements: { count: 0, rank: 0 },
-					legendaryAchievements: { count: 0, rank: 0 }
-				};
-
-				userLeaderboards.insert(userStats);
-				callback && callback();
-			});
-		});
-	});
-}
-
 leaderboardsApi.updateUserCounts = function(userId, callback) {
 	if (typeof userId !== 'string') {
 		console.log('userId is not a string');
