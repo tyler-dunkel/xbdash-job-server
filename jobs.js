@@ -46,43 +46,19 @@ Job.setDDP(ddp);
 
 ddp.connect(function (err) {
 	if (err) throw err;
-	DDPlogin(ddp, function (err, token) {
+	DDPlogin(ddp, {
+		env: 'METEOR_TOKEN',
+		method: 'account',
+		account: 'tyler.dunkel@gmail.com',
+		pass: '12341234',
+		retry: 5
+	}, function (err, token) {
 		if (err) {
 			db.close();
 			throw err;
 		}
-
-		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
-
-		// var checkGamesWorker = Job.processJobs('xbdjobscollection', 'checkGamesJob', function (job, callback) {
-		// 	if (job) {
-		// 		if (err) throw err;
-
-		// 		var userGames = db.collection('usergames');
-		// 		var xbdGame = db.collection('xbdgames');
-
-		// 		userGames.find({ completed: false }).pipe(function(game) {
-		// 			console.log(game);
-		// 		});
-
-		// 		pipe.on('data', function(doc) {
-		// 			xbdGame.findOne({ _id: doc.gameId }, {}, function(err, game) {
-		// 				if (err) throw err;
-		// 				console.log(game.name + ' is not complete');
-		// 				if (doc.currentGamerscore === game.maxGamerscore) {
-		// 					userGames.updateOne({ _id: game._id }, { $set: { completed: true } });
-		// 				}
-		// 			});
-		// 		});
-
-		// 		pipe.on('end', function() {
-		// 			console.log('pipe is done');
-		// 			job.done();
-		// 			callback();
-		// 		});
-		// 	}
-		// });
-
-		//var checkAchievementsWorker = Job.processJobs('xbdjobscollection', 'checkAchievementsJob', achievementWorker);
+		console.log('starting worker');
+		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 
+			'buildUserProfileJob', workers.profileBuilder);
 	});
 });

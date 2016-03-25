@@ -218,14 +218,6 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 				console.log('all 360 queue items done');
 				callback && callback();
 			}
-			// async.each(data.titles, processGame, function(err) {
-			// 	if (err) {
-			// 		console.log('async each error xbox 1 ');
-			// 		callback && callback();
-			// 		return;
-			// 	}
-			// 	callback && callback();
-			// });
 		});
 	});
 }

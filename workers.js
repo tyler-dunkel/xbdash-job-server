@@ -3,37 +3,10 @@ var mongoJS = require('mongojs');
 var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var xboxApiObject = require('./xbox-api.js');
 var async = require('async');
+var createAndBuild = require('./leaderboards-api/create-and-build.js');
 var welcomeEmailSend = require('./mailer-welcome.js');
 
 var db = mongoJS(meteorUrl);
-
-var achievementCheck = function (job, callback) {
-	if (job) {
-
-		var users = db.collection('users').find({ xuid: { $exists: true } }, { timeout: false });
-		var userAchievements = db.collection('userachievements');
-		var xbdAchievements = db.collection('xbdachievements');
-
-		users.count(function(err, userCount) {
-			if (err) throw err;
-
-			stream.on('data', function(doc) {
-				console.log('running job for: ' + doc.name);
-				userAchievements.find({ achievementId: doc._id, progressState: true }).count(function(err, achiCount) {
-					if (err) throw err;
-					var achievementUnlockPercentage = Math.round((achiCount/userCount) * 100);
-					xbdAchievements.updateOne({ _id: doc._id }, {$set: { userPercentage: achievementUnlockPercentage }});
-				});
-			});
-
-			stream.on('end', function() {
-				console.log('achi job is done');
-				job.done();
-				callback();
-			});
-		});
-	}
-}
 
 var profileBuilder = function(job, callback) {
 	if (job) {
@@ -48,15 +21,11 @@ var profileBuilder = function(job, callback) {
 				return;
 			}
 
-			// async.each('')
-			console.log('calling update gamercard');
 			xboxApiObject.updateGamercard(userId, function(err, res) {
 				if (err) {
 					console.log('error with update gamercard');
 				}
 				console.log('update gamercard done, moving to x1');
-				// job.done();
-				// callback();
 				xboxApiObject.updateXboxOneData(userId, function(err, res) {
 					if (err) {
 						console.log('error with update x1 games');
@@ -72,13 +41,18 @@ var profileBuilder = function(job, callback) {
 							if (err) {
 								console.log('error in db update');
 							}
-							job.done && job.done();
-							welcomeEmailSend(userId, function(err, result) {
-								if (err) {
-									console.log('error sending welcome email');
+							createAndBuild(userId, function(error) {
+								if (error) {
+									cosnole.log(error);
 								}
-								callback && callback();
-								console.log('ending job');
+								job.done && job.done();
+								welcomeEmailSend(userId, function(err, result) {
+									if (err) {
+										console.log('error sending welcome email');
+									}
+									callback && callback();
+									console.log('ending job');
+								});
 							});
 						});
 				    });
@@ -89,6 +63,5 @@ var profileBuilder = function(job, callback) {
 }
 
 module.exports = {
-	profileBuilder: profileBuilder,
-	achievementCheck: achievementCheck
+	profileBuilder: profileBuilder
 }

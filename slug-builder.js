@@ -8,20 +8,21 @@ var db = mongoJS(meteorUrl);
 var slugBuilder = function(collectionName, record, cb) {
 	recordName = tr(record.name).replace(/\((r)\)|\((c)\)|\((tm)\)|®|©|™|'|ʼ/g, ''); // ® © ™ ' ʼ
 	
-	var nameSlug = slugify(recordName, { lowercase: true });
+	var baseSlug = slugify(recordName, { lowercase: true });
 	var collection = db.collection(collectionName);
 	
-	collection.find({ slug: nameSlug }, function(err, docs) {
+	collection.find({ baseSlug: baseSlug }, function(err, docs) {
 		if (err) {
 			cb && cb(err, null);
 			return;
 		}
-		var slugNameCount = docs.length || 0;
-		console.log(slugNameCount);
-		if (slugNameCount !== 0) {
-			nameSlug = nameSlug + '-' + slugNameCount;
+		var baseSlugCount = docs.length || 0;
+		if (baseSlugCount !== 0) {
+			slug = baseSlug + '-' + baseSlugCount;
+		} else {
+			slug = baseSlug;
 		}
-		cb && cb(null, nameSlug);
+		cb && cb(null, {baseSlug: baseSlug, slug: slug});
 	});
 }
 

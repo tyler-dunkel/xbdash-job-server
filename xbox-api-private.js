@@ -95,8 +95,9 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 							value: achievementValue,
 							userPercentage: 0
 						};
-						slugBuilder('xbdachievements', singleAchievement, function(err, nameSlug) {
-							singleAchievement.slug = nameSlug;
+						slugBuilder('xbdachievements', singleAchievement, function(err, slugObj) {
+							singleAchievement.baseSlug = slugObj.baseSlug;
+							singleAchievement.slug = slugObj.slug;
 							achievementCheck = xbdAchievements.insert(singleAchievement, function(err, doc) {
 								if (err) {
 									asyncCallback && asyncCallback();
@@ -152,8 +153,9 @@ xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback)
 				titleType: game.titleType,
 				maxGamerscore: game.maxGamerscore
 			};
-			slugBuilder('xbdgames', singleGame, function(err, slugName) {
-				singleGame.slug = slugName;
+			slugBuilder('xbdgames', singleGame, function(err, slugObj) {
+				singleGame.baseSlug = slugObj.baseSlug;
+				singleGame.slug = slugObj.slug;
 				gameCheck = xbdGames.insert(singleGame);
 				gameInserted = true;
 			});
@@ -322,8 +324,9 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 							value: achievement.gamerscore,
 							userPercentage: 0
 						};
-						slugBuilder('xbdachievements', singleAchievement, function(err, nameSlug) {
-							singleAchievement.slug = nameSlug;
+						slugBuilder('xbdachievements', singleAchievement, function(err, slugObj) {
+							singleAchievement.baseSlug = slugObj.baseSlug;
+							singleAchievement.slug = slugObj.slug;
 							achievementCheck = xbdAchievements.insert(singleAchievement, function(err, doc) {
 								if (err) {
 									asyncCallback && asyncCallback();
@@ -378,8 +381,9 @@ xboxApiPrivate._updateXbox360GameData = function(userId, game, gameId, callback)
 				titleType: game.titleType,
 				maxGamerscore: game.totalGamerscore
 			};
-			slugBuilder('xbdgames', singleGame, function(err, slugName) {
-				singleGame.slug = slugName;
+			slugBuilder('xbdgames', singleGame, function(err, slugObj) {
+				singleGame.baseSlug = slugObj.baseSlug;
+				singleGame.slug = slugObj.slug;
 				gameCheck = xbdGames.insert(singleGame);
 				gameInserted = true;
 			});
