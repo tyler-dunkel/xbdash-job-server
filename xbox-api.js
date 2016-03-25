@@ -34,7 +34,7 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 			return;
 		}
 		if (!user || !user.gamertagScanned) {
-			callback({ reason: 'the users gamertag isnt scanned'}, null);
+			callback({ reason: 'the users gamertag isnt scanned' }, null);
 			return;
 		}
 
