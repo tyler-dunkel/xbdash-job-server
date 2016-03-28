@@ -11,10 +11,10 @@ module.exports = function() {
 
 	async.series([
 		function(callback) {
-			aysnc.parallel([
+			async.parallel([
 				function(cb) {
-					xbdAchievements.update({$exists: { friendlySlugs: 1 } }, 
-						{$unset: {friendlySlugs: "", slug: ""} }, { multi: true },
+					xbdAchievements.update({ friendlySlugs: { $exists: 1 } }, 
+						{ $unset: { friendlySlugs: "", slug: "" } }, { multi: true },
 						function(err) {
 							if (err) {
 								console.log(err);
@@ -23,8 +23,8 @@ module.exports = function() {
 						});
 				},
 				function(cb) {
-					xbdGames.update({$exists: { friendlySlugs: 1 } }, 
-						{$unset: {friendlySlugs: "", slug: ""} }, { multi: true },
+					xbdGames.update({ friendlySlugs: { $exists: 1 } }, 
+						{ $unset: { friendlySlugs: "", slug: "" } }, { multi: true },
 						function(err) {
 							if (err) {
 								console.log(err);
@@ -40,33 +40,33 @@ module.exports = function() {
 		function(callback) {
 			async.parallel([
 				function(cb) {
-					xbdAchievements.find({ $exists: { slug: 0 } })
+					xbdAchievements.find({ slug: { $exists: 0 } })
 						.forEach(function(err, doc) {
 							if (err || !doc) {
 								console.log('done with all docs');
-								cb && callback();
+								cb && cb();
 								return;
 							}
 							slugBuilder('xbdachievements', doc, function(err, slugObj) {
-								xbdAchievements.update({_id: doc._id}, 
-									{baseSlug: slugObj.baseSlug, slug: slugObj.slug}, function(err) {
-										cb && callback();
+								xbdAchievements.update({ _id: doc._id }, 
+									{ $set: { baseSlug: slugObj.baseSlug, slug: slugObj.slug } }, function(err) {
+										cb && cb();
 									});
 							});
 						});
 				},
 				function(cb) {
-					xbdGames.find({ $exists: { slug: 0 } })
+					xbdGames.find({ slug: { $exists: 0 } })
 						.forEach(function(err, doc) {
 							if (err || !doc) {
 								console.log('done with all docs');
-								cb && callback();
+								cb && cb();
 								return;
 							}
 							slugBuilder('xbdgames', doc, function(err, slugObj) {
-								xbdGames.update({_id: doc._id}, 
-									{baseSlug: slugObj.baseSlug, slug: slugObj.slug}, function(err) {
-										cb && callback();
+								xbdGames.update({ _id: doc._id },
+									{ $set: { baseSlug: slugObj.baseSlug, slug: slugObj.slug} }, function(err) {
+										cb && cb();
 									});
 							});
 						});
