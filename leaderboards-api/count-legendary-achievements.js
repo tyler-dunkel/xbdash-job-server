@@ -1,7 +1,4 @@
-var mongoJS = require('mongojs');
-var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
-
-var db = mongoJS(meteorUrl);
+var db = require('../db.js');
 
 module.exports = function(user, callback) {
 	var legendaryCount = 0;

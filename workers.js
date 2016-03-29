@@ -1,12 +1,9 @@
 var randomstring = require("randomstring");
-var mongoJS = require('mongojs');
-var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var xboxApiObject = require('./xbox-api.js');
 var async = require('async');
 var createAndBuild = require('./leaderboards-api/create-and-build.js');
 var welcomeEmailSend = require('./mailer-welcome.js');
-
-var db = mongoJS(meteorUrl);
+var db = require('./db.js');
 
 var profileBuilder = function(job, callback) {
 	if (job) {
