@@ -50,7 +50,7 @@ module.exports = function() {
 							slugBuilder('xbdachievements', doc, function(err, slugObj) {
 								xbdAchievements.update({ _id: doc._id }, 
 									{ $set: { baseSlug: slugObj.baseSlug, slug: slugObj.slug } }, function(err) {
-										cb && cb();
+										if (err) return;
 									});
 							});
 						});
@@ -66,7 +66,7 @@ module.exports = function() {
 							slugBuilder('xbdgames', doc, function(err, slugObj) {
 								xbdGames.update({ _id: doc._id },
 									{ $set: { baseSlug: slugObj.baseSlug, slug: slugObj.slug} }, function(err) {
-										cb && cb();
+										if (err) return;
 									});
 							});
 						});
