@@ -42,15 +42,22 @@ module.exports = function() {
 				function(cb) {
 					xbdAchievements.find({ slug: { $exists: 0 } })
 						.forEach(function(err, doc) {
-							if (err || !doc) {
+							if (!doc) {
 								console.log('done with all docs');
 								cb && cb();
 								return;
 							}
+							if (err) {
+								console.log(err);
+								return;
+							}
 							slugBuilder('xbdachievements', doc, function(err, slugObj) {
+								console.log('giving: ' + doc.name + ' ' + slugObj.slug);
 								xbdAchievements.update({ _id: doc._id }, 
 									{ $set: { baseSlug: slugObj.baseSlug, slug: slugObj.slug } }, function(err) {
-										if (err) return;
+										if (err) {
+											console.log(err);
+										}
 									});
 							});
 						});
@@ -64,6 +71,8 @@ module.exports = function() {
 								return;
 							}
 							slugBuilder('xbdgames', doc, function(err, slugObj) {
+
+								console.log('giving: ' + doc.name + ' ' + slugObj.slug);
 								xbdGames.update({ _id: doc._id },
 									{ $set: { baseSlug: slugObj.baseSlug, slug: slugObj.slug} }, function(err) {
 										if (err) return;
