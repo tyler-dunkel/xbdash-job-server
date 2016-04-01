@@ -40,7 +40,7 @@ var profileBuilder = function(job, callback) {
 							}
 							createAndBuild(userId, function(error) {
 								if (error) {
-									cosnole.log(error);
+									console.log(error);
 								}
 								job.done && job.done();
 								welcomeEmailSend(userId, function(err, result) {
@@ -61,18 +61,21 @@ var profileBuilder = function(job, callback) {
 
 var dirtyUpdateUserStats = function(job, callback) {
 	if (job) {
-		var userArray = job.data.userArray;
 		var users = db.collection('users');
-
-		userArray.forEach(function(userId, index, array) {
-			xboxApiObject.dirtyUpdateUserStats(userId, function(err) {
-				if (err) {
-					console.log(err);
-				}
-				if (index === array.length - 1) {
+		users.find({ 'gamertagScanned.status': 'true' }).sort({ 'gamertagScanned.lastUpdate': 1 }).limit(20, function(err, userArray) {
+			userArray.forEach(function(user) {
+				if (user === null) {
 					job.done && job.done();
 					callback && callback();
+					return;
 				}
+				xboxApiObject.dirtyUpdateUserStats(user._id, function(err) {
+					createAndBuild(user._id, function(error) {
+						if (error) {
+							console.log(error);
+						}
+					});
+				});
 			});
 		});
 	}

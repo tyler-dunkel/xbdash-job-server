@@ -23,6 +23,8 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 		return;
 	}
 
+	console.log('user x1 data running');
+
 	var users = db.collection('users');
 
 	users.findOne({ _id: userId }, function(err, user) {
@@ -35,11 +37,19 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 			return;
 		}
 
+		console.log(user.xuid + ' for x1');
+
 		var url = user.xuid + '/xboxonegames';
 
 		xboxApiCaller(url, function(err, data) {
 			if (err) {
+				console.log('xbox api error');
 				callback(err, null);
+				return;
+			}
+			if (data.pagingInfo.totalRecords === 0) {
+				console.log('no x1 games available');
+				callback();
 				return;
 			}
 			if (!data.titles || typeof data.titles.forEach !== 'function') {
@@ -49,7 +59,7 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 
 			var processGame = function(game, asyncCallback) {
 				if (game.maxGamerscore ===  0) {
-					console.log('no gamerscore');
+					console.log('this x1 game has 0 gamerscore ' + game.name);
 					asyncCallback && asyncCallback();
 					return;
 				}
@@ -109,7 +119,7 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 			});
 
 			q.drain = function(err) {
-				console.log('all queue items done');
+				console.log('all x1 queue items done');
 				callback && callback();
 			}
 			// async.each(data.titles, processGame, function(err) {
@@ -129,18 +139,19 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 
 	console.log('user 360 data running');
 
-	db.collection('users').findOne({ _id: userId }, function(err, user) {
+	var users = db.collection('users');
+
+	users.findOne({ _id: userId }, function(err, user) {
 		if (err) {
 			callback({ reason: 'the db findOne failed', data: err }, null);
 			return;
 		}
 		if (!user || !user.gamertagScanned) {
-			console.log('user gmamertag not scanned');
 			callback({ reason: 'the users gamertag isnt scanned'}, null);
 			return;
 		}
 
-		console.log('user.xuid');
+		console.log(user.xuid + ' for x360');
 
 		var url = user.xuid + '/xbox360games';
 
@@ -150,20 +161,27 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 				callback(err, null);
 				return;
 			}
+			if (data.pagingInfo.totalRecords === 0) {
+				console.log('no 360 games available');
+				callback();
+				return;
+			}
 			if (!data.titles || typeof data.titles.forEach !== 'function') {
 				console.log('data doesnt have what we need in x360');
-				callback({ reason: 'api responsed with an error', data: data}, null);
+				callback({ reason: 'api responsed with an error', data: data }, null);
 				return;
 			}
 
 			var processGame = function(game, asyncCallback) {
 				if (game.totalGamerscore ===  0) {
-					console.log('this game has 0 gamerscore ' + game.name);
+					console.log('this x360 game has 0 gamerscore ' + game.name);
 					asyncCallback && asyncCallback();
 					return;
 				}
 
 				var gameId = game.titleId.toString();
+
+				console.log('x360 processing game');
 
 				async.parallel([
 					function(callback) {
@@ -171,7 +189,7 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 						xboxApiPrivate._updateXbox360AchievementsData(userId, gameId, function(err, result) {
 							if (err) {
 								callback(err, null);
-								console.log('error in x1 achi data');
+								console.log('error in x360 achi data');
 								return;
 							}
 							callback();
@@ -200,6 +218,7 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 						});
 					}
 				], function(err, result) {
+					console.log('x360 async done');
 					asyncCallback && asyncCallback();
 				});
 			}
@@ -213,7 +232,7 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 			});
 
 			q.drain = function(err) {
-				console.log('all 360 queue items done');
+				console.log('all x360 queue items done');
 				callback && callback();
 			}
 		});
@@ -358,6 +377,7 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 								if (err) {
 									console.log(err);
 								}
+								console.log('dirty x1 game ended');
 								cb && cb();
 							});
 						},
@@ -366,6 +386,7 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 								if (err) {
 									console.log(err);
 								}
+								console.log('dirty x360 game ended');
 								cb && cb();
 							});
 						}
@@ -374,6 +395,7 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 							if (err) {
 								console.log(err);
 							}
+							console.log('dirty user update stats done');
 							callback && callback();
 						});
 					});
