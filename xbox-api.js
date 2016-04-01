@@ -1,10 +1,7 @@
-var mongoJS = require('mongojs');
-var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var xboxApiCaller = require('./xbox-api-caller.js');
 var xboxApiPrivate = require('./xbox-api-private.js');
 var async = require('async');
-
-var db = mongoJS(meteorUrl);
+var db = require('./db.js');
 
 var xboxApiObject = xboxApiObject || {};
 

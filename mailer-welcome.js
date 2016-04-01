@@ -1,9 +1,6 @@
-var mongoJS = require('mongojs');
-var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var mailgun = require('mailgun-js')({ apiKey: 'key-e3bf4d16353fe8dbe0066aa6a164d479', domain: 'email.xbdash.com' });
 var nunjucks = require('nunjucks');
-
-var db = mongoJS(meteorUrl);
+var db = require('./db.js');
 
 nunjucks.configure('emails', { watch: true });
 

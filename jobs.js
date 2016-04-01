@@ -2,13 +2,10 @@ var DDP = require('ddp');
 var Job = require('meteor-job');
 var DDPlogin = require('ddp-login');
 var randomstring = require("randomstring");
-var mongoJS = require('mongojs');
-var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var xboxApiObject = require('./xbox-api.js');
 var workers = require('./workers.js');
 var async = require('async');
-
-var db = mongoJS(meteorUrl);
+var db = require('./db.js');
 
 // xboxApiObject.updateXboxOneData('G7P77WqDsCuYjbvQG', function (err, res) {
 // 	if (err) {

@@ -1,10 +1,7 @@
-var mongoJS = require('mongojs');
-var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var moment = require('moment');
 var randomstring = require("randomstring");
 var updateUserLeaderboard = require('./update-user-leaderboard.js');
-
-var db = mongoJS(meteorUrl);
+var db = require('../db.js');
 
 module.exports = function(userId, callback) {
 	if (typeof userId !== 'string') {

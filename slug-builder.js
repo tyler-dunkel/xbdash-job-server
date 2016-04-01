@@ -1,9 +1,6 @@
-var mongoJS = require('mongojs');
-var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
 var tr = require('transliteration');
 var slugify = require('transliteration').slugify;
-
-var db = mongoJS(meteorUrl);
+var db = require('./db.js');
 
 var slugBuilder = function(collectionName, record, cb) {
 	recordName = tr(record.name).replace(/\((r)\)|\((c)\)|\((tm)\)|®|©|™|'|ʼ/g, ''); // ® © ™ ' ʼ
