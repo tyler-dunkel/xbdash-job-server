@@ -60,6 +60,7 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 				var gameId = game.titleId.toString();
 
 				console.log('xbox one processing game');
+				
 				async.parallel([
 					function(callback) {
 						//callback();
@@ -346,35 +347,38 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 				console.log('dirty function has gotten a gamerscore from the api');
 				if (user.gamercard.gamerscore < result.gamerscore) {
 					console.log('the gamerscore on record is lower than on the api');
-					users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'updating' } }, function(err, res) {
-						if (err) {
-							callback({ reason: 'error setting user status to updating', data: err }, null);
-							return;
+					async.series([
+						function(cb) {
+							users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'updating', gamercard: result } }, function(err, res) {
+								if (err) {
+									console.log(err);
+								}
+								cb && cb();
+							});
+						},
+						function(cb) {
+							xboxApiPrivate._dirtyCheckXboxOneGames(user, function(err, result) {
+								if (err) {
+									console.log(err);
+								}
+								cb && cb();
+							});
+						},
+						function(cb) {
+							xboxApiPrivate._dirtyCheckXbox360Games(user, function(err, result) {
+								if (err) {
+									console.log(err);
+								}
+								cb && cb();
+							});
 						}
-					});
-					users.update({ _id: userId }, { $set: { gamercard: result }}, function(err, res) {
-						if (err) {
-							callback({ reason: 'error with db updating', data: err }, null);
-							return;
-						}
-					});
-					xboxApiPrivate._dirtyCheckXboxOneGames(user, function(err, result) {
-						if (err) {
-							callback({ reason: 'there is an error with the x1 game function', data: err }, null);
-							return;
-						}
-					});
-					xboxApiPrivate._dirtyCheckXbox360Games(user, function(err, result) {
-						if (err) {
-							callback({ reason: 'there is an error with the x360 game function', data: err }, null);
-							return;
-						}
-					});
-					users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
-						if (err) {
-							callback({ reason: 'error dirty updating user stats', data: err }, null);
-							return;
-						}
+					], function(err) {
+						users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
+							if (err) {
+								console.log(err);
+							}
+							callback && callback();
+						});
 					});
 				} else {
 					callback();
@@ -385,7 +389,6 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 			}
 		});
 	});
-	callback();
 }
 
 module.exports = xboxApiObject;

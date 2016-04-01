@@ -62,6 +62,26 @@ var profileBuilder = function(job, callback) {
 	}
 }
 
+var dirtyUpdateUserStats = function(job, callback) {
+	if (job) {
+		var userArray = job.data.userArray;
+		var users = db.collection('users');
+
+		userArray.forEach(function(userId, index, array) {
+			xboxApiObject.dirtyUpdateUserStats(userId, function(err) {
+				if (err) {
+					console.log(err);
+				}
+				if (index === array.length - 1) {
+					job.done && job.done();
+					callback && callback();
+				}
+			});
+		});
+	}
+}
+
 module.exports = {
-	profileBuilder: profileBuilder
+	profileBuilder: profileBuilder,
+	dirtyUpdateUserStats: dirtyUpdateUserStats
 }
