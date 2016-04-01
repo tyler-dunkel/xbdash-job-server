@@ -34,61 +34,69 @@ var db = require('./db.js');
 // });
 
 var ddp = new DDP({
-	host: "beta.xbdash.com",
-	port: 443,
-	ssl: true
-	// url: "wss://beta.xbdash.com/websocket",
-	// autoReconnect: true,
-	// autoReconnectTimer: 500,
-	// ddpVersion: '1',
-	// useSockJs: true
+	host: "127.0.0.1",
+	port: 3000,
+	use_ejson: true
 });
 
-// Job.setDDP(ddp);
+Job.setDDP(ddp);
+
+ddp.connect(function (err) {
+	if (err) throw err;
+	DDPlogin(ddp, {
+		env: 'METEOR_TOKEN',
+		method: 'email',
+		account: "kggraphix@gmail.com",
+		pass: '121212',
+		retry: 5
+	}, function (err, token) {
+		if (err) {
+			db.close();
+			throw err;
+		}
+		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
+		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyStatJob', workers.dirtyUpdateUserStats);
+	});
+});
+
+// var ddp = new DDP({
+// 	host: "beta.xbdash.com",
+// 	port: 443,
+// 	ssl: true
+// 	// url: "wss://beta.xbdash.com/websocket",
+// 	// autoReconnect: true,
+// 	// autoReconnectTimer: 500,
+// 	// ddpVersion: '1',
+// 	// useSockJs: true
+// });
  
-ddp.connect(function(error, wasReconnect) {
-	if (error) {
-		console.log('DDP connection error!');
-		return;
-	}
+// ddp.connect(function(error, wasReconnect) {
+// 	if (error) {
+// 		console.log('DDP connection error!');
+// 		return;
+// 	}
 
-	if (wasReconnect) {
-		console.log('Reestablishment of a connection.');
-	}
+// 	if (wasReconnect) {
+// 		console.log('Reestablishment of a connection.');
+// 	}
 
-	console.log('connected!');
+// 	console.log('connected!');
 
-	setTimeout(function () {
-		DDPlogin(ddp, {
-			env: 'METEOR_TOKEN',
-			method: 'email',
-			account: "kguirao87@gmail.com",
-			pass: 'kgXB!2016',
-			retry: 5
-		}, function (err, token) {
-			if (err) {
-				db.close();
-				throw err;
-			}
-			console.log('Connected to XBdash Beta on Galaxy!');
-		});
-	}, 3000);
-});
-
-// ddp.connect(function (err) {
-// 	if (err) throw err;
-// 	DDPlogin(ddp, {
-// 		env: 'METEOR_TOKEN',
-// 		method: 'account',
-// 		account: "kguirao87@gmail.com",
-// 		pass: '121212',
-// 		retry: 5
-// 	}, function (err, token) {
-// 		if (err) {
-// 			db.close();
-// 			throw err;
-// 		}
-// 		// var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 
-// 		// 	'buildUserProfileJob', workers.profileBuilder);
-// 	});
+// 	setTimeout(function () {
+// 		DDPlogin(ddp, {
+// 			env: 'METEOR_TOKEN',
+// 			method: 'email',
+// 			account: "kguirao87@gmail.com",
+// 			pass: 'kgXB!2016',
+// 			retry: 5
+// 		}, function (err, token) {
+// 			if (err) {
+// 				db.close();
+// 				throw err;
+// 			}
+// 			console.log('Connected to XBdash Beta on Galaxy!');
+// 			var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
+// 			var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyStatJob', workers.dirtyUpdateUserStats);
+// 		});
+// 	}, 3000);
 // });
