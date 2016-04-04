@@ -6,16 +6,19 @@ module.exports = {
 		var users = db.collection('users');
 		var userLeaderboards = db.collection('userleaderboards');
 
-		users.find({ 'gamercard.gamerscore': { $gt: 1 } }).sort({ 'gamercard.gamerscore': -1 }, function(err, user) {
-			if (err) return;
-			if (!user) return;
-			user.forEach(function(user, index, array) {
-				rank++;
-				userLeaderboards.update({ userId: user._id }, { $set: { 'overallRank': rank } }, function() {
-					if (index === array.length - 1) {
-						callback && callback();
-					}
-				});
+		users.find({ 'gamercard.gamerscore': { $gt: 1 } }).sort({ 'gamercard.gamerscore': -1 }).forEach(function(err, userDoc) {
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userDoc) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			userLeaderboards.update({ userId: userDoc._id }, { $set: { 'overallRank': rank } }, function() {
+				console.log('overall rank update fired');
 			});
 		});
 	},
@@ -23,14 +26,19 @@ module.exports = {
 		var rank = 0;
 		var userLeaderboards = db.collection('userleaderboards');
 
-		userLeaderboards.find({ 'dailyRank.value': { $gte: 1 } }).sort({ 'dailyRank.value': -1 }, function(err, userStats) {
-			userStats.forEach(function(userStat, index, array) {
-				rank++;
-				userLeaderboards.update({ userId: userStat.userId }, { $set: { 'dailyRank.rank': rank } }, function() {
-					if (index === array.length - 1) {
-						callback && callback();
-					}
-				});
+		userLeaderboards.find({ 'dailyRank.value': { $gte: 1 } }).sort({ 'dailyRank.value': -1 }).forEach(function(err, userStat) { 
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			userLeaderboards.update({ userId: userStat._id }, { $set: { 'dailyRank.rank': rank } }, function() {
+				console.log('daily rank update fired');
 			});
 		});
 	},
@@ -38,14 +46,19 @@ module.exports = {
 		var rank = 0;
 		var userLeaderboards = db.collection('userleaderboards');
 
-		userLeaderboards.find({ 'completedGames.count': { $gte: 1 } }).sort({ 'completedGames.count': -1 }, function(err, userStats) {
-			userStats.forEach(function(userStat, index, array) {
-				rank++;
-				userLeaderboards.update({ userId: userStat.userId }, { $set: { 'completedGames.rank': rank } }, function() {
-					if (index === array.length - 1) {
-						callback && callback();
-					}
-				});
+		userLeaderboards.find({ 'completedGames.count': { $gte: 1 } }).sort({ 'completedGames.count': -1 }).forEach(function(err, userStat) {
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			userLeaderboards.update({ userId: userStat._id }, { $set: { 'completedGames.rank': rank } }, function() {
+				console.log('completed games rank update fired');
 			});
 		});
 	},
@@ -53,14 +66,19 @@ module.exports = {
 		var rank = 0;
 		var userLeaderboards = db.collection('userleaderboards');
 
-		userLeaderboards.find({ 'completedAchievements.count': { $gte: 1 } }).sort({ 'completedAchievements.count': -1 }, function(err, userStats) {
-			userStats.forEach(function(userStat, index, array) {
-				rank++;
-				userLeaderboards.update({ userId: userStat.userId }, { $set: { 'completedAchievements.rank': rank } }, function() {
-					if (index === array.length - 1) {
-						callback && callback();
-					}
-				});
+		userLeaderboards.find({ 'completedAchievements.count': { $gte: 1 } }).sort({ 'completedAchievements.count': -1 }).forEach(function(err, userStat) {
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			userLeaderboards.update({ userId: userStat._id }, { $set: { 'completedAchievements.rank': rank } }, function() {
+				console.log('completed achievements rank update fired');
 			});
 		});
 	},
@@ -68,14 +86,19 @@ module.exports = {
 		var rank = 0;
 		var userLeaderboards = db.collection('userleaderboards');
 
-		userLeaderboards.find({ 'totalAchievements.count': { $gte: 1 } }).sort({ 'totalAchievements.count': -1 }, function(err, userStats) {
-			userStats.forEach(function(userStat, index, array) {
-				rank++;
-				userLeaderboards.update({ userId: userStat.userId }, { $set: { 'totalAchievements.rank': rank } }, function() {
-					if (index === array.length - 1) {
-						callback && callback();
-					}
-				});
+		userLeaderboards.find({ 'totalAchievements.count': { $gte: 1 } }).sort({ 'totalAchievements.count': -1 }).forEach(function(err, userStat) {
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			userLeaderboards.update({ userId: userStat._id }, { $set: { 'totalAchievements.rank': rank } }, function() {
+				console.log('total achievements rank update fired');
 			});
 		});
 	},
@@ -83,14 +106,19 @@ module.exports = {
 		var rank = 0;
 		var userLeaderboards = db.collection('userleaderboards');
 
-		userLeaderboards.find({ 'commonAchievements.count': { $gte: 1 } }).sort({ 'commonAchievements.count': -1 }, function(err, userStats) {
-			userStats.forEach(function(userStat, index, array) {
-				rank++;
-				userLeaderboards.update({ userId: userStat.userId }, { $set: { 'commonAchievements.rank': rank } }, function() {
-					if (index === array.length - 1) {
-						callback && callback();
-					}
-				});
+		userLeaderboards.find({ 'commonAchievements.count': { $gte: 1 } }).sort({ 'commonAchievements.count': -1 }).forEach(function(err, userStat) {
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			userLeaderboards.update({ userId: userStat._id }, { $set: { 'commonAchievements.rank': rank } }, function() {
+				console.log('common achievements rank update fired');
 			});
 		});
 	},
@@ -98,14 +126,19 @@ module.exports = {
 		var rank = 0;
 		var userLeaderboards = db.collection('userleaderboards');
 
-		userLeaderboards.find({ 'rareAchievements.count': { $gte: 1 } }).sort({ 'rareAchievements.count': -1 }, function(err, userStats) {
-			userStats.forEach(function(userStat, index, array) {
-				rank++;
-				userLeaderboards.update({ userId: userStat.userId }, { $set: { 'rareAchievements.rank': rank } }, function() {
-					if (index === array.length - 1) {
-						callback && callback();
-					}
-				});
+		userLeaderboards.find({ 'rareAchievements.count': { $gte: 1 } }).sort({ 'rareAchievements.count': -1 }).forEach(function(err, userStat) {
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			userLeaderboards.update({ userId: userStat._id }, { $set: { 'rareAchievements.rank': rank } }, function() {
+				console.log('rare achievements rank update fired');
 			});
 		});
 	},
@@ -113,14 +146,19 @@ module.exports = {
 		var rank = 0;
 		var userLeaderboards = db.collection('userleaderboards');
 
-		userLeaderboards.find({ 'epicAchievements.count': { $gte: 1 } }).sort({ 'epicAchievements.count': -1 }, function(err, userStats) {
-			userStats.forEach(function(userStat, index, array) {
-				rank++;
-				userLeaderboards.update({ userId: userStat.userId }, { $set: { 'epicAchievements.rank': rank } }, function() {
-					if (index === array.length - 1) {
-						callback && callback();
-					}
-				});
+		userLeaderboards.find({ 'epicAchievements.count': { $gte: 1 } }).sort({ 'epicAchievements.count': -1 }).forEach(function(err, userStat) {
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			userLeaderboards.update({ userId: userStat._id }, { $set: { 'epicAchievements.rank': rank } }, function() {
+				console.log('epic achievements rank update fired');
 			});
 		});
 	},
@@ -128,14 +166,19 @@ module.exports = {
 		var rank = 0;
 		var userLeaderboards = db.collection('userleaderboards');
 
-		userLeaderboards.find({ 'legendaryAchievements.count': { $gte: 1 } }).sort({ 'legendaryAchievements.count': -1 }, function(err, userStats) {
-			userStats.forEach(function(userStat, index, array) {
-				rank++;
-				userLeaderboards.update({ userId: userStat.userId }, { $set: { 'legendaryAchievements.rank': rank } }, function() {
-					if (index === array.length - 1) {
-						callback && callback();
-					}
-				});
+		userLeaderboards.find({ 'legendaryAchievements.count': { $gte: 1 } }).sort({ 'legendaryAchievements.count': -1 }).forEach(function(err, userStat) {
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			userLeaderboards.update({ userId: userStat._id }, { $set: { 'legendaryAchievements.rank': rank } }, function() {
+				console.log('legendary achievements rank update fired');
 			});
 		});
 	}
