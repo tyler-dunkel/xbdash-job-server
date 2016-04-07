@@ -14,7 +14,7 @@ module.exports = function(user, callback) {
 			return;
 		}
 		if (!userAchiCount > 0) {
-			userLeaderboards.update({ userId: user._id }, { $set: { 'dailyRank.value': 10 } }, function(err) {
+			userLeaderboards.update({ userId: user._id }, { $set: { 'dailyRank.value': 0 } }, function(err) {
 				callback && callback();
 			});
 		} else {
