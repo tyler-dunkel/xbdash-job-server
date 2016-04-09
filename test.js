@@ -1,8 +1,6 @@
-// var xboxApiObject = require('./xbox-api.js');
+var aP = require('./user-achievement-percentage.js');
+var db = ('./db.js');
 
-// xboxApiObject.dirtyUpdateUserStats('hpCR9jDHjSknw6Rbg', function(err, res) {
-// 	if (err) {
-// 		console.log(err);
-// 	}
-// 	console.log('callback for dirty stats fired');
-// });
+aP('EOOhT1aZeibBDYvuy', function(err, res) {
+	console.log(res);
+});

@@ -93,11 +93,13 @@ var dirtyUpdateUserStats = function(job, callback) {
 					callback && callback();
 					return;
 				}
+				console.log('user: ' + user.gamercard.gamertag + ' started');
 				xboxApiObject.dirtyUpdateUserStats(user._id, function(err) {
 					createAndBuild(user._id, function(err, res) {
 						if (err) {
 							console.log(err);
 						}
+						console.log('user: ' + user.gamercard.gamertag + ' finished')
 					});
 				});
 			});
