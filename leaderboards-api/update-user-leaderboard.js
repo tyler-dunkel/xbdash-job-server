@@ -79,55 +79,55 @@ module.exports = function(user, topCallback) {
 				async.parallel([
 					function(callback) {
 						updateRanks.overallRank(function() {
-							console.log('overall ranks callback fired');
+							//console.log('overall ranks callback fired');
 							callback();
 						});
 					},
 					function(callback) {
 						updateRanks.dailyRank(function() {
-							console.log('daily callback fired');
+							//console.log('daily callback fired');
 							callback();
 						});
 					},
 					function(callback) {
 						updateRanks.completedGamesRank(function() {
-							console.log('completed games callback fired');
+							//console.log('completed games callback fired');
 							callback();
 						});
 					},
 					function(callback) {
 						updateRanks.completedAchievementsRank(function() {
-							console.log('completed achievements callback fired');
+							//console.log('completed achievements callback fired');
 							callback();
 						});
 					},
 					function(callback) {
 						updateRanks.totalAchievementsRank(function() {
-							console.log('total achievements callback fired');
+							//console.log('total achievements callback fired');
 							callback();
 						});
 					},
 					function(callback) {
 						updateRanks.commonAchievementsRank(function() {
-							console.log('common achievements callback fired');
+							//console.log('common achievements callback fired');
 							callback();
 						});
 					},
 					function(callback) {
 						updateRanks.rareAchievementsRank(function() {
-							console.log('rare achievements callback fired');
+							//console.log('rare achievements callback fired');
 							callback();
 						});
 					},
 					function(callback) {
 						updateRanks.epicAchievementsRank(function() {
-							console.log('epic achievements callback fired');
+							//console.log('epic achievements callback fired');
 							callback();
 						});
 					},
 					function(callback) {
 						updateRanks.legendaryAchievementsRank(function() {
-							console.log('legendary achievements callback fired');
+							//console.log('legendary achievements callback fired');
 							callback();
 						});
 					}

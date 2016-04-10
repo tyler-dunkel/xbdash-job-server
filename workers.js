@@ -80,30 +80,39 @@ var profileBuilder = function(job, callback) {
 var dirtyUpdateUserStats = function(job, callback) {
 	if (job) {
 		var users = db.collection('users');
-		users.find({ 'gamertagScanned.status': 'true' }).sort({ 'gamertagScanned.lastUpdate': 1 }).limit(20, function(err, userArray) {
-			userArray.forEach(function(user) {
-				if (user === null) {
-					job.done && job.done({}, {}, function (err, res) {
-						if (err) {
-							console.log('error in ending job');
-						}
-						callback && callback();
-						console.log('all dirty user update jobs done');
-					});
-					callback && callback();
+		var processUser = function(user, asyncCb) {
+			xboxApiObject.dirtyUpdateUserStats(user._id, function(err, res) {
+				if (err) {
+					console.log('error on xbox api dirty user update');
+					asyncCb && asyncCb();
 					return;
 				}
-				console.log('user: ' + user.gamercard.gamertag + ' started');
-				xboxApiObject.dirtyUpdateUserStats(user._id, function(err) {
-					createAndBuild(user._id, function(err, res) {
-						if (err) {
-							console.log(err);
-						}
-						console.log('user: ' + user.gamercard.gamertag + ' finished')
-					});
+				createAndBuild(user._id, function(err, res) {
+					if (err) {
+						console.log(err);
+						asyncCb && asyncCb();
+						return;
+					}
+					console.log('calling async cb');
+					asyncCb && asyncCb();
 				});
 			});
+		}
+		var q = async.queue(processUser, 2);
+		users.find({ 'gamertagScanned.status': 'true' }).sort({ 'gamertagScanned.lastUpdate': 1 }).limit(20).forEach(function(err, user) {
+			if (user === null) {
+				return;
+			}
+			q.push(user, function(err) {
+
+			});
+			console.log('user: ' + user.gamercard.gamertag + ' started');
 		});
+		q.drain = function(err) {
+			console.log('queue drained');
+			job.done();
+			callback && callback();
+		}
 	}
 }
 

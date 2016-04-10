@@ -17,9 +17,9 @@ module.exports = {
 				return;
 			}
 			rank++;
-			console.log('overall rank is ' + rank);
+			//console.log('overall rank is ' + rank);
 			userLeaderboards.update({ userId: userDoc._id }, { $set: { 'overallRank': rank } }, function() {
-				console.log('overall rank update fired');
+				//console.log('overall rank update fired');
 			});
 		});
 	},
@@ -38,9 +38,9 @@ module.exports = {
 				return;
 			}
 			rank++;
-			console.log('daily rank is ' + rank);
+			//console.log('daily rank is ' + rank);
 			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'dailyRank.rank': rank } }, function() {
-				console.log('daily rank update fired');
+				//console.log('daily rank update fired');
 			});
 		});
 	},
@@ -59,9 +59,9 @@ module.exports = {
 				return;
 			}
 			rank++;
-			console.log('completed games rank is ' + rank);
+			//console.log('completed games rank is ' + rank);
 			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'completedGames.rank': rank } }, function() {
-				console.log('completed games rank update fired');
+				//console.log('completed games rank update fired');
 			});
 		});
 	},
@@ -80,9 +80,9 @@ module.exports = {
 				return;
 			}
 			rank++;
-			console.log('completed achievements rank is ' + rank);
+			//console.log('completed achievements rank is ' + rank);
 			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'completedAchievements.rank': rank } }, function() {
-				console.log('completed achievements rank update fired');
+				//console.log('completed achievements rank update fired');
 			});
 		});
 	},
@@ -101,9 +101,9 @@ module.exports = {
 				return;
 			}
 			rank++;
-			console.log('total achievements rank is ' + rank);
+			//console.log('total achievements rank is ' + rank);
 			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'totalAchievements.rank': rank } }, function() {
-				console.log('total achievements rank update fired');
+				//console.log('total achievements rank update fired');
 			});
 		});
 	},
@@ -122,9 +122,9 @@ module.exports = {
 				return;
 			}
 			rank++;
-			console.log('common achievements rank is ' + rank);
+			//console.log('common achievements rank is ' + rank);
 			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'commonAchievements.rank': rank } }, function() {
-				console.log('common achievements rank update fired');
+				//console.log('common achievements rank update fired');
 			});
 		});
 	},
@@ -143,9 +143,9 @@ module.exports = {
 				return;
 			}
 			rank++;
-			console.log('rare achievements rank is ' + rank);
+			//console.log('rare achievements rank is ' + rank);
 			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'rareAchievements.rank': rank } }, function() {
-				console.log('rare achievements rank update fired');
+				//console.log('rare achievements rank update fired');
 			});
 		});
 	},
@@ -164,9 +164,9 @@ module.exports = {
 				return;
 			}
 			rank++;
-			console.log('epic achievements rank is ' + rank);
+			//console.log('epic achievements rank is ' + rank);
 			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'epicAchievements.rank': rank } }, function() {
-				console.log('epic achievements rank update fired');
+				//console.log('epic achievements rank update fired');
 			});
 		});
 	},
@@ -185,9 +185,9 @@ module.exports = {
 				return;
 			}
 			rank++;
-			console.log('legendary achievements rank is ' + rank);
+			//console.log('legendary achievements rank is ' + rank);
 			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'legendaryAchievements.rank': rank } }, function() {
-				console.log('legendary achievements rank update fired');
+				//console.log('legendary achievements rank update fired');
 			});
 		});
 	}

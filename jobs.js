@@ -55,7 +55,7 @@ ddp.connect(function (err) {
 			throw err;
 		}
 		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
-		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyStatJob', workers.dirtyUpdateUserStats);
+		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', workers.dirtyUpdateUserStats);
 	});
 });
 
