@@ -6,13 +6,18 @@ module.exports = function(achievementId, cb) {
 			cb && cb('no users', null);
 			return;
 		}
-		db.collection('userachievements').count({achievementId: achievementId, progressState: true}, function(err, userAchievementCount) {
+		db.collection('userachievements').count({ achievementId: achievementId, progressState: true }, function(err, userAchievementCount) {
 			if (err) {
 				cb && cb('no acheivements error', null);
 				return;
 			}
 			var achievementUnlockPercentage = Math.round((userAchievementCount/userCount) * 100);
-			db.collection('xbdachievements').update({_id: achievementId}, {$set: {userPercentage: achievementUnlockPercentage}}, function(err, doc) {
+
+			if (achievementUnlockPercentage > 100) {
+				achievementUnlockPercentage = 100;
+			}
+			
+			db.collection('xbdachievements').update({ _id: achievementId }, { $set: { userPercentage: achievementUnlockPercentage }}, function(err, doc) {
 				if (err) {
 					cb && cb(err, null);
 					return;

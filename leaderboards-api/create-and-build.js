@@ -13,16 +13,20 @@ module.exports = function(userId, callback) {
 	var users = db.collection('users');
 	var userLeaderboards = db.collection('userleaderboards');
 
+	console.log('create and build leaderboards entry');
+
 	users.findOne({ _id: userId }, function(err, user) {
 		if (err) {
 			callback({ reason: 'error retrieving user', data: err });
 			return;
 		}
 		if (!user || !user.gamertagScanned) {
+			console.log('error - not a user or gamertag was not scanned');
 			callback();
 			return;
 		}
 		if (user.gamertagScanned.status === 'false' || user.gamertagScanned.status === 'building') {
+			console.log('gamertag is false or building');
 			callback && callback();
 			return;
 		}
@@ -31,6 +35,7 @@ module.exports = function(userId, callback) {
 				callback({ reason: 'error retrieving user', data: err });
 				return;
 			}
+			console.log('counting leaderboards');
 			if (userCount < 1) {
 				var userStats = {
 					_id: randomstring.generate(17),
@@ -45,9 +50,11 @@ module.exports = function(userId, callback) {
 					epicAchievements: { count: 0, rank: 0 },
 					legendaryAchievements: { count: 0, rank: 0 }
 				};
+				console.log('inserting user in leaderboards');
 				userLeaderboards.insert(userStats);
 			}
 			updateUserLeaderboard(user, function() {
+				console.log('leaderboards updated');
 				callback && callback();
 			});
 		});

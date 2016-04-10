@@ -181,8 +181,10 @@ xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callba
 	}
 
 	var hexId = game.titleId.toString(16);
+	console.log(hexId);
 	var url = 'game-details-hex/' + hexId;
 	var gameDetails = db.collection('gamedetails');
+	var gameId = game.titleId.toString();
 
 	xboxApiCaller(url, function(err, result) {
 		if (err) {
@@ -195,7 +197,7 @@ xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callba
 			return;
 		}
 
-		gameDetails.findOne({gameId: gameId}, function(err, gameCheck) {
+		gameDetails.findOne({ gameId: gameId }, function(err, gameCheck) {
 
 			if (!gameCheck) {
 				var _id = randomstring.generate(17);

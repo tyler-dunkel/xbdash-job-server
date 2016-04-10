@@ -46,7 +46,7 @@ ddp.connect(function (err) {
 	DDPlogin(ddp, {
 		env: 'METEOR_TOKEN',
 		method: 'email',
-		account: "kggraphix@gmail.com",
+		account: "kguirao87@gmail.com",
 		pass: '121212',
 		retry: 5
 	}, function (err, token) {
@@ -55,7 +55,7 @@ ddp.connect(function (err) {
 			throw err;
 		}
 		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
-		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyStatJob', workers.dirtyUpdateUserStats);
+		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', workers.dirtyUpdateUserStats);
 	});
 });
 
