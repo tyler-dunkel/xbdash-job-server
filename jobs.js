@@ -14,7 +14,7 @@ var ddp = new DDP({
 	autoReconnect : true,
 	autoReconnectTimer : 500,
 	ddpVersion : '1',
-	url: 'wss://beta.xbdash.com.com/websocket',
+	url: 'wss://beta.xbdash.com/websocket',
 	use_ejson: true
 });
 
