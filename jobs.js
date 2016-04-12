@@ -10,6 +10,11 @@ var db = require('./db.js');
 var ddp = new DDP({
 	host: 'beta.xbdash.com',
 	port: 3000,
+	ssl: true,
+	autoReconnect : true,
+	autoReconnectTimer : 500,
+	ddpVersion : '1',
+	url: 'wss://beta.xbdash.com.com/websocket',
 	use_ejson: true
 });
 
@@ -28,6 +33,7 @@ ddp.connect(function (err) {
 			db.close();
 			throw err;
 		}
+		console.log('connected to xbdash');
 		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
 		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', workers.dirtyUpdateUserStats);
 	});
