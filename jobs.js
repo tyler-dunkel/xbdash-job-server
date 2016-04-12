@@ -8,8 +8,8 @@ var async = require('async');
 var db = require('./db.js');
 
 var ddp = new DDP({
-	host: "beta.xbdash.com",
-	port: 443,
+	host: 'beta.xbdash.com',
+	port: 3000,
 	use_ejson: true
 });
 
