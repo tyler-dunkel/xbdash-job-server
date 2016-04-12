@@ -122,10 +122,6 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 				console.log('all x1 queue items done');
 				callback && callback();
 			}
-			// async.each(data.titles, processGame, function(err) {
-			// 	console.log('async done, should only run once');
-			// 	callback && callback('this is bullshit', null);
-			// });
 		});
 	});
 }

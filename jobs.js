@@ -7,35 +7,9 @@ var workers = require('./workers.js');
 var async = require('async');
 var db = require('./db.js');
 
-// xboxApiObject.updateXboxOneData('G7P77WqDsCuYjbvQG', function (err, res) {
-// 	if (err) {
-// 		console.log(JSON.stringify(err));
-// 		return;
-// 	}
-// 	console.log('xbox one updated');
-// });
-
-// xboxApiObject.updateXbox360Data('G7P77WqDsCuYjbvQG', function (err, res) {
-// 	if (err) {
-// 		console.log(JSON.stringify(err));
-// 		return;
-// 	}
-// 	console.log('xbox 360 updated');
-// });
-
-// xboxApiObject.dirtyUpdateUserStats('mMk9BBNF6deJGjMBu', function (err, res) {
-// 	if (err) {
-// 		console.log(JSON.stringify(err));
-// 		return;
-// 	}
-// 	if (res) {
-// 		console.log(res);
-// 	}
-// });
-
 var ddp = new DDP({
-	host: "127.0.0.1",
-	port: 3000,
+	host: "beta.xbdash.com",
+	port: 443,
 	use_ejson: true
 });
 
@@ -47,7 +21,7 @@ ddp.connect(function (err) {
 		env: 'METEOR_TOKEN',
 		method: 'email',
 		account: "kguirao87@gmail.com",
-		pass: '121212',
+		pass: 'xbdAdmin!20160430',
 		retry: 5
 	}, function (err, token) {
 		if (err) {

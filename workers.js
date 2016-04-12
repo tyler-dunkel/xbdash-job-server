@@ -100,7 +100,7 @@ var dirtyUpdateUserStats = function(job, callback) {
 		}
 		var q = async.queue(processUser, 2);
 		users.find({ 'gamertagScanned.status': 'true' }).sort({ 'gamertagScanned.lastUpdate': 1 }).limit(20).forEach(function(err, user) {
-			if (user === null) {
+			if (user === null || !user.gamercard) {
 				return;
 			}
 			q.push(user, function(err) {
