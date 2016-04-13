@@ -8,15 +8,21 @@ var async = require('async');
 var db = require('./db.js');
 
 var ddp = new DDP({
-	host: 'beta.xbdash.com',
+	host: 'localhost',
 	port: 3000,
-	ssl: true,
-	autoReconnect : true,
-	autoReconnectTimer : 500,
-	ddpVersion : '1',
-	url: 'wss://beta.xbdash.com/websocket',
 	use_ejson: true
 });
+
+// var ddp = new DDP({
+// 	host: 'beta.xbdash.com',
+// 	port: 3000,
+// 	ssl: true,
+// 	autoReconnect : true,
+// 	autoReconnectTimer : 500,
+// 	ddpVersion : '1',
+// 	url: 'wss://beta.xbdash.com/websocket',
+// 	use_ejson: true
+// });
 
 Job.setDDP(ddp);
 
@@ -25,8 +31,8 @@ ddp.connect(function (err) {
 	DDPlogin(ddp, {
 		env: 'METEOR_TOKEN',
 		method: 'email',
-		account: 'tyler.dunkel@gmail.com',
-		pass: 'Tjd11034',
+		account: 'kguirao87@gmail.com',
+		pass: '121212',
 		retry: 5
 	}, function (err, token) {
 		if (err) {
@@ -38,6 +44,25 @@ ddp.connect(function (err) {
 		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', workers.dirtyUpdateUserStats);
 	});
 });
+
+// ddp.connect(function (err) {
+// 	if (err) throw err;
+// 	DDPlogin(ddp, {
+// 		env: 'METEOR_TOKEN',
+// 		method: 'email',
+// 		account: 'tyler.dunkel@gmail.com',
+// 		pass: 'Tjd11034',
+// 		retry: 5
+// 	}, function (err, token) {
+// 		if (err) {
+// 			db.close();
+// 			throw err;
+// 		}
+// 		console.log('connected to xbdash');
+// 		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
+// 		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', workers.dirtyUpdateUserStats);
+// 	});
+// });
 
 // var ddp = new DDP({
 // 	host: "beta.xbdash.com",

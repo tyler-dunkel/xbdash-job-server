@@ -1,6 +1,6 @@
 var mongoJS = require('mongojs');
-// var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
-var meteorUrl = 'mongodb://xbadmin:tda88f552e87k15g@capital.4.mongolayer.com:10130,capital.5.mongolayer.com:10130/xbdash-production?replicaSet=set-569077792b73d794a800039f';
+var meteorUrl = 'mongodb://127.0.0.1:3001/meteor';
+// var meteorUrl = 'mongodb://xbadmin:tda88f552e87k15g@capital.4.mongolayer.com:10130,capital.5.mongolayer.com:10130/xbdash-production?replicaSet=set-569077792b73d794a800039f';
 var slugBuilder = require('./slug-builder.js');
 var async = require('async');
 

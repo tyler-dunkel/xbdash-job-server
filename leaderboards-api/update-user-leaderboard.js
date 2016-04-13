@@ -1,12 +1,7 @@
 var async = require('async');
 var dailyCount = require('./daily-count.js');
 var completedGameCount = require('./count-completed-games.js');
-var completedAchievementCount = require('./count-completed-achievements.js');
-var totalAchievementCount = require('./count-total-achievements.js');
-var commonAchievementsCount = require('./count-common-achievements.js');
-var rareAchievementsCount = require('./count-rare-achievements.js');
-var epicAchievementsCount = require('./count-epic-achievements.js');
-var legendaryAchievementsCount = require('./count-legendary-achievements.js');
+var countFunctions = require('./count-functions.js');
 var updateRanks = require('./rank-functions.js');
 var db = require('../db.js');
 
@@ -36,32 +31,18 @@ module.exports = function(user, topCallback) {
 						});
 					},
 					function(callback) {
-						completedAchievementCount(user, function() {
+						countFunctions.countTotal(user, function() {
 							callback();
 						});
 					},
 					function(callback) {
-						totalAchievementCount(user, function() {
+						countFunctions.countCompleted(user, function() {
 							callback();
 						});
 					},
 					function(callback) {
-						commonAchievementsCount(user, function() {
-							callback();
-						});
-					},
-					function(callback) {
-						rareAchievementsCount(user, function() {
-							callback();
-						});
-					},
-					function(callback) {
-						epicAchievementsCount(user, function() {
-							callback();
-						});
-					},
-					function(callback) {
-						legendaryAchievementsCount(user, function() {
+						countFunctions.countByTier(user, function() {
+							console.log('tier callback called');
 							callback();
 						});
 					}
