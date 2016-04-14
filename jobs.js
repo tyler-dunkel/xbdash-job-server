@@ -7,37 +7,22 @@ var workers = require('./workers.js');
 var async = require('async');
 var db = require('./db.js');
 
-// xboxApiObject.updateXboxOneData('G7P77WqDsCuYjbvQG', function (err, res) {
-// 	if (err) {
-// 		console.log(JSON.stringify(err));
-// 		return;
-// 	}
-// 	console.log('xbox one updated');
-// });
-
-// xboxApiObject.updateXbox360Data('G7P77WqDsCuYjbvQG', function (err, res) {
-// 	if (err) {
-// 		console.log(JSON.stringify(err));
-// 		return;
-// 	}
-// 	console.log('xbox 360 updated');
-// });
-
-// xboxApiObject.dirtyUpdateUserStats('mMk9BBNF6deJGjMBu', function (err, res) {
-// 	if (err) {
-// 		console.log(JSON.stringify(err));
-// 		return;
-// 	}
-// 	if (res) {
-// 		console.log(res);
-// 	}
-// });
-
 var ddp = new DDP({
-	host: "127.0.0.1",
+	host: 'localhost',
 	port: 3000,
 	use_ejson: true
 });
+
+// var ddp = new DDP({
+// 	host: 'beta.xbdash.com',
+// 	port: 3000,
+// 	ssl: true,
+// 	autoReconnect : true,
+// 	autoReconnectTimer : 500,
+// 	ddpVersion : '1',
+// 	url: 'wss://beta.xbdash.com/websocket',
+// 	use_ejson: true
+// });
 
 Job.setDDP(ddp);
 
@@ -46,7 +31,7 @@ ddp.connect(function (err) {
 	DDPlogin(ddp, {
 		env: 'METEOR_TOKEN',
 		method: 'email',
-		account: "kguirao87@gmail.com",
+		account: 'kguirao87@gmail.com',
 		pass: '121212',
 		retry: 5
 	}, function (err, token) {
@@ -54,10 +39,30 @@ ddp.connect(function (err) {
 			db.close();
 			throw err;
 		}
+		console.log('connected to xbdash');
 		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
 		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', workers.dirtyUpdateUserStats);
 	});
 });
+
+// ddp.connect(function (err) {
+// 	if (err) throw err;
+// 	DDPlogin(ddp, {
+// 		env: 'METEOR_TOKEN',
+// 		method: 'email',
+// 		account: 'tyler.dunkel@gmail.com',
+// 		pass: 'Tjd11034',
+// 		retry: 5
+// 	}, function (err, token) {
+// 		if (err) {
+// 			db.close();
+// 			throw err;
+// 		}
+// 		console.log('connected to xbdash');
+// 		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
+// 		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', workers.dirtyUpdateUserStats);
+// 	});
+// });
 
 // var ddp = new DDP({
 // 	host: "beta.xbdash.com",
