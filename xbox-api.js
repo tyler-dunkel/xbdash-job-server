@@ -396,7 +396,13 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 						});
 					});
 				} else {
-					callback();
+					users.update({ _id: userId }, { $set: { 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
+							if (err) {
+								console.log(err);
+							}
+							console.log('no dirty update needed');
+							callback && callback();
+						});
 					return;
 				}
 			} else {

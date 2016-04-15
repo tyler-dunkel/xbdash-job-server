@@ -91,7 +91,8 @@ var countByTier = function(user, callback) {
 	var q = async.queue(processAcheivement, 1);
 
 	userAchievements.find({ userId: user._id, progressState: true }).forEach(function(err, userAchi) {
-		console.log('uer acheivement is: ' + !!userAchi);
+		console.log('user achievement is: ' + !!userAchi);
+		console.log(user._id);
 		if (!userAchi) {
 			return;
 		}
@@ -100,7 +101,7 @@ var countByTier = function(user, callback) {
 		});
 	});
 	q.drain = function() {
-		console.log('draining the queue for acheievement leaderbaord');
+		console.log('draining the queue for achievement leaderbaord');
 		console.log("common count is: " + commonCount + " Legendary Count is: " + legendaryCount);
 		userLeaderboards.update({ userId: user._id }, { $set: { 'legendaryAchievements.count': legendaryCount, 
 			'commonAchievements.count': commonCount, 'epicAchievements.count': epicCount, 'rareAchievements.count': rareCount }
