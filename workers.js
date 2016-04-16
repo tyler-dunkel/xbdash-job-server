@@ -99,8 +99,9 @@ var dirtyUpdateUserStats = function(job, callback) {
 			});
 		}
 		var q = async.queue(processUser, 2);
-		users.find({ 'gamertagScanned.status': 'true' }).sort({ 'gamertagScanned.lastUpdate': 1 }).limit(20).forEach(function(err, user) {
-			if (user === null) {
+		// change back later***
+		users.find({ 'gamertagScanned.status': 'true', 'gamercard.gamerscore': { $gt: 0 } }).sort({ 'gamertagScanned.lastUpdate': 1 }).limit(5).forEach(function(err, user) {
+			if (!user || !user.gamercard) {
 				return;
 			}
 			q.push(user, function(err) {
@@ -110,13 +111,27 @@ var dirtyUpdateUserStats = function(job, callback) {
 		});
 		q.drain = function(err) {
 			console.log('queue drained');
-			job.done();
+			job.done("dirty user job is done");
 			callback && callback();
 		}
 	}
 }
 
+var clearDailyRanksJob = function(job, callback) {
+	if (job) {
+		var userLeaderboards = db.collection('userleaderboards');
+		userLeaderboards.update({}, {$set: { 'dailyRank.value': 0, 'dailyRank.rank': 0} }, { multi: true },
+			function(err) {
+				if (err) {
+					console.log(err);
+				}
+				cb && cb();
+			});
+	}
+}
+
 module.exports = {
 	profileBuilder: profileBuilder,
-	dirtyUpdateUserStats: dirtyUpdateUserStats
+	dirtyUpdateUserStats: dirtyUpdateUserStats,
+	clearDailyRanksJob: clearDailyRanksJob
 }

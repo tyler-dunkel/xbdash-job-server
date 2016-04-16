@@ -122,10 +122,6 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 				console.log('all x1 queue items done');
 				callback && callback();
 			}
-			// async.each(data.titles, processGame, function(err) {
-			// 	console.log('async done, should only run once');
-			// 	callback && callback('this is bullshit', null);
-			// });
 		});
 	});
 }
@@ -400,7 +396,13 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 						});
 					});
 				} else {
-					callback();
+					users.update({ _id: userId }, { $set: { 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
+							if (err) {
+								console.log(err);
+							}
+							console.log('no dirty update needed');
+							callback && callback();
+						});
 					return;
 				}
 			} else {

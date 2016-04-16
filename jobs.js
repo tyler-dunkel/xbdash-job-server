@@ -1,28 +1,20 @@
 var DDP = require('ddp');
 var Job = require('meteor-job');
 var DDPlogin = require('ddp-login');
-var randomstring = require("randomstring");
-var xboxApiObject = require('./xbox-api.js');
+var later = require('later');
 var workers = require('./workers.js');
-var async = require('async');
 var db = require('./db.js');
 
 var ddp = new DDP({
-	host: 'localhost',
+	host: 'beta.xbdash.com',
 	port: 3000,
+	ssl: true,
+	autoReconnect : true,
+	autoReconnectTimer : 500,
+	ddpVersion : '1',
+	url: 'wss://beta.xbdash.com/websocket',
 	use_ejson: true
 });
-
-// var ddp = new DDP({
-// 	host: 'beta.xbdash.com',
-// 	port: 3000,
-// 	ssl: true,
-// 	autoReconnect : true,
-// 	autoReconnectTimer : 500,
-// 	ddpVersion : '1',
-// 	url: 'wss://beta.xbdash.com/websocket',
-// 	use_ejson: true
-// });
 
 Job.setDDP(ddp);
 
@@ -31,27 +23,63 @@ ddp.connect(function (err) {
 	DDPlogin(ddp, {
 		env: 'METEOR_TOKEN',
 		method: 'email',
-		account: 'kguirao87@gmail.com',
-		pass: '121212',
+		account: 'tyler.dunkel@gmail.com',
+		pass: 'Tjd11034',
 		retry: 5
 	}, function (err, token) {
 		if (err) {
 			db.close();
 			throw err;
 		}
-		console.log('connected to xbdash');
+		console.log('connected to xbdash prod');
+
+		var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
+			.priority('normal')
+			.repeat({
+				schedule: later.parse.text('at 12:00 am')
+			})
+			.save(function (err, result) {
+				if (err) return;
+				if (!err && result) {
+					console.log('clear daily ranks job saved with ID: ' + result);
+				}
+			});
+
+		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
+			.priority('normal')
+			.repeat({
+				schedule: later.parse.text('every 5 mins')
+			})
+			.save(function (err, result) {
+				if (err) return;
+				if (!err && result) {
+					console.log('dirty user stats job saved with ID: ' + result);
+				}
+			});
+
 		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
 		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', workers.dirtyUpdateUserStats);
+		var clearDailyRanksJob = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', workers.profileBuilder);
 	});
 });
+
+
+
+// var ddp = new DDP({
+// 	host: 'localhost',
+// 	port: 3000,
+// 	use_ejson: true
+// });
+
+// Job.setDDP(ddp);
 
 // ddp.connect(function (err) {
 // 	if (err) throw err;
 // 	DDPlogin(ddp, {
 // 		env: 'METEOR_TOKEN',
 // 		method: 'email',
-// 		account: 'tyler.dunkel@gmail.com',
-// 		pass: 'Tjd11034',
+// 		account: 'kguirao87@gmail.com',
+// 		pass: '121212',
 // 		retry: 5
 // 	}, function (err, token) {
 // 		if (err) {
@@ -59,10 +87,38 @@ ddp.connect(function (err) {
 // 			throw err;
 // 		}
 // 		console.log('connected to xbdash');
+
+// 		var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
+// 			.priority('normal')
+// 			.repeat({
+// 				schedule: later.parse.text('at 12:00 am')
+// 			})
+// 			.save(function (err, result) {
+// 				if (err) return;
+// 				if (!err && result) {
+// 					console.log('clear daily ranks job saved with ID: ' + result);
+// 				}
+// 			});
+
+// 		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
+// 			.priority('normal')
+// 			.repeat({
+// 				schedule: later.parse.text('every 5 mins')
+// 			})
+// 			.save(function (err, result) {
+// 				if (err) return;
+// 				if (!err && result) {
+// 					console.log('dirty user stats job saved with ID: ' + result);
+// 				}
+// 			});
+
 // 		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
 // 		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', workers.dirtyUpdateUserStats);
+// 		var clearDailyRanksJob = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', workers.profileBuilder);
 // 	});
 // });
+
+
 
 // var ddp = new DDP({
 // 	host: "beta.xbdash.com",
