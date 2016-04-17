@@ -18,8 +18,24 @@ var ddp = new DDP({
 
 Job.setDDP(ddp);
 
-ddp.connect(function (err) {
+ddp.connect(function (err, wasReconnect) {
 	if (err) throw err;
+	if (wasReconnect) {
+		console.log('connection reestablished');
+		var jobRunToCompleted = function(user, cb) {
+			var jobsCollection = db.collection('xbdjobscollection.jobs');
+			jobsCollection.update({ 'status': 'running' }, { $set: { 'status': 'completed' } }, { multi: true },
+				function(err) {
+					if (err) {
+						console.log(err);
+					}
+					console.log('updated running jobs to completed');
+					cb && cb();
+				});
+		}
+
+		jobRunToCompleted();
+	}
 	DDPlogin(ddp, {
 		env: 'METEOR_TOKEN',
 		method: 'email',
@@ -32,6 +48,20 @@ ddp.connect(function (err) {
 			throw err;
 		}
 		console.log('connected to xbdash prod');
+
+		var jobRunToCompleted = function(user, cb) {
+			var jobsCollection = db.collection('xbdjobscollection.jobs');
+			jobsCollection.update({ 'status': 'running' }, { $set: { 'status': 'completed' } }, { multi: true },
+				function(err) {
+					if (err) {
+						console.log(err);
+					}
+					console.log('updated running jobs to completed');
+					cb && cb();
+				});
+		}
+
+		jobRunToCompleted();
 
 		var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
 			.priority('normal')
@@ -73,8 +103,23 @@ ddp.connect(function (err) {
 
 // Job.setDDP(ddp);
 
-// ddp.connect(function (err) {
+// ddp.connect(function (err, wasReconnect) {
 // 	if (err) throw err;
+// 	if (wasReconnect) {
+// 		var jobRun = function(user, cb) {
+// 			var jobsCollection = db.collection('xbdjobscollection.jobs');
+// 			jobsCollection.update({ 'status': 'running' }, { $set: { 'status': 'completed' } }, { multi: true },
+// 				function(err) {
+// 					if (err) {
+// 						console.log(err);
+// 					}
+// 					console.log('updated running jobs to completed');
+// 					cb && cb();
+// 				});
+// 		}
+
+// 		jobRun();
+// 	}
 // 	DDPlogin(ddp, {
 // 		env: 'METEOR_TOKEN',
 // 		method: 'email',
@@ -87,6 +132,20 @@ ddp.connect(function (err) {
 // 			throw err;
 // 		}
 // 		console.log('connected to xbdash');
+
+// 		var jobRun = function(user, cb) {
+// 			var jobsCollection = db.collection('xbdjobscollection.jobs');
+// 			jobsCollection.update({ 'status': 'running' }, { $set: { 'status': 'completed' } }, { multi: true },
+// 				function(err) {
+// 					if (err) {
+// 						console.log(err);
+// 					}
+// 					console.log('updated running jobs to completed');
+// 					cb && cb();
+// 				});
+// 		}
+
+// 		jobRun();
 
 // 		var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
 // 			.priority('normal')
@@ -103,7 +162,7 @@ ddp.connect(function (err) {
 // 		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
 // 			.priority('normal')
 // 			.repeat({
-// 				schedule: later.parse.text('every 5 mins')
+// 				schedule: later.parse.text('every 2 mins')
 // 			})
 // 			.save(function (err, result) {
 // 				if (err) return;
