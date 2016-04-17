@@ -1,4 +1,5 @@
 var DDP = require('ddp');
+var jobRunToCompleted = require('./settings-reset.js');
 var Job = require('meteor-job');
 var DDPlogin = require('ddp-login');
 var later = require('later');
@@ -22,18 +23,6 @@ ddp.connect(function (err, wasReconnect) {
 	if (err) throw err;
 	if (wasReconnect) {
 		console.log('connection reestablished');
-		var jobRunToCompleted = function(user, cb) {
-			var jobsCollection = db.collection('xbdjobscollection.jobs');
-			jobsCollection.update({ 'status': 'running' }, { $set: { 'status': 'completed' } }, { multi: true },
-				function(err) {
-					if (err) {
-						console.log(err);
-					}
-					console.log('updated running jobs to completed');
-					cb && cb();
-				});
-		}
-
 		jobRunToCompleted();
 	}
 	DDPlogin(ddp, {
@@ -47,19 +36,8 @@ ddp.connect(function (err, wasReconnect) {
 			db.close();
 			throw err;
 		}
-		console.log('connected to xbdash prod');
 
-		var jobRunToCompleted = function(user, cb) {
-			var jobsCollection = db.collection('xbdjobscollection.jobs');
-			jobsCollection.update({ 'status': 'running' }, { $set: { 'status': 'completed' } }, { multi: true },
-				function(err) {
-					if (err) {
-						console.log(err);
-					}
-					console.log('updated running jobs to completed');
-					cb && cb();
-				});
-		}
+		console.log('connected to xbdash prod');
 
 		jobRunToCompleted();
 
@@ -106,19 +84,8 @@ ddp.connect(function (err, wasReconnect) {
 // ddp.connect(function (err, wasReconnect) {
 // 	if (err) throw err;
 // 	if (wasReconnect) {
-// 		var jobRun = function(user, cb) {
-// 			var jobsCollection = db.collection('xbdjobscollection.jobs');
-// 			jobsCollection.update({ 'status': 'running' }, { $set: { 'status': 'completed' } }, { multi: true },
-// 				function(err) {
-// 					if (err) {
-// 						console.log(err);
-// 					}
-// 					console.log('updated running jobs to completed');
-// 					cb && cb();
-// 				});
-// 		}
-
-// 		jobRun();
+// 		console.log('connection reestablished');
+// 		jobRunToCompleted();
 // 	}
 // 	DDPlogin(ddp, {
 // 		env: 'METEOR_TOKEN',
@@ -131,21 +98,10 @@ ddp.connect(function (err, wasReconnect) {
 // 			db.close();
 // 			throw err;
 // 		}
+
 // 		console.log('connected to xbdash');
 
-// 		var jobRun = function(user, cb) {
-// 			var jobsCollection = db.collection('xbdjobscollection.jobs');
-// 			jobsCollection.update({ 'status': 'running' }, { $set: { 'status': 'completed' } }, { multi: true },
-// 				function(err) {
-// 					if (err) {
-// 						console.log(err);
-// 					}
-// 					console.log('updated running jobs to completed');
-// 					cb && cb();
-// 				});
-// 		}
-
-// 		jobRun();
+// 		jobRunToCompleted();
 
 // 		var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
 // 			.priority('normal')

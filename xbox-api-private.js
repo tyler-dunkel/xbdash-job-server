@@ -498,13 +498,12 @@ xboxApiPrivate._dirtyCheckXboxOneGames = function(user, callback) {
 			callback(err, null);
 			return;
 		}
-		if (result.pagingInfo.totalRecords === 0) {
-			console.log('no x1 games in user history');
-			callback();
-			return;
-		}
 		if (!result.titles || typeof result.titles.forEach !== 'function') {
 			callback({reason: 'there are no games in the result'}, null);
+			return;
+		}
+		if (!result.pagingInfo || result.pagingInfo.totalRecords === 0) {
+			callback({reason: 'no x1 games in user history'}, null);
 			return;
 		}
 
@@ -604,15 +603,15 @@ xboxApiPrivate._dirtyCheckXbox360Games = function (user, callback) {
 			callback(err, null);
 			return;
 		}
-		if (result.pagingInfo.totalRecords === 0) {
-			console.log('no x360 games in user history');
-			callback();
-			return;
-		}
 		if (!result.titles || typeof result.titles.forEach !== 'function') {
 			callback({reason: 'there are no titles in the result'}, null);
 			return;
 		}
+		if (!result.pagingInfo || result.pagingInfo.totalRecords === 0) {
+			callback({reason: 'no x360 games in user history'}, null);
+			return;
+		}
+
 		var processGame = function(game, asyncCallback) {
 			if (game.maxGamerscore ===  0) {
 					console.log('no gamerscore');
