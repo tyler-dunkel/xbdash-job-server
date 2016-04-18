@@ -67,7 +67,7 @@ ddp.connect(function (err, wasReconnect) {
 
 		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
 		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', workers.dirtyUpdateUserStats);
-		var clearDailyRanksJob = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', workers.profileBuilder);
+		var clearDailyRanksJob = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', workers.clearDailyRanksJob);
 	});
 });
 
