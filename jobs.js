@@ -23,7 +23,13 @@ ddp.connect(function (err, wasReconnect) {
 	if (err) throw err;
 	if (wasReconnect) {
 		console.log('connection reestablished');
-		jobRunToCompleted();
+		jobRunToCompleted(function(err, res) {
+			if (err) {
+				console.log('error sending welcome email');
+				return;
+			}
+			console.log('all jobs and users set back to default');
+		});
 	}
 	DDPlogin(ddp, {
 		env: 'METEOR_TOKEN',
@@ -39,7 +45,13 @@ ddp.connect(function (err, wasReconnect) {
 
 		console.log('connected to xbdash prod');
 
-		jobRunToCompleted();
+		jobRunToCompleted(function(err, res) {
+			if (err) {
+				console.log('error sending welcome email');
+				return;
+			}
+			console.log('all jobs and users set back to default');
+		});
 
 		var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
 			.priority('normal')
@@ -65,9 +77,9 @@ ddp.connect(function (err, wasReconnect) {
 				}
 			});
 
-		var buildUserProfileWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
-		var dirtyUpdateStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', workers.dirtyUpdateUserStats);
-		var clearDailyRanksJob = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', workers.clearDailyRanksJob);
+		var profileBuilderWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
+		var clearDailyRanksWorker = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', workers.clearDailyRanks);
+		var dirtyUpdateUserStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', workers.dirtyUpdateUserStats);
 	});
 });
 

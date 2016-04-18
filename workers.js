@@ -117,7 +117,7 @@ var dirtyUpdateUserStats = function(job, callback) {
 	}
 }
 
-var clearDailyRanksJob = function(job, callback) {
+var clearDailyRanks = function(job, callback) {
 	if (job) {
 		var userLeaderboards = db.collection('userleaderboards');
 		userLeaderboards.update({}, { $set: { 'dailyRank.value': 0, 'dailyRank.rank': 0 } }, { multi: true },
@@ -125,7 +125,8 @@ var clearDailyRanksJob = function(job, callback) {
 				if (err) {
 					console.log(err);
 				}
-				cb && cb();
+				console.log('daily ranks cleared');
+				callback && callback();
 			});
 	}
 }
@@ -133,5 +134,5 @@ var clearDailyRanksJob = function(job, callback) {
 module.exports = {
 	profileBuilder: profileBuilder,
 	dirtyUpdateUserStats: dirtyUpdateUserStats,
-	clearDailyRanksJob: clearDailyRanksJob
+	clearDailyRanks: clearDailyRanks
 }

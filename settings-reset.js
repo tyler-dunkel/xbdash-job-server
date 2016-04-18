@@ -31,7 +31,6 @@ var jobRunToCompleted = function(callback) {
 				});
 		}
 	], function(err, res){
-		console.log('all jobs and users set back to default');
 		callback && callback();
 	});
 }
