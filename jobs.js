@@ -53,18 +53,6 @@ ddp.connect(function (err, wasReconnect) {
 			console.log('all jobs and users set back to default');
 		});
 
-		var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
-			.priority('normal')
-			.repeat({
-				schedule: later.parse.text('at 12:00 am')
-			})
-			.save(function (err, result) {
-				if (err) return;
-				if (!err && result) {
-					console.log('clear daily ranks job saved with ID: ' + result);
-				}
-			});
-
 		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
 			.priority('normal')
 			.repeat({
@@ -74,6 +62,18 @@ ddp.connect(function (err, wasReconnect) {
 				if (err) return;
 				if (!err && result) {
 					console.log('dirty user stats job saved with ID: ' + result);
+				}
+			});
+
+		var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
+			.priority('normal')
+			.repeat({
+				schedule: later.parse.text('at 12:00 am starting on the 18th day of April in 2016')
+			})
+			.save(function (err, result) {
+				if (err) return;
+				if (!err && result) {
+					console.log('clear daily ranks job saved with ID: ' + result);
 				}
 			});
 

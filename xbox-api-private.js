@@ -10,7 +10,7 @@ var xboxApiPrivate = xboxApiPrivate || {};
 xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callback) {
 	if (typeof userId !== 'string' || typeof gameId !== 'string') {
 		console.log('callback on line 15 called (x1 achi)');
-		callback({reason: 'type err STRING LINE 11'}, null);
+		callback({ reason: 'type err STRING LINE 11' }, null);
 		return;
 	}
 
@@ -119,7 +119,7 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback) {
 	if (typeof userId !== 'string' || typeof gameId !== 'string') {
 		console.log('callback on line 133 called (x1 game)');
-		callback({ reason: 'type err STRING line 93'}, null);
+		callback({ reason: 'type err STRING line 93' }, null);
 		return;
 	}
 
@@ -345,7 +345,7 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 
 xboxApiPrivate._updateXbox360GameData = function(userId, game, gameId, callback) {
 	if (typeof userId !== 'string' || typeof gameId !== 'string') {
-		callback({reason: 'type err STRING LINE 274'}, null);
+		callback({ reason: 'type err STRING LINE 274' }, null);
 		return;
 	}
 
@@ -399,7 +399,7 @@ xboxApiPrivate._updateXbox360GameData = function(userId, game, gameId, callback)
 
 xboxApiPrivate._updateXbox360GameDetails = function(userId, game, gameId, callback) {
 	if (typeof userId !== 'string' || typeof gameId !== 'string') {
-		callback({reason: 'type err STRING LINE 319'}, null);
+		callback({ reason: 'type err STRING LINE 319' }, null);
 		return;
 	}
 
@@ -499,11 +499,11 @@ xboxApiPrivate._dirtyCheckXboxOneGames = function(user, callback) {
 			return;
 		}
 		if (!result.titles || typeof result.titles.forEach !== 'function') {
-			callback({reason: 'there are no games in the result'}, null);
+			callback({ reason: 'there are no games in the result' }, null);
 			return;
 		}
-		if (!result.pagingInfo || result.pagingInfo.totalRecords === 0) {
-			callback({reason: 'no x1 games in user history'}, null);
+		if (!result.pagingInfo || result.pagingInfo.totalRecords === 0 || typeof undefined) {
+			callback({ reason: 'no x1 games in user history' }, null);
 			return;
 		}
 
@@ -604,11 +604,11 @@ xboxApiPrivate._dirtyCheckXbox360Games = function (user, callback) {
 			return;
 		}
 		if (!result.titles || typeof result.titles.forEach !== 'function') {
-			callback({reason: 'there are no titles in the result'}, null);
+			callback({ reason: 'there are no titles in the result' }, null);
 			return;
 		}
-		if (!result.pagingInfo || result.pagingInfo.totalRecords === 0) {
-			callback({reason: 'no x360 games in user history'}, null);
+		if (!result.pagingInfo || result.pagingInfo.totalRecords === 0 || typeof undefined) {
+			callback({ reason: 'no x360 games in user history' }, null);
 			return;
 		}
 
