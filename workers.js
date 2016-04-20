@@ -98,7 +98,7 @@ var dirtyUpdateUserStats = function(job, callback) {
 				});
 			});
 		}
-		var q = async.queue(processUser, 2);
+		var q = async.queue(processUser, 1);
 		// change back later***
 		users.find({ 'gamertagScanned.status': 'true', 'gamercard.gamerscore': { $gt: 0 } }).sort({ 'gamertagScanned.lastUpdate': 1 }).limit(5).forEach(function(err, user) {
 			if (!user || !user.gamercard) {
