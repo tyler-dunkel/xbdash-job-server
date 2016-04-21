@@ -94,7 +94,6 @@ var countByTier = function(user, callback) {
 		console.log('user achievement is: ' + !!userAchi);
 		console.log(user._id);
 		if (!userAchi) {
-			callback && callback();
 			return;
 		}
 		q.push(userAchi, function(err) {
