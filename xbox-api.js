@@ -47,7 +47,7 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 				callback(err, null);
 				return;
 			}
-			if (data.pagingInfo.totalRecords === 0) {
+			if (!data.pagingInfo || data.pagingInfo.totalRecords === 0) {
 				console.log('no x1 games available');
 				callback();
 				return;
@@ -157,7 +157,7 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 				callback(err, null);
 				return;
 			}
-			if (data.pagingInfo.totalRecords === 0) {
+			if (!data.pagingInfo || data.pagingInfo.totalRecords === 0) {
 				console.log('no 360 games available');
 				callback();
 				return;

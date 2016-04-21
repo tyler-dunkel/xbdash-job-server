@@ -22,7 +22,7 @@ module.exports = function(userId, callback) {
 		}
 		if (!user || !user.gamertagScanned) {
 			console.log('error - not a user or gamertag was not scanned');
-			callback();
+			callback && callback();
 			return;
 		}
 		if (user.gamertagScanned.status === 'false' || user.gamertagScanned.status === 'building') {

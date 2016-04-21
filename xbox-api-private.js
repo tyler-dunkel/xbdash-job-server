@@ -502,7 +502,7 @@ xboxApiPrivate._dirtyCheckXboxOneGames = function(user, callback) {
 			callback({ reason: 'there are no games in the result' }, null);
 			return;
 		}
-		if (!result.pagingInfo || result.pagingInfo.totalRecords === 0 || typeof result.infoPaging === undefined) {
+		if (!result.pagingInfo || result.pagingInfo.totalRecords === 0) {
 			callback({ reason: 'no x1 games in user history' }, null);
 			return;
 		}
@@ -607,7 +607,7 @@ xboxApiPrivate._dirtyCheckXbox360Games = function (user, callback) {
 			callback({ reason: 'there are no titles in the result' }, null);
 			return;
 		}
-		if (!result.pagingInfo || result.pagingInfo.totalRecords === 0 || typeof result.infoPaging === undefined) {
+		if (!result.pagingInfo || result.pagingInfo.totalRecords === 0) {
 			callback({ reason: 'no x360 games in user history' }, null);
 			return;
 		}

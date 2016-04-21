@@ -94,12 +94,13 @@ var countByTier = function(user, callback) {
 		console.log('user achievement is: ' + !!userAchi);
 		console.log(user._id);
 		if (!userAchi) {
+			callback && callback();
 			return;
 		}
 		q.push(userAchi, function(err) {
-
 		});
 	});
+
 	q.drain = function() {
 		console.log('draining the queue for achievement leaderbaord');
 		console.log("common count is: " + commonCount + " Legendary Count is: " + legendaryCount);
