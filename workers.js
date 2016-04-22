@@ -57,6 +57,7 @@ var profileBuilder = function(job, callback) {
 										callback && callback();
 										return;
 									}
+									console.log('all profile build jobs are done');
 									welcomeEmailSend(userId, function(err, res) {
 										if (err) {
 											console.log('error sending welcome email');
@@ -66,7 +67,6 @@ var profileBuilder = function(job, callback) {
 										callback && callback();
 										console.log('welcome email sent');
 									});
-									console.log('all profile build jobs done');
 								});
 							});
 						});
@@ -126,6 +126,7 @@ var clearDailyRanks = function(job, callback) {
 					console.log(err);
 				}
 				console.log('daily ranks cleared');
+				job.done("daily ranks clear is done");
 				callback && callback();
 			});
 	}
