@@ -38,6 +38,11 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 			}
 
 			var processAchievement = function(achievement, asyncCallback) {
+				if (!achievement.progression || achievement.progression.timeUnlocked === 0) {
+					console.log('no unlocked time recorded');
+					callback();
+					return;
+				}
 				var progressState = (achievement.progressState !== 'NotStarted') ? true : false;
 				var progression = achievement.progression.timeUnlocked;
 				progression = new Date(progression);
