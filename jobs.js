@@ -5,17 +5,21 @@ var later = require('later');
 var workers = require('./workers.js');
 var db = require('./db.js');
 
+// var ddp = new DDP({
+// 	host: 'beta.xbdash.com',
+// 	port: 3000,
+// 	ssl: true,
+// 	autoReconnect : true,
+// 	autoReconnectTimer : 500,
+// 	ddpVersion : '1',
+// 	url: 'wss://beta.xbdash.com/websocket',
+// 	use_ejson: true
+// });
 var ddp = new DDP({
-	host: 'beta.xbdash.com',
+	host: 'localhost',
 	port: 3000,
-	ssl: true,
-	autoReconnect : true,
-	autoReconnectTimer : 500,
-	ddpVersion : '1',
-	url: 'wss://beta.xbdash.com/websocket',
 	use_ejson: true
 });
-
 Job.setDDP(ddp);
 
 ddp.connect(function (err) {
