@@ -1,3 +1,18 @@
+var db = require('./db.js');
+
+var migrate = function() {
+	db.collection('xbdjobscollection.jobs').remove({ status: "completed" }, {}, { multi: true }, function(err, res) {
+		if (err) {
+			console.log('error removing completed jobs');
+			callback && callback();
+			return;
+		}
+		console.log('removed completed jobs');
+	});
+}
+
+migrate();
+
 // var xboxApiObject = require('./xbox-api.js');
 // var createAndBuild = require('./leaderboards-api/create-and-build.js');
 // var db = require('./db.js');

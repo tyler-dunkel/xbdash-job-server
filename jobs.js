@@ -7,13 +7,13 @@ var workers = require('./workers.js');
 var db = require('./db.js');
 
 var ddp = new DDP({
-	host: 'beta.xbdash.com',
+	host: 'www.xbdash.com',
 	port: 3000,
 	ssl: true,
 	autoReconnect : true,
 	autoReconnectTimer : 500,
 	ddpVersion : '1',
-	url: 'wss://beta.xbdash.com/websocket',
+	url: 'wss://www.xbdash.com/websocket',
 	use_ejson: true
 });
 
