@@ -13,7 +13,6 @@ var ddp = new DDP({
 	autoReconnect : true,
 	autoReconnectTimer : 500,
 	ddpVersion : '1',
-	url: 'wss://xbdash.com/websocket',
 	use_ejson: true
 });
 
