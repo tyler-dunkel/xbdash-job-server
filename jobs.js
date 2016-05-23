@@ -9,7 +9,7 @@ var db = require('./db.js');
 var ddp = new DDP({
 	host: 'www.xbdash.com',
 	port: 3000,
-	ssl: true,
+	ssl: false,
 	autoReconnect : true,
 	autoReconnectTimer : 500,
 	ddpVersion : '1',
@@ -33,7 +33,7 @@ ddp.connect(function (err, wasReconnect) {
 	}
 	DDPlogin(ddp, {
 		env: 'METEOR_TOKEN',
-		method: 'email',
+		method: 'email', 
 		account: 'tyler.dunkel@gmail.com',
 		pass: 'Tjd11034',
 		retry: 5
