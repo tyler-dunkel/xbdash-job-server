@@ -1,3 +1,5 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 var DDP = require('ddp');
 var jobRunToCompleted = require('./settings-reset.js');
 var Job = require('meteor-job');
@@ -13,7 +15,6 @@ var ddp = new DDP({
 	autoReconnect : true,
 	autoReconnectTimer : 500,
 	ddpVersion : '1',
-	useSockJs: true,
 	url: 'wss://www.xbdash.com/websocket',
 	use_ejson: true
 });
