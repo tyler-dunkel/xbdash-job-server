@@ -9,7 +9,6 @@ var db = require('./db.js');
 var ddp = new DDP({
 	host: 'www.xbdash.com',
 	port: 3000,
-	ssl: true,
 	autoReconnect : true,
 	autoReconnectTimer : 500,
 	ddpVersion : '1',
