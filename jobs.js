@@ -9,11 +9,11 @@ var db = require('./db.js');
 var ddp = new DDP({
 	host: 'www.xbdash.com',
 	port: 3000,
-	ssl: false,
+	ssl: true,
 	autoReconnect : true,
 	autoReconnectTimer : 500,
 	ddpVersion : '1',
-	// url: 'wss://www.xbdash.com/websocket',
+	url: 'wss://www.xbdash.com/websocket',
 	use_ejson: true
 });
 
