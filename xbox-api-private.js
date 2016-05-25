@@ -59,7 +59,7 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 							progressState: progressState,
 							progression: progression
 						};
-						userAchievements.update({ achievementId: doc._id, userId: doc.userId }, { $set: userAchievement, $setOnInsert: { _id: userAchievementId } }, { upsert: true }, function(err, res) {
+						userAchievements.update({ achievementId: doc._id, userId: userId }, { $set: userAchievement, $setOnInsert: { _id: userAchievementId } }, { upsert: true }, function(err, res) {
 							if (err) {
 								console.log('callback on line 73 called (x1 achi)');
 								cb && cb();
@@ -284,7 +284,7 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 							progressState: progressState,
 							progression: progression
 						};
-						userAchievements.update({ achievementId: doc._id, userId: doc.userId }, { $set: userAchievement, $setOnInsert: { _id: userAchievementId } }, { upsert: true }, function(err, res) {
+						userAchievements.update({ achievementId: doc._id, userId: userId }, { $set: userAchievement, $setOnInsert: { _id: userAchievementId } }, { upsert: true }, function(err, res) {
 							if (err) {
 								console.log('callback on line 311 called (x360 achi)');
 								cb && cb();
