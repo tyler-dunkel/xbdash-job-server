@@ -97,9 +97,9 @@ var countByTier = function(user, callback) {
 			return;
 		}
 		q.push(userAchi, function(err) {
-
 		});
 	});
+
 	q.drain = function() {
 		console.log('draining the queue for achievement leaderbaord');
 		console.log("common count is: " + commonCount + " Legendary Count is: " + legendaryCount);

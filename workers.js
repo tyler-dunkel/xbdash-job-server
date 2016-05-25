@@ -57,6 +57,7 @@ var profileBuilder = function(job, callback) {
 										callback && callback();
 										return;
 									}
+									console.log('all profile build jobs are done');
 									welcomeEmailSend(userId, function(err, res) {
 										if (err) {
 											console.log('error sending welcome email');
@@ -66,7 +67,6 @@ var profileBuilder = function(job, callback) {
 										callback && callback();
 										console.log('welcome email sent');
 									});
-									console.log('all profile build jobs done');
 								});
 							});
 						});
@@ -98,7 +98,7 @@ var dirtyUpdateUserStats = function(job, callback) {
 				});
 			});
 		}
-		var q = async.queue(processUser, 2);
+		var q = async.queue(processUser, 1);
 		// change back later***
 		users.find({ 'gamertagScanned.status': 'true', 'gamercard.gamerscore': { $gt: 0 } }).sort({ 'gamertagScanned.lastUpdate': 1 }).limit(5).forEach(function(err, user) {
 			if (!user || !user.gamercard) {
@@ -117,15 +117,17 @@ var dirtyUpdateUserStats = function(job, callback) {
 	}
 }
 
-var clearDailyRanksJob = function(job, callback) {
+var clearDailyRanks = function(job, callback) {
 	if (job) {
 		var userLeaderboards = db.collection('userleaderboards');
-		userLeaderboards.update({}, {$set: { 'dailyRank.value': 0, 'dailyRank.rank': 0} }, { multi: true },
+		userLeaderboards.update({}, { $set: { 'dailyRank.value': 0, 'dailyRank.rank': 0 } }, { multi: true },
 			function(err) {
 				if (err) {
 					console.log(err);
 				}
-				cb && cb();
+				console.log('daily ranks cleared');
+				job.done("daily ranks clear is done");
+				callback && callback();
 			});
 	}
 }
@@ -133,5 +135,5 @@ var clearDailyRanksJob = function(job, callback) {
 module.exports = {
 	profileBuilder: profileBuilder,
 	dirtyUpdateUserStats: dirtyUpdateUserStats,
-	clearDailyRanksJob: clearDailyRanksJob
+	clearDailyRanks: clearDailyRanks
 }
