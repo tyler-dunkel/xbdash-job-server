@@ -11,10 +11,10 @@ var userAchievements = db.collection('userachievements');
 var theFunc = function(user, callback) {
 
 	var achiFunc = function(achi, callback) {
-		userAchievements.find({userId: user._id, achievementId: achi.achievementId}, function(err, userAchiDocs) {
+		userAchievements.find({ userId: user._id, achievementId: achi.achievementId }, function(err, userAchiDocs) {
 			if (userAchiDocs.length > 1) {
 				console.log(achi.achievementId);
-				userAchievements.remove({userId: user._id, achievementId: achi.achievementId}, {justOne: true}, function(err) {
+				userAchievements.remove({ userId: user._id, achievementId: achi.achievementId }, { justOne: true }, function(err) {
 					console.log('removed one');
 					callback();
 				});
@@ -25,7 +25,7 @@ var theFunc = function(user, callback) {
 		});
 	}
 	console.log(user._id);
-	userAchievements.find({userId: user._id}).sort({progression: -1}, function(err, docs) {
+	userAchievements.find({ userId: user._id}).sort({ progression: -1 }, function(err, docs) {
 		async.eachSeries(docs, achiFunc, function(err) {
 			console.log('achi done');
 			callback();
@@ -33,7 +33,7 @@ var theFunc = function(user, callback) {
 	});
 }
 
-users.find({'gamertagScanned.status': 'true', 'gamercard.gamertag': {$exists: 1}, 'gamercard.gamerscore': {$gt: 0}}).skip(6).sort({createdAt: 1}, function(err, userDocs) {
+users.find({ 'gamertagScanned.status': 'true', 'gamercard.gamertag': { $exists: 1 }, 'gamercard.gamerscore': { $gt: 0 } }).skip(5).sort({ 'gamercard.gamerscore': -1 }, function(err, userDocs) {
 	async.eachLimit(userDocs, 1, theFunc, function(err) {
 		console.log('done with the callbacks');
 	});
