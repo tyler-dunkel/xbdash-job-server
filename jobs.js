@@ -70,7 +70,7 @@ ddp.connect(function (err, wasReconnect) {
 		var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
 			.priority('normal')
 			.repeat({
-				schedule: later.parse.text('at 12:15 am starting on the 22th day of May in 2016')
+				schedule: later.parse.text('at 12:15 am starting on the 25th day of May in 2016')
 			})
 			.save(function (err, result) {
 				if (err) return;
@@ -80,7 +80,7 @@ ddp.connect(function (err, wasReconnect) {
 			});
 
 		var profileBuilderWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
-		var dirtyUpdateUserStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', { workTimeout: 600000 }, workers.dirtyUpdateUserStats);
+		// var dirtyUpdateUserStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', { workTimeout: 600000 }, workers.dirtyUpdateUserStats);
 		var clearDailyRanksWorker = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', { workTimeout: 600000 }, workers.clearDailyRanks);
 	});
 });
