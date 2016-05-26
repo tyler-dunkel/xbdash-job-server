@@ -168,7 +168,7 @@ xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback)
 			completed: completed
 		};
 
-		userGames.update({ gameId: gameId, userId: userId }, { $set: userGame, $setOnInsert: {_id: _id} }, { upsert: true }, function(err, res) {
+		userGames.update({ gameId: gameId, userId: userId }, { $set: userGame, $setOnInsert: { _id: _id } }, { upsert: true }, function(err, res) {
 			if (err) {
 				console.log('callback on line 181 called (x1 game)');
 				callback({ reason: 'error updating user xbox one games', data: err }, null);
