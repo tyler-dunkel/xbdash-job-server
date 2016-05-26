@@ -361,14 +361,6 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 					console.log('the gamerscore on record is lower than on the api');
 					async.series([
 						function(cb) {
-							users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'updating', gamercard: result } }, function(err, res) {
-								if (err) {
-									console.log(err);
-								}
-								cb && cb();
-							});
-						},
-						function(cb) {
 							xboxApiPrivate._dirtyCheckXboxOneGames(user, function(err, result) {
 								if (err) {
 									console.log(err);

@@ -100,14 +100,16 @@ var dirtyUpdateUserStats = function(job, callback) {
 		}
 		var q = async.queue(processUser, 1);
 		// change back later***
-		users.find({ 'gamertagScanned.status': 'true', 'gamercard.gamerscore': { $gt: 0 } }).sort({ 'gamertagScanned.lastUpdate': 1 }).limit(5).forEach(function(err, user) {
-			if (!user || !user.gamercard) {
-				return;
-			}
-			q.push(user, function(err) {
-
+		users.find({ 'gamertagScanned.status': 'true', 'gamercard.gamerscore': { $gt: 0 } }).sort({ 'gamertagScanned.lastUpdate': 1 }).limit(5).toArray(function(err, userDocs) {
+			userDocs.forEach(function(user) {
+				if (!user || !user.gamercard) {
+					return;
+				}
+				users.update({_id: user._id}, {$set: {'gamertagScanned.status': 'updating'}}, function() {
+					q.push(user, function(err) {
+					});
+				});
 			});
-			console.log('user: ' + user.gamercard.gamertag + ' started');
 		});
 		q.drain = function(err) {
 			console.log('queue drained');
