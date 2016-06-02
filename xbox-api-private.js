@@ -572,7 +572,7 @@ xboxApiPrivate._dirtyCheckXboxOneGames = function(user, callback) {
 			});
 		}
 
-		var q = async.queue(processGame, 2);
+		var q = async.queue(processGame, 1);
 
 		q.drain = function(err) {
 			console.log('all queue items done');
@@ -677,7 +677,7 @@ xboxApiPrivate._dirtyCheckXbox360Games = function (user, callback) {
 			});
 		}
 
-		var q = async.queue(processGame, 2);
+		var q = async.queue(processGame, 1);
 
 		q.drain = function(err) {
 			console.log('all queue items done');
