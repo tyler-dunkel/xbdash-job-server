@@ -3,6 +3,7 @@ var xboxApiObject = require('./xbox-api.js');
 var async = require('async');
 var createAndBuild = require('./leaderboards-api/create-and-build.js');
 var welcomeEmailSend = require('./mailer-welcome.js');
+var updateBadges = require('./badge-api/badges.js');
 var db = require('./db.js');
 
 var profileBuilder = function(job, callback) {
@@ -93,8 +94,15 @@ var dirtyUpdateUserStats = function(job, callback) {
 						asyncCb && asyncCb();
 						return;
 					}
-					console.log('calling async cb');
-					asyncCb && asyncCb();
+					updateBadges(user._id, function(err, res) {
+						if (err) {
+							console.log(err);
+							asyncCb && asyncCb();
+							return;
+						}
+						console.log('calling async cb');
+						asyncCb && asyncCb();
+					});
 				});
 			});
 		}

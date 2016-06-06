@@ -18,6 +18,11 @@ var ddp = new DDP({
 	url: 'wss://www.xbdash.com/websocket',
 	use_ejson: true
 });
+// var ddp = new DDP({
+// 	host: 'localhost',
+// 	port: 3000,
+// 	use_ejson: true
+// });
 
 Job.setDDP(ddp);
 
@@ -84,14 +89,6 @@ ddp.connect(function (err, wasReconnect) {
 		var clearDailyRanksWorker = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', { workTimeout: 600000 }, workers.clearDailyRanks);
 	});
 });
-
-
-
-// var ddp = new DDP({
-// 	host: 'localhost',
-// 	port: 3000,
-// 	use_ejson: true
-// });
 
 // Job.setDDP(ddp);
 
