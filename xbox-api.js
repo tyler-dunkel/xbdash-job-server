@@ -48,7 +48,7 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 				callback(err, null);
 				return;
 			}
-			if (data.pagingInfo.totalRecords === 0) {
+			if (!data.pagingInfo || data.pagingInfo.totalRecords === 0) {
 				console.log('no x1 games available');
 				callback();
 				return;
@@ -158,7 +158,7 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 				callback(err, null);
 				return;
 			}
-			if (data.pagingInfo.totalRecords === 0) {
+			if (!data.pagingInfo || data.pagingInfo.totalRecords === 0) {
 				console.log('no 360 games available');
 				callback();
 				return;
@@ -367,16 +367,15 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 					console.log('the gamerscore on record is lower than on the api');
 					async.series([
 						function(cb) {
-							users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'updating', gamercard: result } }, function(err, res) {
-								if (err) {
-									console.log(err);
-								}
-								slugifyGamertag(userId, result, function(err) {
-									if (err) {
-										console.log(err);
-									}
-									cb && cb();
-								});
+							users.update({ _id: userId }, { $set: 
+								{ 'gamertagScanned.status': 'updating', gamercard: result } }, 
+								function(err, res) {
+									slugifyGamertag(userId, result, function(err) {
+										if (err) {
+											console.log(err);
+										}
+										cb && cb();
+									});
 							});
 						},
 						function(cb) {
