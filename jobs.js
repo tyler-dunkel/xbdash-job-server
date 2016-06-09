@@ -18,6 +18,7 @@ var ddp = new DDP({
 	url: 'wss://www.xbdash.com/websocket',
 	use_ejson: true
 });
+
 // var ddp = new DDP({
 // 	host: 'localhost',
 // 	port: 3000,
