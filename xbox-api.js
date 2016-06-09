@@ -235,6 +235,131 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 	});
 }
 
+xboxApiObject.updateRecentActivity = function(userId, callback) {
+	if (typeof userId !== 'string') {
+		callback('username not a sting', null);
+		return;
+	}
+
+	var users = db.collection('users');
+
+	users.findOne({_id: userId}, function(err, user) {
+		if (err) {
+			console.log(err);
+			callback('error in db find', null);
+			return;
+		}
+		if (!user || !user.xuid) {
+			console.log('user is null: ' + user);
+			callback({ reason: 'user does not have an xuid' }, null);
+			return;
+		}
+
+		var url = user.xuid + '/activity/recent';
+		xboxApiCaller(url, function(err, result) {
+			console.log(result);
+			if (!result || !result[0].startTime) {
+				console.log('got here');
+				callback('no result from xbox api', null);
+				return;
+			}
+			var recentActivity = db.collection('recentActivity');
+			recentActivity.update({userId: userId}, {userId: userId, activityList: result}, {upsert: true}, function(err, result) {
+				callback();
+			});
+		});
+	});
+}
+
+xboxApiObject.updateXboxPresence = function(userId, callback) {
+	if (typeof userId !== 'string') {
+		callback('username not a sting', null);
+		return;
+	}
+
+	var users = db.collection('users');
+
+	users.findOne({_id: userId}, function(err, user) {
+		if (err) {
+			console.log(err);
+			callback('error in db find', null);
+			return;
+		}
+		if (!user || !user.xuid) {
+			console.log('user is null: ' + user);
+			callback({ reason: 'user does not have an xuid' }, null);
+			return;
+		}
+		var url = user.xuid + '/presence';
+
+		xboxApiCaller(url, function(err, result) {
+			console.log(result);
+			if (!result || !result.state) {
+				console.log(result);
+				console.log(err);
+				callback('no result from xbox api', null);
+				return;
+			}
+			delete result['xuid'];
+			users.update({ _id: userId }, { $set: { presence: result } }, function(err, res) {
+				if (err) {
+					callback({ reason: 'error setting user gamercard', data: err }, null);
+					return;
+				}
+				callback && callback();
+			});
+		});
+	});
+}
+
+xboxApiObject.updateXboxProfile = function(userId, callback) {
+	if (typeof userId !== 'string') {
+		callback('username not a sting', null);
+		return;
+	}
+
+	var users = db.collection('users');
+
+	users.findOne({_id: userId}, function(err, user) {
+		if (err) {
+			console.log(err);
+			callback('error in db find', null);
+			return;
+		}
+		if (!user || !user.xuid) {
+			console.log('user is null: ' + user);
+			callback({ reason: 'user does not have an xuid' }, null);
+			return;
+		}
+
+		var url = user.xuid + '/profile';
+
+		xboxApiCaller(url, function(err, result) {
+			if (!result || !result.Gamerscore) {
+				callback('error with xbox api', null);
+				return;
+			}
+			var setObject = { 
+				xboxProfile: {
+					gameDisplayPicRaw: result.GameDisplayPicRaw,
+					appDislayPicRaw: result.AppDisplayPicRaw,
+					accountTier: result.AccountTier,
+					xboxOneRep: result.XboxOneRep,
+					isSponsoredUser: result.isSponsoredUser
+				}
+			};
+			console.log(setObject);
+			users.update({ _id: userId }, { $set: setObject }, function(err, res) {
+				if (err) {
+					callback({ reason: 'error setting user gamercard', data: err }, null);
+					return;
+				}
+				callback && callback();
+			});
+		});
+	});
+}
+
 xboxApiObject.updateGamercard = function(userId, callback) {
 	console.log('update gamercard: ' + userId);
 	if (typeof userId !== 'string') {
