@@ -2,6 +2,7 @@ var xboxApiCaller = require('./xbox-api-caller.js');
 var xboxApiPrivate = require('./xbox-api-private.js');
 var async = require('async');
 var db = require('./db.js');
+var slugifyGamertag = require('./gamertag-slugify.js');
 
 var xboxApiObject = xboxApiObject || {};
 
@@ -277,7 +278,12 @@ xboxApiObject.updateGamercard = function(userId, callback) {
 					callback({ reason: 'error setting user gamercard', data: err }, null);
 					return;
 				}
-				callback && callback();
+				slugifyGamertag(userId, result, function(err) {
+					if (err) {
+						console.log(err);
+					}
+					callback && callback();
+				});
 			});
 			console.log('updated user gamercard');
 		});
@@ -361,14 +367,13 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 					console.log('the gamerscore on record is lower than on the api');
 					async.series([
 						function(cb) {
-							xboxApiObject.updateGamercard(userId, function(err, res) {
+							xboxApiObject.updateGamercard(userId, function(err) {
 								if (err) {
-									console.log('error with update gamercard');
-									cb();
-									return;
+									console.log(err);
 								}
+								console.log('updated gamercard');
 								cb();
-							});
+							})
 						},
 						function(cb) {
 							xboxApiPrivate._dirtyCheckXboxOneGames(user, function(err, result) {
