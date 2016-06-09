@@ -351,7 +351,7 @@ xboxApiObject.updateRecentActivity = function(userId, callback) {
 				callback('no result from xbox api', null);
 				return;
 			}
-			var recentActivity = db.collection('recentActivity');
+			var recentActivity = db.collection('recentactivity');
 			recentActivity.update({userId: userId}, {userId: userId, activityList: result}, {upsert: true}, function(err, result) {
 				callback();
 			});
