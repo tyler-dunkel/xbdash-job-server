@@ -235,6 +235,94 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 	});
 }
 
+xboxApiObject.updateScreenShots = function(userId, callback) {
+	if (typeof userId !== 'string') {
+		callback('username not a sting', null);
+		return;
+	}
+	var users = db.collection('users');
+
+	users.findOne({_id: userId}, function(err, user) {
+		if (err) {
+			console.log(err);
+			callback('error in db find', null);
+			return;
+		}
+		if (!user || !user.xuid) {
+			console.log('user is null: ' + user);
+			callback({ reason: 'user does not have an xuid' }, null);
+			return;
+		}
+
+		var url = user.xuid + '/screenshots';
+
+		xboxApiCaller(url, function(err, result) {
+			console.log(result);
+			if (!result || !result[0] || !result[0].state) {
+				console.log(result);
+				callback('no result from xbox api', null);
+				return;
+			}
+			var screenShots = db.collection('screenshots');
+			var processPicture = function(screenShot, asyncCallback) {
+				screenShot.userId = userId;
+				screenShots.update({userId: userId, screenShotId: screenShot.screenshotid}, screenShot, {upsert: true}, function() {
+					asyncCallback();
+				});
+			};
+			console.log(result);
+			async.eachSeries(result, processClip, function(err) {
+				console.log('calling async series end callback');
+				callback();
+			});
+		});		
+	});
+}
+
+xboxApiObject.updateVideoClips = function(userId, callback) {
+	if (typeof userId !== 'string') {
+		callback('username not a sting', null);
+		return;
+	}
+
+	var users = db.collection('users');
+
+	users.findOne({_id: userId}, function(err, user) {
+		if (err) {
+			console.log(err);
+			callback('error in db find', null);
+			return;
+		}
+		if (!user || !user.xuid) {
+			console.log('user is null: ' + user);
+			callback({ reason: 'user does not have an xuid' }, null);
+			return;
+		}
+
+		var url = user.xuid + '/game-clips';
+
+		xboxApiCaller(url, function(err, result) {
+			if (!result || !result[0] || !result[0].gameClipDetails) {
+				console.log('got here');
+				callback('no result from xbox api', null);
+				return;
+			}
+			var gameClips = db.collection('gameclips');
+			var processClip = function(gameClip, asyncCallback) {
+				gameClip.userId = userId;
+				gameClips.update({userId: userId, gameClipId: gameClip.gameClipId}, gameClip, {upsert: true}, function() {
+					asyncCallback();
+				});
+			};
+			console.log(result);
+			async.eachSeries(result, processClip, function(err) {
+				console.log('calling async series end callback');
+				callback();
+			});
+		});		
+	});
+}
+
 xboxApiObject.updateRecentActivity = function(userId, callback) {
 	if (typeof userId !== 'string') {
 		callback('username not a sting', null);
@@ -258,7 +346,7 @@ xboxApiObject.updateRecentActivity = function(userId, callback) {
 		var url = user.xuid + '/activity/recent';
 		xboxApiCaller(url, function(err, result) {
 			console.log(result);
-			if (!result || !result[0].startTime) {
+			if (!result || !result[0] || !result[0].startTime) {
 				console.log('got here');
 				callback('no result from xbox api', null);
 				return;

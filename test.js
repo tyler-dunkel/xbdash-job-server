@@ -123,7 +123,7 @@ var db = require('./db.js');
 
 var users = db.collection('users');
 var userId = 'ApRaGbLEr7yob2TXB';
-xboxApiObject.updateRecentActivity(userId, function(err) {
+xboxApiObject.updateScreenShots(userId, function(err) {
 	console.log('done');
 });
 // createAndBuild(userId, function (err, res) {
