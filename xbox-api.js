@@ -584,6 +584,56 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 							});
 						},
 						function(cb) {
+							xboxApiObject.updateXboxProfile(userId, function(err, res) {
+								if (err) {
+									console.log('error with update gamercard');
+									cb();
+									return;
+								}
+								cb && cb();
+							});
+						},
+						function(cb) {
+							xboxApiObject.updateXboxPresence(userId, function(err, res) {
+								if (err) {
+									console.log('error with update gamercard');
+									cb();
+									return;
+								}
+								cb && cb();
+							});
+						},
+						function(cb) {
+							xboxApiObject.updateRecentActivity(userId, function(err, res) {
+								if (err) {
+									console.log('error with update gamercard');
+									cb();
+									return;
+								}
+								cb && cb();
+							});
+						},
+						function(cb) {
+							xboxApiObject.updateVideoClips(userId, function(err, res) {
+								if (err) {
+									console.log('error with update gamercard');
+									cb();
+									return;
+								}
+								cb && cb();
+							});
+						},
+						function(cb) {
+							xboxApiObject.updateScreenShots(userId, function(err, res) {
+								if (err) {
+									console.log('error with update gamercard');
+									cb();
+									return;
+								}
+								cb && cb();
+							});
+						},
+						function(cb) {
 							xboxApiPrivate._dirtyCheckXboxOneGames(user, function(err, result) {
 								if (err) {
 									console.log(err);
