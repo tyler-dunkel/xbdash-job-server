@@ -63,9 +63,7 @@ ddp.connect(function (err, wasReconnect) {
 
 		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
 			.priority('normal')
-			.repeat({
-				schedule: later.parse.text('every 5 mins')
-			})
+			.repeat()
 			.save(function (err, result) {
 				if (err) return;
 				if (!err && result) {
