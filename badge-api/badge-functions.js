@@ -29,56 +29,56 @@ var gamerscoreFunction = function(userBadges, cb) {
 			setObject.fiveGS = true;
 			if (userBadges.fiveGS === false) {
 				message = 'You have unlocked the 5k gamerscore badge!';
-				notifications.insert({userId: userBadges.userId, message: message, read: false});
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 			}
 		}
 		if (gamerscore >= 10000) {
 			setObject.tenGS = true;
 			if (userBadges.tenGS === false) {
 				message = 'You have unlocked the 10k gamerscore badge!';
-				notifications.insert({userId: userBadges.userId, message: message, read: false});
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 			}
 		}
 		if (gamerscore >= 20000) {
 			setObject.twentyGS = true;
 			if (userBadges.twentyGS === false) {
 				message = 'You have unlocked the 20k gamerscore badge!';
-				notifications.insert({userId: userBadges.userId, message: message, read: false});
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 			}
 		}
 		if (gamerscore >= 50000) {
 			setObject.fiftyGS = true;
 			if (userBadges.fiftyGS === false) {
 				message = 'You have unlocked the 50k gamerscore badge!';
-				notifications.insert({userId: userBadges.userId, message: message, read: false});
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 			}
 		}
 		if (gamerscore >= 100000) {
 			setObject.oneHundredGS = true;
 			if (userBadges.oneHundredGS === false) {
 				message = 'You have unlocked the 100k gamerscore badge!';
-				notifications.insert({userId: userBadges.userId, message: message, read: false});
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 			}
 		}
 		if (gamerscore >= 250000) {
 			setObject.twoFiftyHundredGS = true;
 			if (userBadges.twoFiftyHundredGS === false) {
 				message = 'You have unlocked the 250k gamerscore badge!';
-				notifications.insert({userId: userBadges.userId, message: message, read: false});
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 			}
 		}
 		if (gamerscore >= 750000) {
 			setObject.sevenFiftyHundredGS = true;
 			if (userBadges.sevenFiftyHundredGS === false) {
 				message = 'You have unlocked the 750k gamerscore badge!';
-				notifications.insert({userId: userBadges.userId, message: message, read: false});
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 			}
 		}
 		if (gamerscore >= 999999) {
 			setObject.nineHundredGS = true;
 			if (userBadges.nineHundredGS === false) {
 				message = 'You have unlocked the 1mil - 1 gamerscore badge!';
-				notifications.insert({userId: userBadges.userId, message: message, read: false});
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 			}
 		}
 		xbdBadges.update({userId: userBadges.userId}, {$set: setObject}, function(err) {
@@ -110,28 +110,28 @@ var gameFunction = function(userBadges, cb) {
 			setObject.oneGame = true;
 			if (userBadges.oneGame === false) {
 				message = 'You have unlocked the one completed game badge!';
-				notifications.insert({userId: userBadges.userId, message: message, read: false});
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 			}
 		}
 		if (count >= 10) {
 			setObject.tenGame = true;
 			if (userBadges.tenGame === false) {
 				message = 'You have unlocked the ten completed games badge!';
-				notifications.insert({userId: userBadges.userId, message: message, read: false});
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 			}
 		}
 		if (count >= 100) {
 			setObject.oneHundredGame = true;
 			if (userBadges.oneHundredGame === false) {
 				message = 'You have unlocked the one hundred completed games badge!';
-				notifications.insert({userId: userBadges.userId, message: message, read: false});
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 			}
 		} 
 		if (count >= 1000) {
 			setObject.oneThousandGame = true;
 			if (userBadges.oneThousandGame === false) {
 				message = 'You have unlocked the one thousand completed games badge!';
-				notifications.insert({userId: userBadges.userId, message: message, read: false});
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 			}
 		}
 		xbdBadges.update({userId: userBadges.userId}, {$set: setObject}, function(err) {
@@ -160,7 +160,7 @@ var solutionExpertFunction = function(userBadges, cb) {
 					console.log(err);
 				}
 				var message = 'You have unlocked the solution expert badge!';
-				notifications.insert({userId: userBadges.userId, message: message, read: false});
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 				cb && cb();
 			});
 		} else {
@@ -183,7 +183,7 @@ var eagleScoutFunction = function(userBadges, cb) {
 			console.log(err);
 		}
 		var message = 'You have unlocked the eagle scout badge!';
-		notifications.insert({userId: userBadges.userId, message: message, read: false});
+		notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 		cb && cb();
 		return;
 	});
