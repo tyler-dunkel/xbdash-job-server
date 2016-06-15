@@ -119,26 +119,33 @@ var xboxApiObject = require('./xbox-api.js');
 var async = require('async');
 var createAndBuild = require('./leaderboards-api/create-and-build.js');
 var welcomeEmailSend = require('./mailer-welcome.js');
+var jobRunToCompleted = require('./settings-reset.js');
 var db = require('./db.js');
 
-var users = db.collection('users');
-var userId = 'jJACJFbadj7nKX2Di';
-createAndBuild(userId, function (err, res) {
-	if (err) {
-		console.log(err);
-		return;
-	}
-	console.log('done creating and building');
 
-	console.log('all profile build jobs are done');
-	welcomeEmailSend(userId, function (err, res) {
-		if (err) {
-			console.log('error sending welcome email');
-			return;
-		}
-		console.log('welcome email sent');
-	});
+jobRunToCompleted(function(err) {
+	console.log(err);
+	console.log('done');
 });
+
+// var users = db.collection('users');
+// var userId = 'jJACJFbadj7nKX2Di';
+// createAndBuild(userId, function (err, res) {
+// 	if (err) {
+// 		console.log(err);
+// 		return;
+// 	}
+// 	console.log('done creating and building');
+
+// 	console.log('all profile build jobs are done');
+// 	welcomeEmailSend(userId, function (err, res) {
+// 		if (err) {
+// 			console.log('error sending welcome email');
+// 			return;
+// 		}
+// 		console.log('welcome email sent');
+// 	});
+// });
 // users.findOne({_id: userId}, function(err, user) {
 // 	if (!user || !user.xuid) {
 // 		console.log('there is no xuid');

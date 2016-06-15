@@ -105,9 +105,7 @@ var dirtyUpdateUserStats = function(job, callback) {
 				if (!user || !user.gamercard) {
 					return;
 				}
-				users.update({_id: user._id}, {$set: {'gamertagScanned.status': 'updating'}}, function() {
-					q.push(user, function(err) {
-					});
+				q.push(user, function(err) {
 				});
 			});
 		});
