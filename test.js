@@ -114,19 +114,21 @@
 
 // migrate();
 
-var randomstring = require("randomstring");
-var xboxApiObject = require('./xbox-api.js');
-var async = require('async');
-var createAndBuild = require('./leaderboards-api/create-and-build.js');
-var updateBadges = require('./badge-api/badges.js');
-var welcomeEmailSend = require('./mailer-welcome.js');
-var db = require('./db.js');
+console.log(process.env.STATE);
 
-var users = db.collection('users');
-var userId = 'ApRaGbLEr7yob2TXB';
-xboxApiObject.updateScreenShots(userId, function(err) {
-	console.log('done');
-});
+// var randomstring = require("randomstring");
+// var xboxApiObject = require('./xbox-api.js');
+// var async = require('async');
+// var createAndBuild = require('./leaderboards-api/create-and-build.js');
+// var updateBadges = require('./badge-api/badges.js');
+// var welcomeEmailSend = require('./mailer-welcome.js');
+// var db = require('./db.js');
+
+// var users = db.collection('users');
+// var userId = 'ApRaGbLEr7yob2TXB';
+// xboxApiObject.updateScreenShots(userId, function(err) {
+// 	console.log('done');
+// });
 // createAndBuild(userId, function (err, res) {
 // 	if (err) {
 // 		console.log(err);

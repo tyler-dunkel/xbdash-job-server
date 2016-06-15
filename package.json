@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node jobs.js"
+    "test:dev": "STATE='dev' node test.js",
+    "start:dev": "STATE='dev' node jobs.js",
+    "start:prod": "STATE='prod' node jobs.js",
+    "test:prod": "STATE='prod' node test.js"
   },
   "keywords": [],
   "author": "",
