@@ -272,7 +272,7 @@ xboxApiObject.updateScreenShots = function(userId, callback) {
 				});
 			};
 			console.log(result);
-			async.eachSeries(result, processClip, function(err) {
+			async.eachSeries(result, processPicture, function(err) {
 				console.log('calling async series end callback');
 				callback();
 			});
