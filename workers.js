@@ -217,8 +217,9 @@ var clearDailyRanks = function (job, callback) {
 					console.log(err);
 				}
 				console.log('daily ranks cleared');
-				job.done("daily ranks clear is done");
-				callback && callback();
+				job.done && job.done({}, {}, function (err, res) {
+					callback && callback();
+				});
 			});
 	}
 }
