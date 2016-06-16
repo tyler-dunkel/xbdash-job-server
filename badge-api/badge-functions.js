@@ -126,6 +126,13 @@ var gameFunction = function(userBadges, cb) {
 				message = 'You have unlocked the one hundred completed games badge!';
 				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
 			}
+		}
+		if (count >= 500) {
+			setObject.fiveHundredGame = true;
+			if (userBadges.fiveHundredGame === false) {
+				message = 'You have unlocked the one hundred completed games badge!';
+				notifications.insert({userId: userBadges.userId, message: message, read: false, createdAt: new Date().getTime(), readAt: null});
+			}
 		} 
 		if (count >= 1000) {
 			setObject.oneThousandGame = true;
@@ -173,8 +180,10 @@ var eagleScoutFunction = function(userBadges, cb) {
 	for (var key in userBadges) {
 		if (userBadges.hasOwnProperty(key)) {
 			if (userBadges[key] === false) {
-				cb && cb();
-				return;
+				if (key !== 'eagleScout') {
+					cb && cb();
+					return;
+				}
 			} 
 		}
 	}
