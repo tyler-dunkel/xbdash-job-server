@@ -3,6 +3,7 @@ var xboxApiPrivate = require('./xbox-api-private.js');
 var async = require('async');
 var randomstring = require("randomstring");
 var db = require('./db.js');
+var updateBadges = require('./badge-api/badges.js');
 var slugifyGamertag = require('./gamertag-slugify.js');
 
 var xboxApiObject = xboxApiObject || {};
@@ -659,6 +660,14 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 								}
 								console.log('dirty x360 game ended');
 								cb && cb();
+							});
+						},
+						function(cb) {
+							updateBadges(userId, function(err, res) {
+								if (err) {
+									console.log('err updating badges');
+								}
+								cb();
 							});
 						}
 					], function(err) {

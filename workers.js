@@ -2,6 +2,7 @@ var randomstring = require("randomstring");
 var xboxApiObject = require('./xbox-api.js');
 var async = require('async');
 var createAndBuild = require('./leaderboards-api/create-and-build.js');
+var updateBadges = require('./badge-api/badges.js');
 var welcomeEmailSend = require('./mailer-welcome.js');
 var updateBadges = require('./badge-api/badges.js');
 var db = require('./db.js');
@@ -117,6 +118,14 @@ var profileBuilder = function (job, callback) {
 							console.log(err);
 						}
 						console.log('done with build leaderboard');
+						cb();
+					});
+				},
+				function (cb) {
+					updateBadges(userId, function(err, res) {
+						if (err) {
+							console.log('err updating badges');
+						}
 						cb();
 					});
 				},
