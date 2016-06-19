@@ -1,6 +1,7 @@
 var xboxApiCaller = require('./xbox-api-caller.js');
 var xboxApiPrivate = require('./xbox-api-private.js');
 var async = require('async');
+var randomstring = require("randomstring");
 var db = require('./db.js');
 var slugifyGamertag = require('./gamertag-slugify.js');
 
@@ -267,6 +268,7 @@ xboxApiObject.updateScreenShots = function(userId, callback) {
 			var screenShots = db.collection('screenshots');
 			var processPicture = function(screenShot, asyncCallback) {
 				screenShot.userId = userId;
+				var _id = randomstring.generate(17);
 				screenShots.update({userId: userId, screenShotId: screenShot.screenshotid}, screenShot, {upsert: true}, function() {
 					asyncCallback();
 				});
@@ -311,6 +313,7 @@ xboxApiObject.updateVideoClips = function(userId, callback) {
 			var gameClips = db.collection('gameclips');
 			var processClip = function(gameClip, asyncCallback) {
 				gameClip.userId = userId;
+				var _id = randomstring.generate(17);
 				gameClips.update({userId: userId, gameClipId: gameClip.gameClipId}, gameClip, {upsert: true}, function() {
 					asyncCallback();
 				});
@@ -353,7 +356,8 @@ xboxApiObject.updateRecentActivity = function(userId, callback) {
 				return;
 			}
 			var recentActivity = db.collection('recentactivity');
-			recentActivity.update({userId: userId}, {userId: userId, activityList: result}, {upsert: true}, function(err, result) {
+			var _id = randomstring.generate(17);
+			recentActivity.update({userId: userId}, {$set: {userId: userId, activityList: result}, $setOnInsert: { _id: _id }}, {upsert: true}, function(err, result) {
 				callback();
 			});
 		});
@@ -667,7 +671,7 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 						});
 					});
 				} else {
-					users.update({ _id: userId }, { $set: { 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
+					users.update({ _id: userId }, { $set: {'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
 							if (err) {
 								console.log(err);
 							}
