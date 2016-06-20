@@ -268,9 +268,9 @@ xboxApiObject.updateScreenShots = function(userId, callback) {
 			}
 			var screenShots = db.collection('screenshots');
 			var processPicture = function(screenShot, asyncCallback) {
-				screenShot.userId = userId;
+				var setObject = _.extend({userId: userId}, screenShot);
 				var _id = randomstring.generate(17);
-				screenShots.update({userId: userId, screenShotId: screenShot.screenshotid}, screenShot, {upsert: true}, function() {
+				screenShots.update({userId: userId, screenShotId: screenShot.screenshotid}, {$set: setObject, $setOnInsert: {_id: _id}}, {upsert: true}, function() {
 					asyncCallback();
 				});
 			};
@@ -313,9 +313,9 @@ xboxApiObject.updateVideoClips = function(userId, callback) {
 			}
 			var gameClips = db.collection('gameclips');
 			var processClip = function(gameClip, asyncCallback) {
-				gameClip.userId = userId;
 				var _id = randomstring.generate(17);
-				gameClips.update({userId: userId, gameClipId: gameClip.gameClipId}, gameClip, {upsert: true}, function() {
+				var setObject = _.extend({userId: userId}, gameClip);
+				gameClips.update({userId: userId, gameClipId: gameClip.gameClipId}, {$set: setObject, $setOnInsert: {_id: _id}}, {upsert: true}, function() {
 					asyncCallback();
 				});
 			};
