@@ -5,6 +5,7 @@ var randomstring = require("randomstring");
 var db = require('./db.js');
 var updateBadges = require('./badge-api/badges.js');
 var slugifyGamertag = require('./gamertag-slugify.js');
+var _ = require('underscore');
 
 var xboxApiObject = xboxApiObject || {};
 

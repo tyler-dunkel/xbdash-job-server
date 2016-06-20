@@ -24,6 +24,7 @@
     "mongojs": "^2.3.0",
     "nunjucks": "^2.3.0",
     "randomstring": "^1.1.4",
-    "transliteration": "^0.1.1"
+    "transliteration": "^0.1.1",
+    "underscore": "^1.8.3"
   }
 }
