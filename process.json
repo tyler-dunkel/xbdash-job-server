@@ -1,0 +1,9 @@
+{
+  "apps" : [{
+    "script"      : "jobs.js",
+    "watch"       : true,
+    "env": {
+      "STATE": "prod",
+    }
+  }]
+}
