@@ -271,7 +271,7 @@ xboxApiObject.updateScreenShots = function(userId, callback) {
 			var processPicture = function(screenShot, asyncCallback) {
 				var setObject = _.extend({userId: userId}, screenShot);
 				var _id = randomstring.generate(17);
-				screenShots.update({userId: userId, screenShotId: screenShot.screenshotid}, {$set: setObject, $setOnInsert: {_id: _id}}, {upsert: true}, function() {
+				screenShots.update({userId: userId, screenshotId: screenShot.screenshotId}, {$set: setObject, $setOnInsert: {_id: _id}}, {upsert: true}, function() {
 					asyncCallback();
 				});
 			};
