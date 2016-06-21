@@ -123,27 +123,37 @@ var createAndBuild = require('./leaderboards-api/create-and-build.js');
 var updateBadges = require('./badge-api/badges.js');
 var welcomeEmailSend = require('./mailer-welcome.js');
 var jobRunToCompleted = require('./settings-reset.js');
+var insertNotification = require('./insert-notification');
+var _ = require('underscore');
 var db = require('./db.js');
 
-var users = db.collection('users');
-// var userId = 'NtomS99vemnKBcxiM';
-
-users.find({'gamertagScanned.status': 'true', gamertagSlug: {$exists: 0}}, function(err, docs) {
-	if (docs) {
-		var processUser = function(user, cb) {
-			xboxApiObject.updateGamercard("5u9MxfAgqYSwggZXK", function(err) {
-				if (err) {
-					console.log(err);
-				}
-				cb();
-			});
-			console.log(user);
-		}
-		async.eachSeries(docs, processUser, function(err) {
-			console.log('done');
-		});
-	}
-});
+var notifications = db.collection('notifications');
+ var userId = '8dg6LAYFRGmArFmYG';
+ var msg = 'test';
+insertNotification(userId, msg);
+// notifications.find({}, function(err, docs) {
+// 	if (docs) {
+// 		var processUser = function(user, cb) {
+// 			var temp = _.omit(user, '_id');
+// 			var _id = randomstring.generate(17);
+// 			var newObj = _.extend(temp, {_id: _id});
+// 			notifications.insert(newObj);
+// 			notifications.remove({_id: user._id}, {}, function(err) {
+// 				cb();
+// 			});
+// 			// xboxApiObject.updateGamercard("5u9MxfAgqYSwggZXK", function(err) {
+// 			// 	if (err) {
+// 			// 		console.log(err);
+// 			// 	}
+// 			// 	cb();
+// 			// });
+// 			// console.log(user);
+// 		}
+// 		async.eachSeries(docs, processUser, function(err) {
+// 			console.log('done');
+// 		});
+// 	}
+// });
 // xboxApiObject.updateScreenShots(userId, function(err) {
 // 	console.log('done');
 // });
