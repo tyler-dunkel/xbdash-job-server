@@ -122,6 +122,7 @@ var async = require('async');
 var createAndBuild = require('./leaderboards-api/create-and-build.js');
 var updateBadges = require('./badge-api/badges.js');
 var welcomeEmailSend = require('./mailer-welcome.js');
+var jobRunToCompleted = require('./settings-reset.js');
 var db = require('./db.js');
 
 var users = db.collection('users');
