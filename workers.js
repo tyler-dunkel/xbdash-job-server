@@ -4,7 +4,6 @@ var async = require('async');
 var createAndBuild = require('./leaderboards-api/create-and-build.js');
 var updateBadges = require('./badge-api/badges.js');
 var welcomeEmailSend = require('./mailer-welcome.js');
-var updateBadges = require('./badge-api/badges.js');
 var db = require('./db.js');
 
 var profileBuilder = function (job, callback) {
