@@ -582,116 +582,109 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 			console.log('api has been hit in dirty');
 			if (result && result.gamerscore) {
 				console.log('dirty function has gotten a gamerscore from the api');
-				if (user.gamercard.gamerscore < result.gamerscore) {
-					console.log('the gamerscore on record is lower than on the api');
-					async.series([
-						function(cb) {
-							xboxApiObject.updateGamercard(userId, function(err, res) {
-								if (err) {
-									console.log('error with update gamercard');
-									cb();
-									return;
-								}
-								cb && cb();
-							});
-						},
-						function(cb) {
-							xboxApiObject.updateXboxProfile(userId, function(err, res) {
-								if (err) {
-									console.log('error with update gamercard');
-									cb();
-									return;
-								}
-								cb && cb();
-							});
-						},
-						function(cb) {
-							xboxApiObject.updateXboxPresence(userId, function(err, res) {
-								if (err) {
-									console.log('error with update gamercard');
-									cb();
-									return;
-								}
-								cb && cb();
-							});
-						},
-						function(cb) {
-							xboxApiObject.updateRecentActivity(userId, function(err, res) {
-								if (err) {
-									console.log('error with update gamercard');
-									cb();
-									return;
-								}
-								cb && cb();
-							});
-						},
-						function(cb) {
-							xboxApiObject.updateVideoClips(userId, function(err, res) {
-								if (err) {
-									console.log('error with update gamercard');
-									cb();
-									return;
-								}
-								cb && cb();
-							});
-						},
-						function(cb) {
-							xboxApiObject.updateScreenShots(userId, function(err, res) {
-								if (err) {
-									console.log('error with update gamercard');
-									cb();
-									return;
-								}
-								cb && cb();
-							});
-						},
-						function(cb) {
-							xboxApiPrivate._dirtyCheckXboxOneGames(user, function(err, result) {
-								if (err) {
-									console.log(err);
-								}
-								console.log('dirty x1 game ended');
-								cb && cb();
-							});
-						},
-						function(cb) {
-							xboxApiPrivate._dirtyCheckXbox360Games(user, function(err, result) {
-								if (err) {
-									console.log(err);
-								}
-								console.log('dirty x360 game ended');
-								cb && cb();
-							});
-						},
-						function(cb) {
-							updateBadges(userId, function(err, res) {
-								if (err) {
-									console.log('err updating badges');
-								}
+				async.series([
+					function(cb) {
+						xboxApiObject.updateGamercard(userId, function(err, res) {
+							if (err) {
+								console.log('error with update gamercard');
 								cb();
-							});
+								return;
+							}
+							cb && cb();
+						});
+					},
+					function(cb) {
+						xboxApiObject.updateXboxProfile(userId, function(err, res) {
+							if (err) {
+								console.log('error with update gamercard');
+								cb();
+								return;
+							}
+							cb && cb();
+						});
+					},
+					function(cb) {
+						xboxApiObject.updateXboxPresence(userId, function(err, res) {
+							if (err) {
+								console.log('error with update gamercard');
+								cb();
+								return;
+							}
+							cb && cb();
+						});
+					},
+					function(cb) {
+						xboxApiObject.updateRecentActivity(userId, function(err, res) {
+							if (err) {
+								console.log('error with update gamercard');
+								cb();
+								return;
+							}
+							cb && cb();
+						});
+					},
+					function(cb) {
+						xboxApiObject.updateVideoClips(userId, function(err, res) {
+							if (err) {
+								console.log('error with update gamercard');
+								cb();
+								return;
+							}
+							cb && cb();
+						});
+					},
+					function(cb) {
+						xboxApiObject.updateScreenShots(userId, function(err, res) {
+							if (err) {
+								console.log('error with update gamercard');
+								cb();
+								return;
+							}
+							cb && cb();
+						});
+					},
+					function(cb) {
+						xboxApiPrivate._dirtyCheckXboxOneGames(user, function(err, result) {
+							if (err) {
+								console.log(err);
+							}
+							console.log('dirty x1 game ended');
+							cb && cb();
+						});
+					},
+					function(cb) {
+						xboxApiPrivate._dirtyCheckXbox360Games(user, function(err, result) {
+							if (err) {
+								console.log(err);
+							}
+							console.log('dirty x360 game ended');
+							cb && cb();
+						});
+					},
+					function(cb) {
+						updateBadges(userId, function(err, res) {
+							if (err) {
+								console.log('err updating badges');
+							}
+							cb();
+						});
+					}
+				], function(err) {
+					users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
+						if (err) {
+							console.log(err);
 						}
-					], function(err) {
-						users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
-							if (err) {
-								console.log(err);
-							}
-							console.log('dirty user update stats done');
-							callback && callback();
-						});
+						console.log('dirty user update stats done');
+						callback && callback();
 					});
-				} else {
-					users.update({ _id: userId }, { $set: {'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
+				});
+			} else {
+				users.update({ _id: userId }, { $set: {'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
 							if (err) {
 								console.log(err);
 							}
-							console.log('no dirty update needed');
-							callback && callback();
-						});
-					return;
-				}
-			} else {
 				callback({ reason: 'no result gamerscore from the api' }, null);
+				});
 			}
 		});
 	});
