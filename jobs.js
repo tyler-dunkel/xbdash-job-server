@@ -75,7 +75,7 @@ ddp.connect(function (err, wasReconnect) {
 
 		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
 			.priority('normal')
-			.repeat()
+			.repeat({repeats: Job.forever})
 			.save(function (err, result) {
 				if (err) return;
 				if (!err && result) {
