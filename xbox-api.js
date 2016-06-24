@@ -261,7 +261,6 @@ xboxApiObject.updateScreenShots = function(userId, callback) {
 		var url = user.xuid + '/screenshots';
 
 		xboxApiCaller(url, function(err, result) {
-			console.log(result);
 			if (!result || !result[0] || !result[0].state) {
 				console.log(result);
 				callback('no result from xbox api', null);

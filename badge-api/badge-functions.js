@@ -7,10 +7,8 @@ var notifications = db.collection('notifications');
 var comments = db.collection('comments');
 
 var gamerscoreFunction = function(userBadges, cb) {
-	console.log(userBadges.userId);
 	var message = '';
 	users.findOne({_id: userBadges.userId}, function(err, user) {
-		console.log(user);
 		if (!user || !user.gamercard || !user.gamercard.gamerscore) {
 			cb && cb();
 			return;
