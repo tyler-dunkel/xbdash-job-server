@@ -468,7 +468,6 @@ xboxApiObject.updateGamercard = function(userId, callback) {
 			callback({ reason: 'db find error', data: err }, null);
 			return;
 		}
-		console.log(user);
 		if (!user || !user.xuid) {
 			console.log(user);
 			console.log('user is null: ' + user);
