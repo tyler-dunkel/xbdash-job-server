@@ -275,7 +275,6 @@ xboxApiObject.updateScreenShots = function(userId, callback) {
 					asyncCallback();
 				});
 			};
-			console.log(result);
 			async.eachSeries(result, processPicture, function(err) {
 				console.log('calling async series end callback');
 				callback();
@@ -320,7 +319,6 @@ xboxApiObject.updateVideoClips = function(userId, callback) {
 					asyncCallback();
 				});
 			};
-			console.log(result);
 			async.eachSeries(result, processClip, function(err) {
 				console.log('calling async series end callback');
 				callback();
@@ -351,7 +349,6 @@ xboxApiObject.updateRecentActivity = function(userId, callback) {
 
 		var url = user.xuid + '/activity/recent';
 		xboxApiCaller(url, function(err, result) {
-			console.log(result);
 			if (!result || !result[0] || !result[0].startTime) {
 				console.log('got here');
 				callback('no result from xbox api', null);
@@ -388,7 +385,6 @@ xboxApiObject.updateXboxPresence = function(userId, callback) {
 		var url = user.xuid + '/presence';
 
 		xboxApiCaller(url, function(err, result) {
-			console.log(result);
 			if (!result || !result.state) {
 				console.log(result);
 				console.log(err);
@@ -680,6 +676,7 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 						});
 					});
 				} else {
+					console.log('no dirty update needed');
 					users.update({ _id: userId }, { $set: {'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
 						if (err) {
 							console.log(err);
