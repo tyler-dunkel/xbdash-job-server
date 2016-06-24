@@ -681,10 +681,10 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 					});
 				} else {
 					users.update({ _id: userId }, { $set: {'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
-								if (err) {
-									console.log(err);
-								}
-					callback({ reason: 'no result gamerscore from the api' }, null);
+						if (err) {
+							console.log(err);
+						}
+						callback();
 					});
 				}
 			}
