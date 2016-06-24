@@ -687,6 +687,8 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 						callback();
 					});
 				}
+			} else {
+				cb('no result from api', null);
 			}
 		});
 	});
