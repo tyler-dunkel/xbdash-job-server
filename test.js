@@ -128,9 +128,14 @@ var _ = require('underscore');
 var db = require('./db.js');
 
 var notifications = db.collection('notifications');
- var userId = '8dg6LAYFRGmArFmYG';
- var msg = 'test';
-insertNotification(userId, msg);
+var userId = 'numKGua7JywHbnPBS';
+// var msg = 'testing message';
+// insertNotification(userId, msg);
+
+xboxApiObject.updateVideoClips(userId, function(err) {
+	console.log('done');
+});
+
 // notifications.find({}, function(err, docs) {
 // 	if (docs) {
 // 		var processUser = function(user, cb) {
