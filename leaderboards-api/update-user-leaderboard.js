@@ -1,5 +1,5 @@
 var async = require('async');
-var dailyCount = require('./daily-count.js');
+var timeFrameCounts = require('./timeframe-counts.js');
 var completedGameCount = require('./count-completed-games.js');
 var countFunctions = require('./count-functions.js');
 var updateRanks = require('./rank-functions.js');
@@ -28,7 +28,17 @@ module.exports = function(user, topCallback) {
 					function(cb) {
 						async.parallel([
 							function(callback) {
-								dailyCount(user, function() {
+								timeFrameCounts.dailyCount(user, function() {
+									callback();
+								});
+							},
+							function(callback) {
+								timeFrameCounts.weeklyCount(user, function() {
+									callback();
+								});
+							},
+							function(callback) {
+								timeFrameCounts.monthlyCount(user, function() {
 									callback();
 								});
 							},
@@ -73,6 +83,36 @@ module.exports = function(user, topCallback) {
 							},
 							function(callback) {
 								updateRanks.dailyRank(function() {
+									//console.log('daily callback fired');
+									callback();
+								});
+							},
+							function(callback) {
+								updateRanks.dailyAchievementRank(function() {
+									//console.log('daily callback fired');
+									callback();
+								});
+							},
+							function(callback) {
+								updateRanks.weeklyRank(function() {
+									//console.log('daily callback fired');
+									callback();
+								});
+							},
+							function(callback) {
+								updateRanks.weeklyAchievementRank(function() {
+									//console.log('daily callback fired');
+									callback();
+								});
+							},
+							function(callback) {
+								updateRanks.monthlyRank(function() {
+									//console.log('daily callback fired');
+									callback();
+								});
+							},
+							function(callback) {
+								updateRanks.monthlyAchievementRank(function() {
 									//console.log('daily callback fired');
 									callback();
 								});

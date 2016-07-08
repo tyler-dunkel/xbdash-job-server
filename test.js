@@ -127,14 +127,37 @@ var insertNotification = require('./insert-notification');
 var _ = require('underscore');
 var db = require('./db.js');
 
-var notifications = db.collection('notifications');
+var contests = db.collection('xbdcontests');
 var userId = 'numKGua7JywHbnPBS';
 // var msg = 'testing message';
 // insertNotification(userId, msg);
 
-xboxApiObject.updateVideoClips(userId, function(err) {
-	console.log('done');
-});
+var id = randomstring.generate(17);
+var obj = {
+	"_id": id,
+    "status" : "waiting",
+    "rules" : [ 
+        "<strong><em>Get an extra entry</em></strong> into this month's contest for each friend you invite that signs up through your link below.", 
+        "Only <strong><em>verified emails qualify</em></strong> as an entry to this contest.", 
+        "1 grand prize winner will receive a customized controller to their liking with engraving. New Xbox Design Lab controllers ship in September."
+    ],
+    "prizes" : [ 
+        {
+            "title" : "Customized Design Xbox One Controller (by the Xbox&reg; Design Lab)",
+            "imageUrl" : "http://res.cloudinary.com/xbdash/image/upload/v1467373849/contests/new-controller-banner.jpg",
+            "isPremium" : false
+        }
+    ],
+    "contestToken" : "julyDirect",
+    "entries" : [],
+    "startDate" : new Date(),
+    "endDate" : new Date('2016-08-01T03:59:59.000Z'),
+    "awardDate" : new Date('2016-08-01T16:00:00.000Z'),
+    "title" : "July 2016 Custom Xbox&reg; One Controller Contest",
+    "description" : "Xbox&reg; recently released their Xbox&reg; Design Lab! With the Design Lab, you can personalize your controller and they ship in mid-September if orders are placed before the end of August. Get a chance to win a controller of your design courtesy of XBdash!"
+}
+
+contests.insert(obj);
 
 // notifications.find({}, function(err, docs) {
 // 	if (docs) {

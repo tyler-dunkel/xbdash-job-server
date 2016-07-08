@@ -44,6 +44,111 @@ module.exports = {
 			});
 		});
 	},
+	dailyAchievementRank: function(callback) {
+		var rank = 0;
+		var userLeaderboards = db.collection('userleaderboards');
+
+		userLeaderboards.find({ 'dailyAchievementRank.value': { $gte: 1 } }).sort({ 'dailyAchievementRank.value': -1 }).forEach(function(err, userStat) { 
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			//console.log('daily rank is ' + rank);
+			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'dailyAchievementRank.rank': rank } }, function() {
+				//console.log('daily rank update fired');
+			});
+		});
+	},
+	weeklyRank: function(callback) {
+		var rank = 0;
+		var userLeaderboards = db.collection('userleaderboards');
+
+		userLeaderboards.find({ 'weeklyRank.value': { $gte: 1 } }).sort({ 'weeklyRank.value': -1 }).forEach(function(err, userStat) { 
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			//console.log('daily rank is ' + rank);
+			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'weeklyRank.rank': rank } }, function() {
+				//console.log('daily rank update fired');
+			});
+		});
+	},
+	weeklyAchievementRank: function(callback) {
+		var rank = 0;
+		var userLeaderboards = db.collection('userleaderboards');
+
+		userLeaderboards.find({ 'weeklyAchievementRank.value': { $gte: 1 } }).sort({ 'weeklyAchievementRank.value': -1 }).forEach(function(err, userStat) { 
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			//console.log('daily rank is ' + rank);
+			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'weeklyAchievementRank.rank': rank } }, function() {
+				//console.log('daily rank update fired');
+			});
+		});
+	},
+	monthlyRank: function(callback) {
+		var rank = 0;
+		var userLeaderboards = db.collection('userleaderboards');
+
+		userLeaderboards.find({ 'monthlyRank.value': { $gte: 1 } }).sort({ 'monthlyRank.value': -1 }).forEach(function(err, userStat) { 
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			//console.log('daily rank is ' + rank);
+			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'monthlyRank.rank': rank } }, function() {
+				//console.log('daily rank update fired');
+			});
+		});
+	},
+	monthlyAchievementRank: function(callback) {
+		var rank = 0;
+		var userLeaderboards = db.collection('userleaderboards');
+
+		userLeaderboards.find({ 'monthlyAchievementRank.value': { $gte: 1 } }).sort({ 'monthlyAchievementRank.value': -1 }).forEach(function(err, userStat) { 
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			//console.log('daily rank is ' + rank);
+			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'monthlyAchievementRank.rank': rank } }, function() {
+				//console.log('daily rank update fired');
+			});
+		});
+	},
 	completedGamesRank: function(callback) {
 		var rank = 0;
 		var userLeaderboards = db.collection('userleaderboards');
