@@ -8,7 +8,6 @@ var db = require('../db.js');
 module.exports = function(user, topCallback) {
 	var userLeaderboards = db.collection('userleaderboards');
 	var userAchievements = db.collection('userachievements');
-
 	userLeaderboards.find({ userId: user._id }, function(err, userStat) {
 		if (err) {
 			topCallback({ reason: 'error retrieving user stats', data: err }, null);
@@ -20,6 +19,7 @@ module.exports = function(user, topCallback) {
 		}
 		userAchievements.count({ userId: user._id }, function(err, achiCount) {
 			if (err || achiCount < 1) {
+				console.log(achiCount);
 				console.log('user does not have any achievements ' + user._id);
 				topCallback && topCallback();
 				return;
@@ -28,11 +28,13 @@ module.exports = function(user, topCallback) {
 					function(cb) {
 						async.parallel([
 							function(callback) {
+								console.log('daily count');
 								timeFrameCounts.dailyCount(user, function() {
 									callback();
 								});
 							},
 							function(callback) {
+								console.log('weekly count');
 								timeFrameCounts.weeklyCount(user, function() {
 									callback();
 								});

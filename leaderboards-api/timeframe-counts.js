@@ -68,7 +68,6 @@ var weeklyCount = function (user, callback) {
 		oneWeek = moment().startOf('week').toDate(),
 		userAchievements = db.collection('userachievements'),
 		xbdAchievements = db.collection('xbdachievements');
-
 	userAchievements.count({
 		userId: user._id,
 		progressState: true,
@@ -103,7 +102,7 @@ var weeklyCount = function (user, callback) {
 					xbdAchievements.findOne({
 						_id: userAchi.achievementId
 					}, function (err, doc) {
-						userDailyGamerscore += doc.value;
+						userWeeklyGamerscore += doc.value;
 						if (index === array.length - 1) {
 							userLeaderboards.update({
 								userId: user._id
@@ -129,7 +128,6 @@ var monthlyCount = function (user, callback) {
 		oneMonth = moment().startOf('month').toDate(),
 		userAchievements = db.collection('userachievements'),
 		xbdAchievements = db.collection('xbdachievements');
-
 	userAchievements.count({
 		userId: user._id,
 		progressState: true,
@@ -164,7 +162,7 @@ var monthlyCount = function (user, callback) {
 					xbdAchievements.findOne({
 						_id: userAchi.achievementId
 					}, function (err, doc) {
-						userDailyGamerscore += doc.value;
+						userMonthlyGamerscore += doc.value;
 						if (index === array.length - 1) {
 							userLeaderboards.update({
 								userId: user._id
