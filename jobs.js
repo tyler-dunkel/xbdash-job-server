@@ -45,10 +45,30 @@ ddp.connect(function (err, wasReconnect) {
 		console.log('connection reestablished');
 		jobRunToCompleted(function(err, res) {
 			if (err) {
-				console.log('error sending welcome email');
+				console.log('error clearing jobs');
 				return;
 			}
-			console.log('all jobs and users set back to default');
+			var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
+			.priority('normal')
+			.repeat({repeats: Job.forever})
+			.save(function (err, result) {
+				if (err) return;
+				if (!err && result) {
+					console.log('dirty user stats job saved with ID: ' + result);
+				}
+			});
+
+			var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
+			.priority('normal')
+			.repeat({
+				schedule: later.parse.text('at 12:15am')
+			})
+			.save(function (err, result) {
+				if (err) return;
+				if (!err && result) {
+					console.log('clear daily ranks job saved with ID: ' + result);
+				}
+			});
 		});
 	}
 	DDPlogin(ddp, {
@@ -70,10 +90,7 @@ ddp.connect(function (err, wasReconnect) {
 				console.log('error sending welcome email');
 				return;
 			}
-			console.log('all jobs and users set back to default');
-		});
-
-		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
+			var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
 			.priority('normal')
 			.repeat({repeats: Job.forever})
 			.save(function (err, result) {
@@ -83,17 +100,18 @@ ddp.connect(function (err, wasReconnect) {
 				}
 			});
 
-		var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
-			.priority('normal')
-			.repeat({
-				schedule: later.parse.text('at 12:15am')
-			})
-			.save(function (err, result) {
-				if (err) return;
-				if (!err && result) {
-					console.log('clear daily ranks job saved with ID: ' + result);
-				}
-			});
+			var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
+				.priority('normal')
+				.repeat({
+					schedule: later.parse.text('at 12:15am')
+				})
+				.save(function (err, result) {
+					if (err) return;
+					if (!err && result) {
+						console.log('clear daily ranks job saved with ID: ' + result);
+					}
+				});
+		});
 
 		var profileBuilderWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
 		var dirtyUpdateUserStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', { workTimeout: 600000 }, workers.dirtyUpdateUserStats);

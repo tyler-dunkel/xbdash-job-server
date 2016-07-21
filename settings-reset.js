@@ -29,6 +29,11 @@ var jobRunToCompleted = function(callback) {
 					console.log('updated gamertag status to true');
 					cb && cb();
 				});
+		},
+		function(cb) {
+			jobsCollection.remove({type: 'clearDailyRanksJob'}, function() {
+				cb && cb();
+			});
 		}
 	], function(err, res){
 		callback && callback();
