@@ -7,6 +7,7 @@ var dailyCount = function (user, callback) {
 	var oneDay = moment().startOf('day').toDate();
 	var userAchievements = db.collection('userachievements');
 	var xbdAchievements = db.collection('xbdachievements');
+	var userContestEntries = db.collection('usercontestentries');
 
 	userAchievements.count({
 		userId: user._id,
@@ -28,7 +29,14 @@ var dailyCount = function (user, callback) {
 					'dailyAchievementRank.value': 0
 				}
 			}, function (err) {
-				callback && callback();
+				userContestEntries.update({ userId: user._id, contentType: 'dailyAchievement', status: 'active'}, 
+					{$set: {
+						'value': 0,
+						'rank': 0
+						}
+					}, function(err) {
+					callback && callback();
+				});
 			});
 		} else {
 			userAchievements.find({
@@ -52,7 +60,11 @@ var dailyCount = function (user, callback) {
 									'dailyAchievementRank.value': userAchiCount
 								}
 							}, function (err) {
-								callback && callback();
+								userContestEntries.update({
+									userId: user._id, contestType: 'dailyAchievement', status: 'active'
+								}, {$set: {value: userDailyGamerscore}}, function(err) {	
+									callback && callback();
+								});
 							});
 						}
 					});
@@ -67,6 +79,7 @@ var weeklyCount = function (user, callback) {
 		userLeaderboards = db.collection('userleaderboards'),
 		oneWeek = moment().startOf('week').toDate(),
 		userAchievements = db.collection('userachievements'),
+		userContestEntries = db.collection('usercontestentries'),
 		xbdAchievements = db.collection('xbdachievements');
 	userAchievements.count({
 		userId: user._id,
@@ -88,7 +101,11 @@ var weeklyCount = function (user, callback) {
 					'weeklyAcheivementRank.value': 0
 				}
 			}, function (err) {
-				callback && callback();
+				userContestEntries.update({userId: user._id, contestType: 'weeklyAchievement', status: 'active'}, {
+					$set: {'rank': 0, 'value': 0}
+				}, function(err) {
+					callback && callback();
+				});
 			});
 		} else {
 			userAchievements.find({
@@ -112,7 +129,11 @@ var weeklyCount = function (user, callback) {
 									'weeklyAcheivementRank.value': userAchiCount
 								}
 							}, function (err) {
-								callback && callback();
+								userContestEntries.update({userId: user._id, contestType: 'weeklyAchievement', status: 'active'}, {
+									$set: {'value': userWeeklyGamerscore}
+								}, function(err) {
+									callback && callback();
+								});
 							});
 						}
 					});
@@ -126,6 +147,7 @@ var monthlyCount = function (user, callback) {
 	var userMonthlyGamerscore = 0,
 		userLeaderboards = db.collection('userleaderboards'),
 		oneMonth = moment().startOf('month').toDate(),
+		userContestEntries = db.collection('usercontestentries'),
 		userAchievements = db.collection('userachievements'),
 		xbdAchievements = db.collection('xbdachievements');
 	userAchievements.count({
@@ -148,7 +170,11 @@ var monthlyCount = function (user, callback) {
 					'monthlyAchievementRank.value': 0
 				}
 			}, function (err) {
-				callback && callback();
+				userContestEntries.update({userId: user._id, contestType: 'monthlyAchievement', status: 'active'}, {
+					$set: {rank: 0, value: 0}
+				}, function(err) {
+					callback && callback();
+				});
 			});
 		} else {
 			userAchievements.find({
@@ -172,7 +198,11 @@ var monthlyCount = function (user, callback) {
 									'monthlyAchievementRank.value': userAchiCount
 								}
 							}, function (err) {
-								callback && callback();
+								userContestEntries.update({userId: user._id, contestType: 'monthlyAchievement', status: 'active'}, {
+									$set: {rank: 0, value: 0}
+								}, function(err) {
+									callback && callback();
+								});
 							});
 						}
 					});

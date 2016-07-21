@@ -44,6 +44,26 @@ module.exports = {
 			});
 		});
 	},
+	dailyContestRank: function(callback) {
+		var rank = 0,
+		userContestEntries = db.collection('usercontestentries');
+
+		userContestEntries.find({contestType: 'dailyAchievement', status: 'active', value: {$gte: 1}}).sort({value: -1}).forEach(function(err, contestEntry) {
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			userContestEntries.update({_id: contestEntry._id}, {$set: {rank: rank}}, function() {
+
+			});
+		});
+	},
 	dailyAchievementRank: function(callback) {
 		var rank = 0;
 		var userLeaderboards = db.collection('userleaderboards');
@@ -83,6 +103,26 @@ module.exports = {
 			//console.log('daily rank is ' + rank);
 			userLeaderboards.update({ userId: userStat.userId }, { $set: { 'weeklyRank.rank': rank } }, function() {
 				//console.log('daily rank update fired');
+			});
+		});
+	},
+	weeklyContestRank: function(callback) {
+		var rank = 0,
+		userContestEntries = db.collection('usercontestentries');
+
+		userContestEntries.find({contestType: 'weeklyAchievement', status: 'active', value: {$gte: 1}}).sort({value: -1}).forEach(function(err, contestEntry) {
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			userContestEntries.update({_id: contestEntry._id}, {$set: {rank: rank}}, function() {
+
 			});
 		});
 	},
@@ -128,6 +168,26 @@ module.exports = {
 			});
 		});
 	},
+	monthlyContestRank: function(callback) {
+		var rank = 0,
+		userContestEntries = db.collection('usercontestentries');
+
+		userContestEntries.find({contestType: 'monthlyAchievement', status: 'active', value: {$gte: 1}}).sort({value: -1}).forEach(function(err, contestEntry) {
+			if (err) {
+				console.log(err);
+				callback && callback();
+				return;
+			}
+			if (!userStat) {
+				callback && callback();
+				return;
+			}
+			rank++;
+			userContestEntries.update({_id: contestEntry._id}, {$set: {rank: rank}}, function() {
+
+			});
+		});
+	}
 	monthlyAchievementRank: function(callback) {
 		var rank = 0;
 		var userLeaderboards = db.collection('userleaderboards');
