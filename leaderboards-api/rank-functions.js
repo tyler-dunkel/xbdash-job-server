@@ -187,7 +187,7 @@ module.exports = {
 
 			});
 		});
-	}
+	},
 	monthlyAchievementRank: function(callback) {
 		var rank = 0;
 		var userLeaderboards = db.collection('userleaderboards');
