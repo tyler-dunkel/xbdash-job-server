@@ -31,7 +31,7 @@ var jobRunToCompleted = function(callback) {
 				});
 		},
 		function(cb) {
-			jobsCollection.remove({type: 'clearDailyRanksJob'}, function() {
+			jobsCollection.remove({type: 'clearDailyRanksJob', status: 'waiting'}, function() {
 				cb && cb();
 			});
 		}

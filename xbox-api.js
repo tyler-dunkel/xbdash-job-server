@@ -114,7 +114,7 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 				});
 			}
 
-			var q = async.queue(processGame, 2);
+			var q = async.queue(processGame, 1);
 
 			data.titles.forEach(function(game) {
 				q.push(game, function(err) {
@@ -223,7 +223,7 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 				});
 			}
 
-			var q = async.queue(processGame, 2);
+			var q = async.queue(processGame, 1);
 
 			data.titles.forEach(function(game) {
 				q.push(game, function(err) {
