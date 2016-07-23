@@ -70,7 +70,7 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 								cb && cb();
 								return;
 							}
-							userPercentageFunc(doc._id, function(err) {
+							userPercentageFunc(doc, function(err) {
 								if (err) {
 									cb && cb();
 								}
@@ -296,7 +296,7 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 								return;
 							}
 							console.log('acheivement has been inserted');
-							userPercentageFunc(doc._id, function(err) {
+							userPercentageFunc(doc, function(err) {
 								cb && cb();
 							});
 						});
