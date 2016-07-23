@@ -86,7 +86,7 @@ ddp.connect(function (err, wasReconnect) {
 		var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
 			.priority('normal')
 			.repeat({
-				schedule: later.parse.text('at 12:15 am starting on the 25th day of May in 2016')
+				schedule: later.parse.text('at 00:15 am')
 			})
 			.save(function (err, result) {
 				if (err) return;
