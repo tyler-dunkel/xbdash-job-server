@@ -92,7 +92,7 @@ var gamerscoreFunction = function(userBadges, cb) {
 var gameFunction = function(userBadges, cb) {
 	userGames.count({userId: userBadges.userId, completed: true}, function(err, count) {
 		if (!count) {
-			console.log('no count');
+			console.log('the user: ' + userBadges.userId + ' has no completed games');
 			cb && cb();
 			return;
 		}

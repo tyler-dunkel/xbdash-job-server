@@ -4,6 +4,7 @@ var async = require('async');
 var createAndBuild = require('./leaderboards-api/create-and-build.js');
 var updateBadges = require('./badge-api/badges.js');
 var welcomeEmailSend = require('./mailer-welcome.js');
+var moment = require('moment');
 var db = require('./db.js');
 
 var profileBuilder = function (job, callback) {
@@ -141,6 +142,7 @@ var profileBuilder = function (job, callback) {
 					if (err) {
 						console.log('error in ending job');
 					}
+					console.log('user: ' + userId + 'finished building at: ' + moment.format('dddd, MMMM Do YYYY, h:mm:ss a'));
 					callback();
 				});
 			});

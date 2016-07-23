@@ -29,10 +29,10 @@ var dailyCount = function (user, callback) {
 					'dailyAchievementRank.value': 0
 				}
 			}, function (err) {
-				userContestEntries.update({ userId: user._id, contentType: 'dailyAchievement', status: 'active'}, 
+				userContestEntries.update({ userId: user._id, contestType: 'dailyAchievement', status: 'active'}, 
 					{$set: {
-						'value': 0,
-						'rank': 0
+						'data.value': 0,
+						'data.rank': 0
 						}
 					}, function(err) {
 					callback && callback();
@@ -62,7 +62,7 @@ var dailyCount = function (user, callback) {
 							}, function (err) {
 								userContestEntries.update({
 									userId: user._id, contestType: 'dailyAchievement', status: 'active'
-								}, {$set: {value: userDailyGamerscore}}, function(err) {	
+								}, {$set: {'data.value': userDailyGamerscore}}, function(err) {	
 									callback && callback();
 								});
 							});
@@ -102,7 +102,7 @@ var weeklyCount = function (user, callback) {
 				}
 			}, function (err) {
 				userContestEntries.update({userId: user._id, contestType: 'weeklyAchievement', status: 'active'}, {
-					$set: {'rank': 0, 'value': 0}
+					$set: {'data.rank': 0, 'data.value': 0}
 				}, function(err) {
 					callback && callback();
 				});
@@ -130,7 +130,7 @@ var weeklyCount = function (user, callback) {
 								}
 							}, function (err) {
 								userContestEntries.update({userId: user._id, contestType: 'weeklyAchievement', status: 'active'}, {
-									$set: {'value': userWeeklyGamerscore}
+									$set: {'data.value': userWeeklyGamerscore}
 								}, function(err) {
 									callback && callback();
 								});
@@ -171,7 +171,7 @@ var monthlyCount = function (user, callback) {
 				}
 			}, function (err) {
 				userContestEntries.update({userId: user._id, contestType: 'monthlyAchievement', status: 'active'}, {
-					$set: {rank: 0, value: 0}
+					$set: {'data.rank': 0, 'data.value': 0}
 				}, function(err) {
 					callback && callback();
 				});
@@ -199,7 +199,7 @@ var monthlyCount = function (user, callback) {
 								}
 							}, function (err) {
 								userContestEntries.update({userId: user._id, contestType: 'monthlyAchievement', status: 'active'}, {
-									$set: {rank: 0, value: 0}
+									$set: {'data.value': userMonthlyGamerscore}
 								}, function(err) {
 									callback && callback();
 								});
