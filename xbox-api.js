@@ -486,7 +486,7 @@ xboxApiObject.updateGamercard = function(userId, callback) {
 				return;
 			}
 
-			users.update({ _id: userId }, { $set: {'gamertagScanned.status': 'updating', gamercard: result } }, function(err, res) {
+			users.update({ _id: userId }, { $set: { gamercard: result } }, function(err, res) {
 				if (err) {
 					callback({ reason: 'error setting user gamercard', data: err }, null);
 					return;

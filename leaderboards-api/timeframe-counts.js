@@ -98,7 +98,7 @@ var weeklyCount = function (user, callback) {
 			}, {
 				$set: {
 					'weeklyRank.value': 0,
-					'weeklyAcheivementRank.value': 0
+					'weeklyAchievementRank.value': 0
 				}
 			}, function (err) {
 				userContestEntries.update({userId: user._id, contestType: 'weeklyAchievement', status: 'active'}, {
@@ -126,7 +126,7 @@ var weeklyCount = function (user, callback) {
 							}, {
 								$set: {
 									'weeklyRank.value': userWeeklyGamerscore,
-									'weeklyAcheivementRank.value': userAchiCount
+									'weeklyAchievementRank.value': userAchiCount
 								}
 							}, function (err) {
 								userContestEntries.update({userId: user._id, contestType: 'weeklyAchievement', status: 'active'}, {
