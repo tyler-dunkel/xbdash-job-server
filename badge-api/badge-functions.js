@@ -96,7 +96,6 @@ var gameFunction = function(userBadges, cb) {
 			cb && cb();
 			return;
 		}
-		console.log('got here');
 		var setObject = {
 			oneGame: false,
 			tenGame: false,

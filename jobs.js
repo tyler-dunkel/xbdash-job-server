@@ -48,27 +48,27 @@ ddp.connect(function (err, wasReconnect) {
 				console.log('error clearing jobs');
 				return;
 			}
-			var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
-			.priority('normal')
-			.repeat({repeats: Job.forever})
-			.save(function (err, result) {
-				if (err) return;
-				if (!err && result) {
-					console.log('dirty user stats job saved with ID: ' + result);
-				}
-			});
+			// var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
+			// .priority('normal')
+			// .repeat({repeats: Job.forever})
+			// .save(function (err, result) {
+			// 	if (err) return;
+			// 	if (!err && result) {
+			// 		console.log('dirty user stats job saved with ID: ' + result);
+			// 	}
+			// });
 
-			var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
-			.priority('normal')
-			.repeat({
-				schedule: later.parse.text('at 12:15am')
-			})
-			.save(function (err, result) {
-				if (err) return;
-				if (!err && result) {
-					console.log('clear daily ranks job saved with ID: ' + result);
-				}
-			});
+			// var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
+			// .priority('normal')
+			// .repeat({
+			// 	schedule: later.parse.text('at 12:15am')
+			// })
+			// .save(function (err, result) {
+			// 	if (err) return;
+			// 	if (!err && result) {
+			// 		console.log('clear daily ranks job saved with ID: ' + result);
+			// 	}
+			// });
 		});
 	}
 	DDPlogin(ddp, {
@@ -83,35 +83,59 @@ ddp.connect(function (err, wasReconnect) {
 			throw err;
 		}
 
-		console.log('connected to xbdash prod');
-
-		jobRunToCompleted(function(err, res) {
-			if (err) {
-				console.log('error sending welcome email');
-				return;
-			}
-			var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
+		var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
 			.priority('normal')
-			.repeat({repeats: Job.forever})
+			.repeat({
+				schedule: later.parse.text('at 12:00 am starting on the 24th day of April in 2016')
+			})
 			.save(function (err, result) {
 				if (err) return;
 				if (!err && result) {
-					console.log('dirty user stats job saved with ID: ' + result);
+					console.log('clear daily ranks job saved with ID: ' + result);
 				}
 			});
 
-			var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
-				.priority('normal')
-				.repeat({
-					schedule: later.parse.text('at 12:15am')
-				})
-				.save(function (err, result) {
-					if (err) return;
-					if (!err && result) {
-						console.log('clear daily ranks job saved with ID: ' + result);
-					}
-				});
-		});
+		console.log('connected to xbdash prod');
+
+		// jobRunToCompleted(function(err, res) {
+		// 	if (err) {
+		// 		console.log('error sending welcome email');
+		// 		return;
+		// 	}
+		// 	// var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
+		// 	// .priority('normal')
+		// 	// .save(function (err, result) {
+		// 	// 	if (err) return;
+		// 	// 	if (!err && result) {
+		// 	// 		console.log('dirty user stats job saved with ID: ' + result);
+		// 	// 	}
+		// 	// });
+
+		// 	// var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
+		// 	// .priority('normal')
+		// 	// .repeat({
+		// 	// 	schedule: later.parse.text('at 12:00 am starting on the 24th day of April in 2016')
+		// 	// })
+		// 	// .save(function (err, result) {
+		// 	// 	if (err) return;
+		// 	// 	if (!err && result) {
+		// 	// 		console.log('clear daily ranks job saved with ID: ' + result);
+		// 	// 	}
+		// 	// });
+
+
+		// 	// var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
+		// 	// 	.priority('normal')
+		// 	// 	.repeat({
+		// 	// 		schedule: later.parse.text('at 12:15am')
+		// 	// 	})
+		// 	// 	.save(function (err, result) {
+		// 	// 		if (err) return;
+		// 	// 		if (!err && result) {
+		// 	// 			console.log('clear daily ranks job saved with ID: ' + result);
+		// 	// 		}
+		// 	// 	});
+		// });
 
 		var profileBuilderWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
 		var dirtyUpdateUserStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', { workTimeout: 600000 }, workers.dirtyUpdateUserStats);
