@@ -215,7 +215,7 @@ var db = require('./db.js');
 // 
 // 
 var users = db.collection('users');
-var userId = 'qD2BwYJJuRHbRvaQu';
+var userId = 'sZHEe2XfccoJj3p8b';
 users.findOne({_id: userId}, function(err, user) {
 	if (!user || !user.xuid) {
 		console.log('there is no xuid');
@@ -252,13 +252,13 @@ users.findOne({_id: userId}, function(err, user) {
 						console.log('done creating and building');
 
 						console.log('all profile build jobs are done');
-						welcomeEmailSend(userId, function(err, res) {
-							if (err) {
-								console.log('error sending welcome email');
-								return;
-							}
-							console.log('welcome email sent');
-						});
+						// welcomeEmailSend(userId, function(err, res) {
+						// 	if (err) {
+						// 		console.log('error sending welcome email');
+						// 		return;
+						// 	}
+						// 	console.log('welcome email sent');
+						// });
 					});
 				});
 		    });

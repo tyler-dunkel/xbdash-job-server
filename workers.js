@@ -2,6 +2,7 @@ var randomstring = require("randomstring");
 var xboxApiObject = require('./xbox-api.js');
 var async = require('async');
 var createAndBuild = require('./leaderboards-api/create-and-build.js');
+var contestFunctions = require('./contests-api/contestFunctions.js');
 var updateBadges = require('./badge-api/badges.js');
 var welcomeEmailSend = require('./mailer-welcome.js');
 var moment = require('moment');
@@ -208,6 +209,75 @@ var dirtyUpdateUserStats = function (job, callback) {
 			job.done("dirty user job is done");
 			callback && callback();
 		}
+	}
+}
+
+var chooseContestWinner = function(job, callback) {
+	if (job) {
+		var xbdContests = db.collection('xbdcontests'),
+			userContestEntries = db.collection('usercontestentries'),
+			contestId = job.data.contestId;
+
+		xbdContests.findOne({_id: contestId}, function(err, contest) {
+			
+			var processEntry = function(entry, asyncCb) {
+				if (entry) {
+					if (entry.contestType === 'referral') {
+						asyncCb && asyncCb();
+						return;
+					}
+					if (entry.contestType === 'dailyAchievement') {
+						contestFunctions.scanDailyEntry(entry, function(err) {
+							if (err) {
+								console.log('there was an error scanning this daily contest entry');
+								console.log(err);
+							}
+							asyncCb && asyncCb();
+						});
+					}
+					if (entry.contestType === 'weeklyAchievement') {
+						contestFunctions.scanWeeklyAchievements(entry, function(err) {
+							if (err) {
+								console.log('there was an error scanning this weekly contest entry');
+								console.log(err);
+							}
+							asyncCb && asyncCb();
+						});
+					}
+					if (entry.contestType === 'monthlyAchievement') {
+						contestFunctions.scanMonthlyAchievements(entry, function(err) {
+							if (err) {
+								console.log('there was an error scanning this monthly contest entry');
+								console.log(err);
+							}
+							asyncCb && asyncCb();
+						});
+					}
+				} else {
+					asyncCb();
+				}
+			}
+
+			var q = async.queue(processEntry, 1);
+
+			userContestEntries.find({contestToken: contest.contestToken}, function(err, entries) {
+				entries.forEach(function(entry) {
+					q.push(entry, function(err) {
+						if (err) {
+							console.log(err);
+						}
+					});
+				});
+			});
+
+			q.drain = function(err) {
+				contestFunctions.chooseWinner(contest, function(err) {
+					job.done && job.done({}, {}, function (err, res) {
+						callback && callback();
+					});
+				})
+			}
+		});
 	}
 }
 
