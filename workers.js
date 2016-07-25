@@ -12,7 +12,8 @@ var profileBuilder = function (job, callback) {
 	if (job) {
 		var userId = job.data.userId;
 		var users = db.collection('users');
-		console.log(userId);
+		
+		console.log('starting build user profile job for: ' + userId + ' at: ' + moment().format());
 		users.findOne({
 			_id: userId
 		}, function (err, user) {
@@ -28,7 +29,6 @@ var profileBuilder = function (job, callback) {
 						if (err) {
 							console.log('error with update gamercard');
 						}
-						console.log('update gamercard done, moving to x1');
 						cb();
 					});
 				},
@@ -85,7 +85,6 @@ var profileBuilder = function (job, callback) {
 						if (err) {
 							console.log('error with update x1 games');
 						}
-						console.log('update xbox 1 done, moving to x360');
 						cb();
 					});
 				},
@@ -94,7 +93,6 @@ var profileBuilder = function (job, callback) {
 						if (err) {
 							console.log('error with update 360 games');
 						}
-						console.log('done with xbox360 games');
 						cb();
 					});
 				},
@@ -118,7 +116,6 @@ var profileBuilder = function (job, callback) {
 						if (err) {
 							console.log(err);
 						}
-						console.log('done with build leaderboard');
 						cb();
 					});
 				},
@@ -143,7 +140,7 @@ var profileBuilder = function (job, callback) {
 					if (err) {
 						console.log('error in ending job');
 					}
-					console.log('user: ' + userId + 'finished building at: ' + moment.format('dddd, MMMM Do YYYY, h:mm:ss a'));
+					console.log('ending build user profile job for: ' + userId + ' at: ' + moment().format());
 					callback();
 				});
 			});
@@ -154,6 +151,7 @@ var profileBuilder = function (job, callback) {
 var dirtyUpdateUserStats = function (job, callback) {
 	if (job) {
 		var users = db.collection('users');
+		console.log('starting dirty stat job at: ' + moment().format());
 		var processUser = function (user, asyncCb) {
 			xboxApiObject.dirtyUpdateUserStats(user._id, function (err, res) {
 				if (err) {
@@ -205,9 +203,10 @@ var dirtyUpdateUserStats = function (job, callback) {
 			});
 		});
 		q.drain = function (err) {
-			console.log('queue drained');
-			job.done("dirty user job is done");
-			callback && callback();
+			console.log('ending dirty stat job at: ' + moment().format());
+			job.done && job.done({}, {}, function (err, res) {
+				callback && callback();
+			});
 		}
 	}
 }
@@ -284,6 +283,7 @@ var chooseContestWinner = function(job, callback) {
 var clearDailyRanks = function (job, callback) {
 	if (job) {
 		var userLeaderboards = db.collection('userleaderboards');
+		console.log('starting clear daily rank job at: ' + moment().format());
 		userLeaderboards.update({}, {
 				$set: {
 					'dailyRank.value': 0,
@@ -296,7 +296,7 @@ var clearDailyRanks = function (job, callback) {
 				if (err) {
 					console.log(err);
 				}
-				console.log('daily ranks cleared');
+				console.log('ending clear daily rank job at: ' + moment().format());
 				job.done && job.done({}, {}, function (err, res) {
 					callback && callback();
 				});
