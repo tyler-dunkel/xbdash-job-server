@@ -49,7 +49,7 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 				}
 				var progressState = (achievement.progressState !== 'NotStarted') ? true : false;
 				var progression = achievement.progression.timeUnlocked;
-				progression = new Date(progression);
+				progression = moment().utc(progression).toDate();
 				var achievementValue = achievement.rewards && achievement.rewards.length ? achievement.rewards[0].value : achievement.value;
 				var _id = randomstring.generate(17);
 				
@@ -133,7 +133,7 @@ xboxApiPrivate._updateXboxOneGameData = function(userId, game, gameId, callback)
 	var xbdGames = db.collection('xbdgames');
 	var userGames = db.collection('usergames');
 	var lastUnlock = game.lastUnlock;
-	lastUnlock = new Date(lastUnlock);
+	lastUnlock = moment().utc(lastUnlock).toDate();
 	var gameInserted = false;
 
 	console.log('starting scan of: ' + game.name + ' for: ' + userId + ' at: ' + moment().format());
@@ -288,7 +288,7 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 
 			var processAchievement = function(achievement, asyncCallback) {
 				var progressState = (achievement.unlocked !== false) ? true : false;
-				var progression = new Date(achievement.timeUnlocked);
+				var progression = moment().utc(achievement.timeUnlocked).toDate();
 				var achievementInserted = false;
 
 				xbdAchievements.findOne({ gameId: gameId, name: achievement.name }, function(err, achievementCheck) {
@@ -397,7 +397,7 @@ xboxApiPrivate._updateXbox360GameData = function(userId, game, gameId, callback)
 			});
 		}
 		
-		var lastPlayed = new Date(game.lastPlayed);
+		var lastPlayed = moment().utc(game.lastPlayed).toDate();
 		var completed = game.totalGamerscore > game.currentGamerscore ? false : true;
 		var _id = randomstring.generate(17);
 		var userGame = {
