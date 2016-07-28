@@ -82,7 +82,7 @@ xboxApiPrivate._updateXboxOneAchievementsData = function(userId, gameId, callbac
 					}
 
 					if (!achievementCheck) {
-						console.log('did not find acheivement: ' + acheivement.name + 'in the db. inserting');
+						console.log('did not find achievement: ' + achievement.name + 'in the db. inserting');
 						var singleAchievement = {
 							_id: _id,
 							gameId: gameId,
@@ -318,7 +318,7 @@ xboxApiPrivate._updateXbox360AchievementsData = function(userId, gameId, callbac
 					}
 
 					if (!achievementCheck) {
-						console.log('x360 acheivement: ' + achievement.name + ' not found in db. inserting now');
+						console.log('x360 achievement: ' + achievement.name + ' not found in db. inserting now');
 						var _id = randomstring.generate(17);
 						var singleAchievement = {
 							_id: _id,

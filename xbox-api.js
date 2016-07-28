@@ -113,7 +113,7 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 						});
 					}
 				], function(err, result) {
-					console.log('done scanning xbox one game: ' + game.name + " at: " + moment.format());
+					console.log('done scanning xbox one game: ' + game.name + " at: " + moment().format());
 					asyncCallback && asyncCallback();
 				});
 			}
@@ -161,7 +161,7 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 
 		xboxApiCaller(url, function(err, data) {
 			if (err) {
-				console.log('updateXbox360Data. there was an error with the api at: ' + moment.format());
+				console.log('updateXbox360Data. there was an error with the api at: ' + moment().format());
 				console.log(err);
 				console.log(data);
 				callback(err, null);
@@ -239,7 +239,7 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 			});
 
 			q.drain = function(err) {
-				console.log('finished scanning xbox 360 games for: ' + userId + ' at: ' + moment.().format());
+				console.log('finished scanning xbox 360 games for: ' + userId + ' at: ' + moment().format());
 				callback && callback();
 			}
 		});
