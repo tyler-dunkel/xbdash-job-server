@@ -40,6 +40,7 @@ if (!ddp) {
 }
 
 Job.setDDP(ddp);
+later.date.UTC();
 
 ddp.connect(function (err, wasReconnect) {
 	if (err) throw err;
