@@ -274,7 +274,7 @@ var chooseContestWinner = function(job, callback) {
 					job.done && job.done({}, {}, function (err, res) {
 						callback && callback();
 					});
-				})
+				});
 			}
 		});
 	}

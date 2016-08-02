@@ -20,7 +20,7 @@ var chooseWinner = function(contest, cb) {
 			cb && cb();
 			return;
 		}
-		if (!userDoc) {
+		if (!entry) {
 			xbdContests.update({_id: contest._id}, {$set: {'status': 'complete'}}, function(err) {
 				cb && cb();
 				return;
@@ -80,7 +80,7 @@ var scanWeeklyEntry = function(entry, cb) {
 				function(callback) {
 					xboxApiObject.dirtyUpdateUserStats(user._id, function(err) {
 						if (err) {
-							console.log('there was an error counting the users achievements ')
+							console.log('there was an error counting the users achievements ');
 						}
 						callback();
 					});
@@ -88,7 +88,7 @@ var scanWeeklyEntry = function(entry, cb) {
 				function(callback) {
 					timeFrameCounts.weeklyCount(user, function(err) {
 						if (err) {
-							console.log('there was an error counting the users achievements ')
+							console.log('there was an error counting the users achievements ');
 						}
 						callback();
 					});
@@ -110,7 +110,7 @@ var scanMonthlyEntry = function(entry, cb) {
 				function(callback) {
 					xboxApiObject.dirtyUpdateUserStats(user._id, function(err) {
 						if (err) {
-							console.log('there was an error counting the users achievements ')
+							console.log('there was an error counting the users achievements ');
 						}
 						callback();
 					});
@@ -118,7 +118,7 @@ var scanMonthlyEntry = function(entry, cb) {
 				function(callback) {
 					timeFrameCounts.monthlyCount(user, function(err) {
 						if (err) {
-							console.log('there was an error counting the users achievements ')
+							console.log('there was an error counting the users achievements ');
 						}
 						callback();
 					});
