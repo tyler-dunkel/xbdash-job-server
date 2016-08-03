@@ -180,6 +180,20 @@ xboxApiObject.updateVideoClips(userId, function(err) {
 // });
 // 
 // 
+
+
+/* BEGIN: user build functions */
+
+// console.log(process.env.STATE);
+
+// var xboxApiObject = require('./xbox-api.js');
+// var createAndBuild = require('./leaderboards-api/create-and-build.js');
+// var welcomeEmailSend = require('./mailer-welcome.js');
+// var db = require('./db.js');
+
+// var users = db.collection('users');
+// var userId = 'sZHEe2XfccoJj3p8b';
+
 // users.findOne({_id: userId}, function(err, user) {
 // 	if (!user || !user.xuid) {
 // 		console.log('there is no xuid');
@@ -229,6 +243,9 @@ xboxApiObject.updateVideoClips(userId, function(err) {
 // 		});
 // 	});
 // });
+
+/* END : user build functions */
+
 
 // var xboxApiObject = require('./xbox-api.js');
 // var createAndBuild = require('./leaderboards-api/create-and-build.js');
