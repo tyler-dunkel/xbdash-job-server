@@ -304,8 +304,70 @@ var clearDailyRanks = function (job, callback) {
 	}
 }
 
+var _updateClipFunc = function(user, cb) {
+	var users = db.collection('users');
+	console.log('starting update clip function for: ' + user._id + ' at: ' + moment().format());
+	async.series([
+		function(callback) {
+			xboxApiObject.updateVideoClips(user._id, function(err) {
+				callback();
+			});
+		},
+		function(callback) {
+			xboxApiObject.updateRecentActivity(user._id, function(err) {
+				callback();
+			});
+		},
+		function(callback) {
+			xboxApiObject.updateXboxPresence(user._id, function(err) {
+				callback();
+			});
+		},
+		function(callback) {
+			users.update({_id: user._id}, {$set: {'gamertagScanned.status': 'true', lastClipUpdate: new Date()}}, function(err) {
+				if (err) {
+					console.log(err);
+				}
+				callback();
+			})
+		}
+	], function(err) {
+		console.log('ending update clip function for: ' + user._id + ' at: ' + moment().format());
+		cb();
+	});
+}
+
+var updateGameClips = function(job, callback) {
+	if (job) {
+		console.log('starting update game clips function at: ' + moment().format());
+		var users = db.collection('users');
+		users.find({
+			'gamertagScanned.status': 'true',
+			'gamercard.gamerscore': {
+				$gt: 0
+			}
+		}).sort({
+			'lastClipUpdate': 1
+		}).limit(20).toArray(function(err, userDocs) {
+			userDocs.forEach(function(userDoc) {
+				users.update({_id: userDoc._id}, {$set: {'gamertagScanned.status': 'updating'}}, function(err) {
+					if (err) {
+						console.log(err);
+					}
+				});
+			});
+			async.eachLimit(userDocs, 1, _updateClipFunc, function(err) {
+				job.done && job.done({}, {}, function (err, res) {
+					callback && callback();
+				});
+			});
+		});
+	}
+}
+
 module.exports = {
 	profileBuilder: profileBuilder,
 	dirtyUpdateUserStats: dirtyUpdateUserStats,
-	clearDailyRanks: clearDailyRanks
+	clearDailyRanks: clearDailyRanks,
+	updateGameClips: updateGameClips
 }

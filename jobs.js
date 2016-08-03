@@ -62,6 +62,20 @@ ddp.connect(function (err, wasReconnect) {
 						});
 				}
 		});
+		jobsCollection.findOne({'type': 'updateGameClips', 'status': {
+			$in: ['waiting', 'ready', 'running']}}, function(err, job) {
+				if (!job) {
+					var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
+						.priority('normal')
+						.repeat({repeats: Job.forever})
+						.save(function (err, result) {
+							if (err) return;
+							if (!err && result) {
+								console.log('updateGameClips job saved with ID: ' + result);
+							}
+						});
+				}
+		});
 		jobsCollection.count({'type': 'dirtyUserStatsJob', 'status': {
 			$in: ['waiting', 'ready', 'running']}}, function(err, count) {
 				if (count < 4) {
@@ -108,6 +122,20 @@ ddp.connect(function (err, wasReconnect) {
 						});
 				}
 		});
+		jobsCollection.findOne({'type': 'updateGameClips', 'status': {
+			$in: ['waiting', 'ready', 'running']}}, function(err, job) {
+				if (!job) {
+					var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
+						.priority('normal')
+						.repeat({repeats: Job.forever})
+						.save(function (err, result) {
+							if (err) return;
+							if (!err && result) {
+								console.log('updateGameClips job saved with ID: ' + result);
+							}
+						});
+				}
+		});
 		jobsCollection.count({'type': 'dirtyUserStatsJob', 'status': {
 			$in: ['waiting', 'ready', 'running']}}, function(err, count) {
 				if (count < 4) {
@@ -129,6 +157,7 @@ ddp.connect(function (err, wasReconnect) {
 		var chooseContestWinnerWorker = Job.processJobs('xbdjobscollection', 'chooseContestWinner', { workTimeout: 600000 }, workers.chooseContestWinner);
 		var dirtyUpdateUserStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', { workTimeout: 600000 }, workers.dirtyUpdateUserStats);
 		var clearDailyRanksWorker = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', { workTimeout: 600000 }, workers.clearDailyRanks);
+		var updateGameClipsWorker = Job.processJobs('xbdjobscollection', 'updateGameClips', {workTimeout: 600000}, workers.updateGameClips);
 	});
 });
 
