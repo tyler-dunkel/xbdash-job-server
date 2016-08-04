@@ -10,6 +10,39 @@ var userLeaderboards = db.collection('userleaderboards');
 var xbdContests = db.collection('xbdcontests');
 var users = db.collection('users');
 
+var updateUserEntries = function(userId, cb) {
+	console.log('started updating user entries for: ' + userId + ' at: ' + moment().format());
+	userContestEntries.find({status: 'active'}).toArray(function(err, entries) {
+		if (entries.length < 1) {
+			cb();
+			return;
+		}
+
+		var updateEntry = function(entry, callback) {
+			if (!entry || !entry.contestType) {
+				callback();
+				return;
+			}
+			if (entry.contestType === 'referral') {
+				callback();
+			}
+			else if (entry.contestType === 'timeAttack') {
+				xbdContests.findOne({contestToken: entry.contestToken}, function(err, contest) {
+					_updateTimeAttackEntry(entry, contest, function(err) {
+						callback();
+					});
+				});
+			} else {
+				callback();
+			}
+		}
+
+		async.each(entries, updateEntry, function(err) {
+			cb();
+		});
+	});
+}
+
 
 var chooseWinner = function(contest, cb) {
 	var rank = 0;
@@ -86,7 +119,7 @@ var _rankTimeAttackEntries = function(contest, cb) {
 		}
 		rank++;
 		userContestEntries.update({_id: contestEntry._id}, {$set: {rank: rank}}, function() {
-			
+
 		});
 	});
 }
@@ -192,5 +225,6 @@ _updateTimeAttackEntry = function(entry, contest, cb) {
 
 module.exports= {
 	scanTimeAttackEntry: scanTimeAttackEntry,
-	chooseWinner: chooseWinner
+	chooseWinner: chooseWinner,
+	updateUserEntries: updateUserEntries
 }

@@ -152,6 +152,7 @@ var dirtyUpdateUserStats = function (job, callback) {
 	if (job) {
 		var users = db.collection('users');
 		console.log('starting dirty stat job at: ' + moment().format());
+
 		var processUser = function (user, asyncCb) {
 			xboxApiObject.dirtyUpdateUserStats(user._id, function (err, res) {
 				if (err) {
@@ -171,14 +172,16 @@ var dirtyUpdateUserStats = function (job, callback) {
 							asyncCb && asyncCb();
 							return;
 						}
-						console.log('calling async cb');
-						asyncCb && asyncCb();
+						contestFunctions.updateUserEntries(user._id, function(err) {
+							asyncCb && asyncCb();
+						});
 					});
 				});
 			});
 		}
+
 		var q = async.queue(processUser, 1);
-		// change back later***
+		
 		users.find({
 			'gamertagScanned.status': 'true',
 			'gamercard.gamerscore': {
