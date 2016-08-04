@@ -29,14 +29,7 @@ var dailyCount = function (user, callback) {
 					'dailyAchievementRank.value': 0
 				}
 			}, function (err) {
-				userContestEntries.update({ userId: user._id, contestType: 'dailyAchievement', status: 'active'}, 
-					{$set: {
-						'data.value': 0,
-						'data.rank': 0
-						}
-					}, function(err) {
-					callback && callback();
-				});
+				callback();
 			});
 		} else {
 			userAchievements.find({
@@ -60,11 +53,7 @@ var dailyCount = function (user, callback) {
 									'dailyAchievementRank.value': userAchiCount
 								}
 							}, function (err) {
-								userContestEntries.update({
-									userId: user._id, contestType: 'dailyAchievement', status: 'active'
-								}, {$set: {'data.value': userDailyGamerscore}}, function(err) {	
-									callback && callback();
-								});
+								callback();
 							});
 						}
 					});
@@ -101,11 +90,7 @@ var weeklyCount = function (user, callback) {
 					'weeklyAchievementRank.value': 0
 				}
 			}, function (err) {
-				userContestEntries.update({userId: user._id, contestType: 'weeklyAchievement', status: 'active'}, {
-					$set: {'data.rank': 0, 'data.value': 0}
-				}, function(err) {
-					callback && callback();
-				});
+				callback();
 			});
 		} else {
 			userAchievements.find({
@@ -129,11 +114,7 @@ var weeklyCount = function (user, callback) {
 									'weeklyAchievementRank.value': userAchiCount
 								}
 							}, function (err) {
-								userContestEntries.update({userId: user._id, contestType: 'weeklyAchievement', status: 'active'}, {
-									$set: {'data.value': userWeeklyGamerscore}
-								}, function(err) {
-									callback && callback();
-								});
+								callback();
 							});
 						}
 					});
@@ -170,11 +151,7 @@ var monthlyCount = function (user, callback) {
 					'monthlyAchievementRank.value': 0
 				}
 			}, function (err) {
-				userContestEntries.update({userId: user._id, contestType: 'monthlyAchievement', status: 'active'}, {
-					$set: {'data.rank': 0, 'data.value': 0}
-				}, function(err) {
-					callback && callback();
-				});
+				callback();
 			});
 		} else {
 			userAchievements.find({
@@ -198,11 +175,7 @@ var monthlyCount = function (user, callback) {
 									'monthlyAchievementRank.value': userAchiCount
 								}
 							}, function (err) {
-								userContestEntries.update({userId: user._id, contestType: 'monthlyAchievement', status: 'active'}, {
-									$set: {'data.value': userMonthlyGamerscore}
-								}, function(err) {
-									callback && callback();
-								});
+								callback();
 							});
 						}
 					});

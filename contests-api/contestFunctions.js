@@ -41,23 +41,21 @@ var chooseWinner = function(contest, cb) {
 		}
 	});
 }
-var scanDailyEntry = function(entry, cb) {
+var scanTimeAttackEntry = function(entry, contest, cb) {
 	users.findOne({_id: entry.userId}, function(err, user) {
 		if (user) {
 			async.series([
 				function(callback) {
 					xboxApiObject.dirtyUpdateUserStats(user._id, function(err) {
 						if (err) {
-							console.log('there was an error counting the users achievements ')
+							console.log('scanTimeAttackEntry. error scanning entries achievements: ' + user._id + ' at: ' + moment().format());
+							callback(err, null);
 						}
 						callback();
 					});
 				},
 				function(callback) {
-					timeFrameCounts.dailyCount(user, function(err) {
-						if (err) {
-							console.log('there was an error counting the users achievements ')
-						}
+					_updateTimeAttackEntry(entry, contest, function(err) {
 						callback();
 					});
 				}
@@ -73,68 +71,126 @@ var scanDailyEntry = function(entry, cb) {
 	});
 }
 
-var scanWeeklyEntry = function(entry, cb) {
-	users.findOne({_id: entry.userId}, function(err, user) {
-		if (user) {
-			async.series([
-				function(callback) {
-					xboxApiObject.dirtyUpdateUserStats(user._id, function(err) {
-						if (err) {
-							console.log('there was an error counting the users achievements ');
-						}
-						callback();
-					});
-				},
-				function(callback) {
-					timeFrameCounts.weeklyCount(user, function(err) {
-						if (err) {
-							console.log('there was an error counting the users achievements ');
-						}
-						callback();
-					});
-				}
-			], function(err) {
-				if (err) {
-					console.log('there was an error processing the entry');
-				}
-				cb();
-			});
+var _rankTimeAttackEntries = function(contest, cb) {
+	var rank = 0;
+
+	userContestEntries.find({status: 'active', contestToken: contest.contestToken}).sort({'data.value': -1}).forEach(function(err, contestEntry) {
+		if (err) {
+			console.log(err);
+			callback && callback();
+			return;
 		}
+		if (!contestEntry) {
+			callback && callback();
+			return;
+		}
+		rank++;
+		userContestEntries.update({_id: contestEntry._id}, {$set: {rank: rank}}, function() {
+			
+		});
 	});
 }
 
-var scanMonthlyEntry = function(entry, cb) {
+_updateTimeAttackEntry = function(entry, contest, cb) {
 	users.findOne({_id: entry.userId}, function(err, user) {
-		if (user) {
-			async.series([
-				function(callback) {
-					xboxApiObject.dirtyUpdateUserStats(user._id, function(err) {
-						if (err) {
-							console.log('there was an error counting the users achievements ');
-						}
-						callback();
-					});
-				},
-				function(callback) {
-					timeFrameCounts.monthlyCount(user, function(err) {
-						if (err) {
-							console.log('there was an error counting the users achievements ');
-						}
-						callback();
-					});
+		var gamerscoreCount = 0;
+
+		var getGamerscoreValue = function(userAchi, callback) {
+			xbdAchievements.findOne({_id: userAchi.achievementId}, function(err, achi) {
+				if (!achi) {
+					console.log('error. not xbdAchievement for this userAchievement: ' + userAchi.achievementId);
+					callback();
+					return;
 				}
-			], function(err) {
-				if (err) {
-					console.log('there was an error processing the entry');
-				}
-				cb();
+				gamerscoreCount += achi.value;
 			});
 		}
+
+		if (!user || !user.gamercard) {
+			cb('error no user', null);
+			return;
+		}
+		userAchievements.find({userId: user._id, progressState: true, progression: {
+			$gte: contest.startDate,
+			$lte: contest.endDate
+		}}).toArray(function(err, achievementArray) {
+			if (achievementArray.length < 1) {
+				userContestEntries.update({_id: entry._id}, {$set: {'data.value': gamerscoreCount, 'data.rank': 0}}, function(err) {
+					cb();
+				});
+			} else {
+				async.each(achievementArray, getGamerscoreValue, function(err) {
+					userContestEntries.update({_id: entry._id}, {$set: {'data.value': gamerscoreCount}}, function(err){
+						_rankTimeAttackEntries(contest, function(err) {
+							callback();
+						});
+					});
+				});
+			}
+		});
 	});
 }
+// var scanWeeklyEntry = function(entry, cb) {
+// 	users.findOne({_id: entry.userId}, function(err, user) {
+// 		if (user) {
+// 			async.series([
+// 				function(callback) {
+// 					xboxApiObject.dirtyUpdateUserStats(user._id, function(err) {
+// 						if (err) {
+// 							console.log('there was an error counting the users achievements ');
+// 						}
+// 						callback();
+// 					});
+// 				},
+// 				function(callback) {
+// 					timeFrameCounts.weeklyCount(user, function(err) {
+// 						if (err) {
+// 							console.log('there was an error counting the users achievements ');
+// 						}
+// 						callback();
+// 					});
+// 				}
+// 			], function(err) {
+// 				if (err) {
+// 					console.log('there was an error processing the entry');
+// 				}
+// 				cb();
+// 			});
+// 		}
+// 	});
+// }
+
+// var scanMonthlyEntry = function(entry, cb) {
+// 	users.findOne({_id: entry.userId}, function(err, user) {
+// 		if (user) {
+// 			async.series([
+// 				function(callback) {
+// 					xboxApiObject.dirtyUpdateUserStats(user._id, function(err) {
+// 						if (err) {
+// 							console.log('there was an error counting the users achievements ');
+// 						}
+// 						callback();
+// 					});
+// 				},
+// 				function(callback) {
+// 					timeFrameCounts.monthlyCount(user, function(err) {
+// 						if (err) {
+// 							console.log('there was an error counting the users achievements ');
+// 						}
+// 						callback();
+// 					});
+// 				}
+// 			], function(err) {
+// 				if (err) {
+// 					console.log('there was an error processing the entry');
+// 				}
+// 				cb();
+// 			});
+// 		}
+// 	});
+// }
 
 module.exports= {
-	scanDailyEntry: scanDailyEntry,
-	scanWeeklyEntry: scanWeeklyEntry,
-	scanMonthlyEntry: scanMonthlyEntry
+	scanTimeAttackEntry: scanTimeAttackEntry,
+	chooseWinner: chooseWinner
 }

@@ -225,28 +225,10 @@ var chooseContestWinner = function(job, callback) {
 						asyncCb && asyncCb();
 						return;
 					}
-					if (entry.contestType === 'dailyAchievement') {
-						contestFunctions.scanDailyEntry(entry, function(err) {
+					if (entry.contestType === 'timeAttack') {
+						contestFunctions.scanTimeAttack(entry, contest, function(err) {
 							if (err) {
 								console.log('there was an error scanning this daily contest entry');
-								console.log(err);
-							}
-							asyncCb && asyncCb();
-						});
-					}
-					if (entry.contestType === 'weeklyAchievement') {
-						contestFunctions.scanWeeklyAchievements(entry, function(err) {
-							if (err) {
-								console.log('there was an error scanning this weekly contest entry');
-								console.log(err);
-							}
-							asyncCb && asyncCb();
-						});
-					}
-					if (entry.contestType === 'monthlyAchievement') {
-						contestFunctions.scanMonthlyAchievements(entry, function(err) {
-							if (err) {
-								console.log('there was an error scanning this monthly contest entry');
 								console.log(err);
 							}
 							asyncCb && asyncCb();
@@ -304,43 +286,43 @@ var clearDailyRanks = function (job, callback) {
 	}
 }
 
-var _updateClipFunc = function(user, cb) {
-	var users = db.collection('users');
-	console.log('starting update clip function for: ' + user._id + ' at: ' + moment().format());
-	async.series([
-		function(callback) {
-			xboxApiObject.updateVideoClips(user._id, function(err) {
-				callback();
-			});
-		},
-		function(callback) {
-			xboxApiObject.updateRecentActivity(user._id, function(err) {
-				callback();
-			});
-		},
-		function(callback) {
-			xboxApiObject.updateXboxPresence(user._id, function(err) {
-				callback();
-			});
-		},
-		function(callback) {
-			users.update({_id: user._id}, {$set: {'gamertagScanned.status': 'true', lastClipUpdate: new Date()}}, function(err) {
-				if (err) {
-					console.log(err);
-				}
-				callback();
-			})
-		}
-	], function(err) {
-		console.log('ending update clip function for: ' + user._id + ' at: ' + moment().format());
-		cb();
-	});
-}
-
 var updateGameClips = function(job, callback) {
 	if (job) {
 		console.log('starting update game clips function at: ' + moment().format());
 		var users = db.collection('users');
+
+		var _updateClipFunc = function(user, cb) {
+			var users = db.collection('users');
+			console.log('starting update clip function for: ' + user._id + ' at: ' + moment().format());
+			async.series([
+				function(callback) {
+					xboxApiObject.updateVideoClips(user._id, function(err) {
+						callback();
+					});
+				},
+				function(callback) {
+					xboxApiObject.updateRecentActivity(user._id, function(err) {
+						callback();
+					});
+				},
+				function(callback) {
+					xboxApiObject.updateXboxPresence(user._id, function(err) {
+						callback();
+					});
+				},
+				function(callback) {
+					users.update({_id: user._id}, {$set: {'gamertagScanned.status': 'true', lastClipUpdate: new Date()}}, function(err) {
+						if (err) {
+							console.log(err);
+						}
+						callback();
+					});
+				}
+			], function(err) {
+				console.log('ending update clip function for: ' + user._id + ' at: ' + moment().format());
+				cb();
+			});
+		}
 		users.find({
 			'gamertagScanned.status': 'true',
 			'gamercard.gamerscore': {
