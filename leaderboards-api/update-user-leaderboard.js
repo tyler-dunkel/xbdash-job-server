@@ -1,4 +1,5 @@
 var async = require('async');
+var moment = require('moment');
 var timeFrameCounts = require('./timeframe-counts.js');
 var completedGameCount = require('./count-completed-games.js');
 var countFunctions = require('./count-functions.js');
@@ -24,6 +25,7 @@ module.exports = function(user, topCallback) {
 				topCallback && topCallback();
 				return;
 			} else {
+				console.log('starting leaderboard update for: ' + user._id + ' at: ' + moment().format());
 				async.series([
 					function(cb) {
 						async.parallel([
@@ -67,11 +69,12 @@ module.exports = function(user, topCallback) {
 							}
 						], function(err, result) {
 							if (err) {
-								console.log('error in finishing counting functions');
+								console.log('error in finishing leaderboardcounting functions for: ' + user._id + ' at: ' + moment().format());
+								console.log(err);
 								cb(err, null);
 								return;
 							}
-							console.log('all counting functions done');
+							console.log('all leaderboard counting functions for: ' + user._id + ' done at: ' + moment().format());
 							cb && cb();
 						});
 					},
@@ -163,18 +166,19 @@ module.exports = function(user, topCallback) {
 							}
 						], function(err, result) {
 							if (err) {
-								console.log('error in finishing ranking functions');
+								console.log('error in finishing ranking functions for: ' + user._id + ' at: ' + moment().format());
+								console.log(err);
 								cb(err, null);
 								return;
 							}
-							console.log('all ranking functions done');
+							console.log('all leaderboard ranking functions for: ' + user._id + ' done at: ' + moment().format());
 							var date = new Date();
 							userLeaderboards.update({ userId: user._id }, { $set: { updated: date } });
 							cb && cb();
 						});
 					}
 				], function(err, results){
-					console.log('calling top callback');
+					console.log('ending leaderboard update for: ' + user._id + ' at: ' + moment().format());
 					topCallback && topCallback();
 				});
 			}

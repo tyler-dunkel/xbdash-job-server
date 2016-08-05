@@ -32,6 +32,20 @@ var updateUserEntries = function(userId, cb) {
 						callback();
 					});
 				});
+			} 
+			else if (entry.contestType === 'completeGame') {
+				xbdContests.findOne({contestToken: entry.contestToken}, function(err, contest) {
+					_updateCompleteGameEntry(entry, contest, function(err) {
+						callback();
+					});
+				});
+			} 
+			else if (entry.contestType === 'completeAchievements') {
+				xbdContests.findOne({contestToken: entry.contestToken}, function(err, contest) {
+					_updateCompleteAchievementsEntry(entry, contest, function(err) {
+						callback();
+					});
+				});
 			} else {
 				callback();
 			}
@@ -45,7 +59,11 @@ var updateUserEntries = function(userId, cb) {
 
 
 var chooseWinner = function(contest, cb) {
-	var rank = 0;
+	var rank = 0,
+		sortSel = -1;
+	if (conest.type === 'completeGame' || contest.type === 'completeAchievements') {
+		sortSel = 1;
+	}
 	userContestEntries.find({contestToken: contest.contestToken}).sort({'data.value': -1}).forEach(function(err, entry) {
 		if (err) {
 			console.log('there was an error finding the contest entries');
@@ -124,7 +142,55 @@ var _rankTimeAttackEntries = function(contest, cb) {
 	});
 }
 
-_updateTimeAttackEntry = function(entry, contest, cb) {
+var _updateCompleteGameEntry = function(entry, contest, cb) {
+	var gameId = contest.data.gameId;
+	userGames.find({userId: entry.userId, gameId: gameId}, function(err, game) {
+		if (game.completed) {
+			userContestEntries.update({_id: entry._id}, {$set: {'data.value': game.lastUnlock}}, function(err) {
+				cb();
+			});
+		} else {
+			cb();
+		}
+	});
+}
+
+var _updateCompleteAchievementsEntry = function(entry, contest, cb) {
+	var achievementIdArray = contest.data.achievementIdArray,
+		areAchievementsComplete = [],
+		lastUnlockTime,
+		isAchievementCompleteFunc;
+
+	isAchievementCompleteFunc = function(achievementId, callback) {
+		userAchievements.findOne({userId: entry.userId, achievementId: achievementId}, function(err, achievement) {
+			if (achievement.progressionState) {
+				areAchievementsComplete.push('true');
+				
+				if (lastUnlockTime instanceof Date) {
+					if (lastUnlockTime < achievement.progression) {
+						lastUnlockTime = achievement.progression;
+					}
+				} else {
+					lastUnlockTime = achievement.progression;
+				}
+				callback();
+			} else {
+				areAchievementsComplete.push('false');
+			}
+		});
+	}
+
+	async.each(achievementIdArray, isAchievementCompleteFunc, function(err) {
+		if (areAchievementsComplete.indexOf('false') === -1) {
+			userContestEntries.update({_id: entry._id}, {$set: {'data.value': lastUnlockTime}}, function(err) {
+				cb();
+			});
+		}
+	});
+}
+
+
+var _updateTimeAttackEntry = function(entry, contest, cb) {
 	users.findOne({_id: entry.userId}, function(err, user) {
 		var gamerscoreCount = 0;
 
