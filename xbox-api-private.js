@@ -220,7 +220,7 @@ xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callba
 					gameDescription: result.Items[0].Description,
 					gameReducedDescription: result.Items[0].ReducedDescription,
 					gameReducedName: result.Items[0].ReducedName,
-					gameReleaseDate: result.Items[0].ReleaseDate,
+					gameReleaseDate: new Date(result.Items[0].ReleaseDate),
 					gameId: gameId,
 					gameGenre: result.Items[0].Genres,
 					gameArt: result.Items[0].Images,
@@ -233,6 +233,10 @@ xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callba
 					gameAllTimeAverageRating: result.Items[0].AllTimeAverageRating
 				};
 
+				if (gameDetail.releaseDate > new Date()) {
+					gameDetail.releaseDate = new Date();
+				}
+				
 				gameDetails.insert(gameDetail, function(err) {
 					if (err) {
 						console.log('db insert error');

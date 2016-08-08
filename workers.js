@@ -181,7 +181,7 @@ var dirtyUpdateUserStats = function (job, callback) {
 		}
 
 		var q = async.queue(processUser, 1);
-		
+
 		users.find({
 			'gamertagScanned.status': 'true',
 			'gamercard.gamerscore': {
@@ -237,6 +237,15 @@ var chooseContestWinner = function(job, callback) {
 							asyncCb && asyncCb();
 						});
 					}
+					if (entry.contestType === 'completeGame' || entry.contestType === 'completeAchievements') {
+						contestFunctions.scanCompleteObjective(entry, contest, function(err) {
+							if (err) {
+								console.log('there was an error scanning this daily contest entry');
+								console.log(err);
+							}
+							asyncCb && asyncCb();
+						});
+					} 
 				} else {
 					asyncCb();
 				}

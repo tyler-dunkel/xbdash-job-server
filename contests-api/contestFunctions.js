@@ -60,11 +60,11 @@ var updateUserEntries = function(userId, cb) {
 
 var chooseWinner = function(contest, cb) {
 	var rank = 0,
-		sortSel = -1;
+		sortSel = {'data.value': -1};
 	if (conest.type === 'completeGame' || contest.type === 'completeAchievements') {
-		sortSel = 1;
+		sortSel = {'data.completeTime': 1};
 	}
-	userContestEntries.find({contestToken: contest.contestToken}).sort({'data.value': -1}).forEach(function(err, entry) {
+	userContestEntries.find({contestToken: contest.contestToken}).sort(sortSel).forEach(function(err, entry) {
 		if (err) {
 			console.log('there was an error finding the contest entries');
 			console.log(err);
@@ -122,10 +122,58 @@ var scanTimeAttackEntry = function(entry, contest, cb) {
 	});
 }
 
+var scanCompleteObjective = function(entry, contest, cb) {
+	users.findOne({_id: entry.userId}, function(err, user) {
+		if (user) {
+			async.series([
+				function(callback) {
+					xboxApiObject.dirtyUpdateUserStats(user._id, function(err) {
+						if (err) {
+							console.log('scanTimeAttackEntry. error scanning entries for: ' + user._id + ' at: ' + moment().format());
+							callback(err, null);
+						}
+						callback();
+					});
+				},
+				function(callback) {
+					if (entry.contestType === 'completeGame') {
+						_updateCompleteGameEntry(entry, contest, function(err) {
+							if (err) {
+							console.log('scanCompleteObjective. error scanning entries for: ' + user._id + ' at: ' + moment().format());
+							callback(err, null);
+							}
+							callback();
+						});
+					} else if (entry.contestType === 'completeAchievements') {
+						_updateCompleteAchievementsEntry(entry, contest, function(err) {
+							if (err) {
+							console.log('scanCompleteObjective. error scanning entries for: ' + user._id + ' at: ' + moment().format());
+							callback(err, null);
+							}
+							callback();
+						});
+					} else {
+						console.log('scanCompleteObjective. error! this contest entry has a type I dont recognize');
+						console.log(entry);
+						callback();
+					}
+				}
+			], function(err) {
+				if (err) {
+					console.log('there was an error processing the entry for: ' + user._id);
+				}
+				cb();
+			});
+		} else {
+			cb();
+		}
+	});
+}
+
 var _rankTimeAttackEntries = function(contest, cb) {
 	var rank = 0;
 
-	userContestEntries.find({status: 'active', contestToken: contest.contestToken}).sort({'data.value': -1}).forEach(function(err, contestEntry) {
+	userContestEntries.find({status: 'active', contestToken: contest.contestToken}).sort({'data.completeTime': -1}).forEach(function(err, contestEntry) {
 		if (err) {
 			console.log(err);
 			callback && callback();
@@ -146,7 +194,7 @@ var _updateCompleteGameEntry = function(entry, contest, cb) {
 	var gameId = contest.data.gameId;
 	userGames.find({userId: entry.userId, gameId: gameId}, function(err, game) {
 		if (game.completed) {
-			userContestEntries.update({_id: entry._id}, {$set: {'data.value': game.lastUnlock}}, function(err) {
+			userContestEntries.update({_id: entry._id}, {$set: {'data.completeTime': game.lastUnlock}}, function(err) {
 				cb();
 			});
 		} else {
@@ -182,7 +230,7 @@ var _updateCompleteAchievementsEntry = function(entry, contest, cb) {
 
 	async.each(achievementIdArray, isAchievementCompleteFunc, function(err) {
 		if (areAchievementsComplete.indexOf('false') === -1) {
-			userContestEntries.update({_id: entry._id}, {$set: {'data.value': lastUnlockTime}}, function(err) {
+			userContestEntries.update({_id: entry._id}, {$set: {'data.completeTime': lastUnlockTime}}, function(err) {
 				cb();
 			});
 		}
@@ -292,5 +340,6 @@ var _updateTimeAttackEntry = function(entry, contest, cb) {
 module.exports= {
 	scanTimeAttackEntry: scanTimeAttackEntry,
 	chooseWinner: chooseWinner,
-	updateUserEntries: updateUserEntries
+	updateUserEntries: updateUserEntries,
+	scanCompleteObjective: scanCompleteObjective
 }
