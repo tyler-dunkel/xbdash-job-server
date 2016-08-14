@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "xbprofile:dev": "STATE='dev' node xbox-profile-update.js",
     "test:dev": "STATE='dev' node test.js",
     "start:dev": "STATE='dev' node jobs.js",
     "start:devJobs": "STATE='dev' node completeJobs.js",
