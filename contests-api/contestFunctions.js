@@ -61,7 +61,7 @@ var updateUserEntries = function(userId, cb) {
 var chooseWinner = function(contest, cb) {
 	var rank = 0,
 		sortSel = {'data.value': -1};
-	if (conest.type === 'completeGame' || contest.type === 'completeAchievements') {
+	if (contest.type === 'completeGame' || contest.type === 'completeAchievements') {
 		sortSel = {'data.completeTime': 1};
 	}
 	userContestEntries.find({contestToken: contest.contestToken}).sort(sortSel).forEach(function(err, entry) {

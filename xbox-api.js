@@ -78,7 +78,7 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 
 				console.log('processing xbox one title: ' + game.name);
 				
-				async.parallel([
+				async.series([
 					function(callback) {
 						//callback();
 						xboxApiPrivate._updateXboxOneAchievementsData(userId, gameId, function(err, result) {
@@ -190,7 +190,7 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 
 				console.log('processing xbox 360 game: ' + game.name + ' at: ' + moment().format());
 
-				async.parallel([
+				async.series([
 					function(callback) {
 						//callback();
 						xboxApiPrivate._updateXbox360AchievementsData(userId, gameId, function(err, result) {

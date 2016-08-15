@@ -214,57 +214,70 @@ var db = require('./db.js');
 // });
 // 
 // 
-var users = db.collection('users');
-var userId = 'sZHEe2XfccoJj3p8b';
-users.findOne({_id: userId}, function(err, user) {
-	if (!user || !user.xuid) {
-		console.log('there is no xuid');
-		return;
-	}
-	xboxApiObject.updateGamercard(userId, function(err, res) {
-		if (err) {
-			console.log('error with update gamercard');
-			return;
-		}
-		console.log('update gamercard done, moving to x1');
-		xboxApiObject.updateXboxOneData(userId, function(err, res) {
-			if (err) {
-				console.log('error with update x1 games');
-				return;
-			}
-			console.log('update xbox one data done, moving to x360');
-			xboxApiObject.updateXbox360Data(userId, function(err, res) {
-				if (err) {
-					console.log('error with update 360 games');
-					return;
-				}
-				console.log('updated x360 data');
-				users.update({ _id: userId }, { $set: { 'gamertagScanned.status': "true", 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
-					if (err) {
-						console.log('error in db update');
-						return;
-					}
-					createAndBuild(userId, function(err, res) {
-						if (err) {
-							console.log(err);
-							return;
-						}
-						console.log('done creating and building');
+var gameDetails = db.collection('gamedetails');
+var xbdGames = db.collection('xbdgames');
 
-						console.log('all profile build jobs are done');
-						// welcomeEmailSend(userId, function(err, res) {
-						// 	if (err) {
-						// 		console.log('error sending welcome email');
-						// 		return;
-						// 	}
-						// 	console.log('welcome email sent');
-						// });
-					});
-				});
-		    });
+xbdGames.find({}, function(err, docs) {
+	docs.forEach(function(doc) {
+		gameDetails.find({gameId: doc._id}).toArray(function(err, gameDetailDocs) {
+			if (gameDetailDocs.length > 1) {
+				console.log('game has more than one game detail');
+				console.log(doc.name);
+			}
 		});
 	});
 });
+// var users = db.collection('users');
+// var userId = 'sZHEe2XfccoJj3p8b';
+// users.findOne({_id: userId}, function(err, user) {
+// 	if (!user || !user.xuid) {
+// 		console.log('there is no xuid');
+// 		return;
+// 	}
+// 	xboxApiObject.updateGamercard(userId, function(err, res) {
+// 		if (err) {
+// 			console.log('error with update gamercard');
+// 			return;
+// 		}
+// 		console.log('update gamercard done, moving to x1');
+// 		xboxApiObject.updateXboxOneData(userId, function(err, res) {
+// 			if (err) {
+// 				console.log('error with update x1 games');
+// 				return;
+// 			}
+// 			console.log('update xbox one data done, moving to x360');
+// 			xboxApiObject.updateXbox360Data(userId, function(err, res) {
+// 				if (err) {
+// 					console.log('error with update 360 games');
+// 					return;
+// 				}
+// 				console.log('updated x360 data');
+// 				users.update({ _id: userId }, { $set: { 'gamertagScanned.status': "true", 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
+// 					if (err) {
+// 						console.log('error in db update');
+// 						return;
+// 					}
+// 					createAndBuild(userId, function(err, res) {
+// 						if (err) {
+// 							console.log(err);
+// 							return;
+// 						}
+// 						console.log('done creating and building');
+
+// 						console.log('all profile build jobs are done');
+// 						// welcomeEmailSend(userId, function(err, res) {
+// 						// 	if (err) {
+// 						// 		console.log('error sending welcome email');
+// 						// 		return;
+// 						// 	}
+// 						// 	console.log('welcome email sent');
+// 						// });
+// 					});
+// 				});
+// 		    });
+// 		});
+// 	});
+// });
 
 // var xboxApiObject = require('./xbox-api.js');
 // var createAndBuild = require('./leaderboards-api/create-and-build.js');

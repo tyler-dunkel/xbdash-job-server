@@ -191,7 +191,6 @@ xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callba
 	}
 
 	var hexId = game.titleId.toString(16);
-	console.log(hexId);
 	var url = 'game-details-hex/' + hexId;
 	var gameDetails = db.collection('gamedetails');
 	    gameId = game.titleId.toString();
