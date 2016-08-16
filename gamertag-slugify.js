@@ -2,29 +2,30 @@ var tr = require('transliteration');
 var slugify = require('transliteration').slugify;
 var db = require('./db.js');
 
-var gamercardSlugify = function(userId, gamercard, cb) {
-	var users = db.collection('users');
-	users.findOne({ _id: userId }, function(err, user) {
-		if (user.gamertagSlug) {
-			cb && cb();
-			return;
-		}
+// var gamercardSlugify = function(userId, gamercard, cb) {
+// 	var users = db.collection('users');
+// 	users.findOne({ _id: userId }, function(err, user) {
+// 		if (user.gamertagSlug) {
+// 			cb && cb();
+// 			return;
+// 		}
 
-		console.log(gamercard.gamertag);
+// 		console.log(gamercard.gamertag);
 
-		var userGamertag = user.gamercard.gamertag;
-		var gamertagSlug = slugify(userGamertag, { lowercase: true });
+// 		var userGamertag = user.gamercard.gamertag;
+// 		var gamertagSlug = slugify(userGamertag, { lowercase: true });
 
-		users.update({ _id: userId }, { $set: { gamertagSlug: gamertagSlug } }, function(err) {
-			if (err) {
-				console.log(err);
-			}
-			cb && cb();
-		});
-	});
-}
+// 		users.update({ _id: userId }, { $set: { gamertagSlug: gamertagSlug } }, function(err) {
+// 			if (err) {
+// 				console.log(err);
+// 			}
+// 			cb && cb();
+// 		});
+// 	});
+// }
 
-var xboxProfileSlugify = function(userId, xboxProfile, cb) {
+// var xboxProfileSlugify = function(userId, xboxProfile, cb) {
+module.exports = function(userId, xboxProfile, cb) {
 	var users = db.collection('users');
 	users.findOne({ _id: userId }, function(err, user) {
 		if (user.gamertagSlug) {
@@ -46,10 +47,10 @@ var xboxProfileSlugify = function(userId, xboxProfile, cb) {
 	});
 }
 
-module.exports = {
-	gamercardSlugify: gamercardSlugify,
-	xboxProfileSlugify: xboxProfileSlugify
-}
+// module.exports = {
+// 	gamercardSlugify: gamercardSlugify,
+// 	xboxProfileSlugify: xboxProfileSlugify
+// }
 
 // original slugify code
 // var tr = require('transliteration');
