@@ -198,7 +198,24 @@ var _updateCompleteGameEntry = function(entry, contest, cb) {
 				cb();
 			});
 		} else {
-			cb();
+			var numberComplete = 0;
+			var func = function(achi, callback) {
+				userAchievements.findOne({userId: entry.userId, achievementId: achi._id}, function(err, userAchi) {
+					if (progressState) {
+						numberComplete++
+						cb();
+					} else {
+						cb();
+					}
+				})
+			}
+			xbdAchievements.find({gameId: gameId}).toArray(function(err, docs) {
+				async.each(docs, func, function(err) {
+					userContestEntries.update({_id: entry._id}, {$set: {'data.numberComplete': numberComplete}}, function(err) {
+						cb();
+					});
+				});
+			});
 		}
 	});
 }
@@ -230,7 +247,19 @@ var _updateCompleteAchievementsEntry = function(entry, contest, cb) {
 
 	async.each(achievementIdArray, isAchievementCompleteFunc, function(err) {
 		if (areAchievementsComplete.indexOf('false') === -1) {
-			userContestEntries.update({_id: entry._id}, {$set: {'data.completeTime': lastUnlockTime}}, function(err) {
+			userContestEntries.update({_id: entry._id}, 
+				{$set: {'data.completeTime': lastUnlockTime, 'data.numberComplete': areAchievementsComplete.length}}, 
+				function(err) {
+				cb();
+			});
+		} else {
+			var numberOfTrues = 0;
+			for (var i=0; i < areAchievementsComplete.length; i++) {
+				if (areAchievementsComplete[i] === "true") {
+					numberOfTrues++;
+				}
+			}
+			userContestEntries.update({_id: entry._id}, {$set: {'data.numberComplete': numberOfTrues}}, function(err) {
 				cb();
 			});
 		}
