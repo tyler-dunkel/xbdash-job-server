@@ -8,6 +8,7 @@
     "test:dev": "STATE='dev' node test.js",
     "start:dev": "STATE='dev' node jobs.js",
     "start:devJobs": "STATE='dev' node completeJobs.js",
+    "xbprofile:prod": "STATE='prod' node xbox-profile-update.js",
     "test:prod": "STATE='prod' node test.js",
     "start:prod": "STATE='prod' node jobs.js",
     "start:prodJobs": "STATE='prod' node completeJobs.js"
