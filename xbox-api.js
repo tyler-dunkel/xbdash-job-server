@@ -432,6 +432,7 @@ xboxApiObject.updateXboxProfile = function(userId, callback) {
 			var setObject = { 
 				xboxProfile: {
 					gamertag: result.Gamertag,
+					gamerscore: result.Gamerscore,
 					gameDisplayPicRaw: result.GameDisplayPicRaw,
 					appDislayPicRaw: result.AppDisplayPicRaw,
 					accountTier: result.AccountTier,
