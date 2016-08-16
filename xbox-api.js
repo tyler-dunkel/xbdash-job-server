@@ -431,10 +431,13 @@ xboxApiObject.updateXboxProfile = function(userId, callback) {
 			}
 			var setObject = { 
 				xboxProfile: {
+					gamertag: result.Gamertag,
 					gameDisplayPicRaw: result.GameDisplayPicRaw,
 					appDislayPicRaw: result.AppDisplayPicRaw,
 					accountTier: result.AccountTier,
 					xboxOneRep: result.XboxOneRep,
+					preferredColor: result.PreferredColor,
+					tenureLevel: result.TenureLevel,
 					isSponsoredUser: result.isSponsoredUser
 				}
 			};
