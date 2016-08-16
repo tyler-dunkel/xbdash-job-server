@@ -448,8 +448,15 @@ xboxApiObject.updateXboxProfile = function(userId, callback) {
 					callback({ reason: 'error setting user gamercard', data: err }, null);
 					return;
 				}
+				slugifyGamertag.slugifyXboxProfileGamertag(userId, result, function(err) {
+					if (err) {
+						console.log(err);
+					}
+					callback && callback();
+				});
 				callback && callback();
 			});
+			console.log('updated user gamercard');
 		});
 	});
 }
@@ -490,12 +497,12 @@ xboxApiObject.updateGamercard = function(userId, callback) {
 				return;
 			}
 
-			users.update({ _id: userId }, { $set: {'gamertagScanned.status': 'updating', gamercard: result } }, function(err, res) {
+			users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'updating', gamercard: result } }, function(err, res) {
 				if (err) {
 					callback({ reason: 'error setting user gamercard', data: err }, null);
 					return;
 				}
-				slugifyGamertag(userId, result, function(err) {
+				slugifyGamertag.slugifyGamercardGamertag(userId, result, function(err) {
 					if (err) {
 						console.log(err);
 					}
