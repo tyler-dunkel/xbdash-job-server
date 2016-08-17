@@ -54,8 +54,8 @@ ddp.connect(function (err, wasReconnect) {
 	DDPlogin(ddp, {
 		env: 'METEOR_TOKEN',
 		method: 'email', 
-		account: 'tyler.dunkel@gmail.com',
-		pass: 'Tjd11034',
+		account: 'kguirao87@gmail.com',
+		pass: '121212',
 		retry: 5
 	}, function (err, token) {
 		if (err) {

@@ -452,9 +452,9 @@ xboxApiObject.updateXboxProfile = function(userId, callback) {
 					if (err) {
 						console.log(err);
 					}
+					console.log(result);
 					callback && callback();
 				});
-				callback && callback();
 			});
 			console.log('updated user gamercard');
 		});
