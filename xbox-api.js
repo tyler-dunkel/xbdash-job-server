@@ -444,10 +444,14 @@ xboxApiObject.updateXboxProfile = function(userId, callback) {
 			}
 			var setObject = { 
 				xboxProfile: {
+					gamertag: result.Gamertag,
+					gamerscore: result.Gamerscore,
 					gameDisplayPicRaw: result.GameDisplayPicRaw,
 					appDislayPicRaw: result.AppDisplayPicRaw,
 					accountTier: result.AccountTier,
 					xboxOneRep: result.XboxOneRep,
+					preferredColor: result.PreferredColor,
+					tenureLevel: result.TenureLevel,
 					isSponsoredUser: result.isSponsoredUser
 				}
 			};
@@ -457,8 +461,15 @@ xboxApiObject.updateXboxProfile = function(userId, callback) {
 					callback({ reason: 'error setting user gamercard', data: err }, null);
 					return;
 				}
-				callback && callback();
+				slugifyGamertag.slugifyXboxProfileGamertag(userId, result, function(err) {
+					if (err) {
+						console.log(err);
+					}
+					console.log(result);
+					callback && callback();
+				});
 			});
+			console.log('updated user gamercard');
 		});
 	});
 }
@@ -504,7 +515,7 @@ xboxApiObject.updateGamercard = function(userId, callback) {
 					callback({ reason: 'error setting user gamercard', data: err }, null);
 					return;
 				}
-				slugifyGamertag(userId, result, function(err) {
+				slugifyGamertag.slugifyGamercardGamertag(userId, result, function(err) {
 					if (err) {
 						console.log(err);
 					}
