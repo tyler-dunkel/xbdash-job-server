@@ -127,6 +127,23 @@ var insertNotification = require('./insert-notification');
 var _ = require('underscore');
 var db = require('./db.js');
 
+db.collection('users').find({gamertagSlug: {$exists: 0}, 'gamertagScanned.status': 'true'}).toArray(function(err, docs) {
+	var theFunc = function(user, cb) {
+		xboxApiObject.updateXboxProfile(user._id, function(err, res) {
+			xboxApiObject.updateXboxPresence(user._id, function(err, res) {
+				xboxApiObject.updateRecentActivity(user._id, function(err, res) {
+					if (err) {
+					}
+					cb && cb();
+				});
+			});
+		});
+	}
+	async.eachSeries(docs, theFunc, function(err) {
+		console.log('done');
+	});
+});
+
 // var updateUserLeaderboard = require('./leaderboards-api/update-user-leaderboard.js');
 // db.collection('users').findOne({ _id: 'wSeyBTBWGa2oZbdPc' }, function(err, user) {
 //     updateUserLeaderboard(user, function(err ,res) {
@@ -213,56 +230,56 @@ var db = require('./db.js');
 // 	});
 // });
 // 
-var gameDetails = db.collection('gamedetails');
-var xbdGames = db.collection('xbdgames');
-var xbdAchievements = db.collection('xbdachievements');
-var userAchievements = db.collection('userachievements');
+// var gameDetails = db.collection('gamedetails');
+// var xbdGames = db.collection('xbdgames');
+// var xbdAchievements = db.collection('xbdachievements');
+// var userAchievements = db.collection('userachievements');
 
-xbdGames.find({}, function(err, docs) {
-	docs.forEach(function(doc) {
-		gameDetails.find({gameId: doc._id}).toArray(function(err, gameDetailDocs) {
-			if (gameDetailDocs.length > 1) {
-				console.log('game has more than one game detail');
-				console.log(doc.name);
-				// gameDetails.remove({gameId: doc._id}, {justOne: true}, function() {
-				// 	console.log('removing one for this game' + doc.name);
-				// });
-				xbdAchievements.find({gameId: doc._id}).sort({name: -1}).toArray(function(err, achiDocs) {
-					// var func = function(achi, callback) {
+// xbdGames.find({}, function(err, docs) {
+// 	docs.forEach(function(doc) {
+// 		gameDetails.find({gameId: doc._id}).toArray(function(err, gameDetailDocs) {
+// 			if (gameDetailDocs.length > 1) {
+// 				console.log('game has more than one game detail');
+// 				console.log(doc.name);
+// 				// gameDetails.remove({gameId: doc._id}, {justOne: true}, function() {
+// 				// 	console.log('removing one for this game' + doc.name);
+// 				// });
+// 				xbdAchievements.find({gameId: doc._id}).sort({name: -1}).toArray(function(err, achiDocs) {
+// 					// var func = function(achi, callback) {
 
-					// }
+// 					// }
 
-					// async.eachSeries(achiDocs, func, function(err) {
+// 					// async.eachSeries(achiDocs, func, function(err) {
 
-					// });
-					for (var i=0; i < achiDocs.length; i++) {
-						console.log(achiDocs[i].name);
-						if (i !== achiDocs.length - 1) {
-							if (true) {
-								var one = 0;
-								var two = 0;
+// 					// });
+// 					for (var i=0; i < achiDocs.length; i++) {
+// 						console.log(achiDocs[i].name);
+// 						if (i !== achiDocs.length - 1) {
+// 							if (true) {
+// 								var one = 0;
+// 								var two = 0;
 
-								async.series([
-									function(cb) {
-										if (achiDocs[i+1]) {
-											gameDetails.remove({_id: gameDetailDocs[1]._id}, function(err) {
-												cb();
-											});
-										} else {
-											cb();
-										}
-									}
-								], function(err) {
-									console.log('done');
-								});
-							}
-						}
-					}
-				});
-			}
-		});
-	});
-});
+// 								async.series([
+// 									function(cb) {
+// 										if (achiDocs[i+1]) {
+// 											gameDetails.remove({_id: gameDetailDocs[1]._id}, function(err) {
+// 												cb();
+// 											});
+// 										} else {
+// 											cb();
+// 										}
+// 									}
+// 								], function(err) {
+// 									console.log('done');
+// 								});
+// 							}
+// 						}
+// 					}
+// 				});
+// 			}
+// 		});
+// 	});
+// });
 // var users = db.collection('users');
 // var userId = 'sZHEe2XfccoJj3p8b';
 

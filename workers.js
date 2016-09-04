@@ -28,6 +28,7 @@ var profileBuilder = function (job, callback) {
 					xboxApiObject.updateGamercard(userId, function (err, res) {
 						if (err) {
 							console.log('error with update gamercard');
+							console.log(err);
 						}
 						cb();
 					});
@@ -35,7 +36,8 @@ var profileBuilder = function (job, callback) {
 				function (cb) {
 					xboxApiObject.updateXboxProfile(userId, function (err, res) {
 						if (err) {
-							console.log('error with update gamercard');
+							console.log('error with update xbox profile');
+							console.log(err);
 						}
 						cb && cb();
 					});
@@ -43,9 +45,9 @@ var profileBuilder = function (job, callback) {
 				function (cb) {
 					xboxApiObject.updateXboxPresence(userId, function (err, res) {
 						if (err) {
-							console.log('error with update gamercard');
-							cb();
-							return;
+							console.log('error with update xbox presence');
+							console.log(err);
+
 						}
 						cb && cb();
 					});
@@ -53,9 +55,9 @@ var profileBuilder = function (job, callback) {
 				function (cb) {
 					xboxApiObject.updateRecentActivity(userId, function (err, res) {
 						if (err) {
-							console.log('error with update gamercard');
-							cb();
-							return;
+							console.log('error with update recent activity');
+							console.log(err);
+
 						}
 						cb && cb();
 					});
@@ -63,9 +65,9 @@ var profileBuilder = function (job, callback) {
 				function (cb) {
 					xboxApiObject.updateVideoClips(userId, function (err, res) {
 						if (err) {
-							console.log('error with update gamercard');
-							cb();
-							return;
+							console.log('error with update video clips');
+							console.log(err);
+
 						}
 						cb && cb();
 					});
@@ -73,9 +75,8 @@ var profileBuilder = function (job, callback) {
 				function (cb) {
 					xboxApiObject.updateScreenShots(userId, function (err, res) {
 						if (err) {
-							console.log('error with update gamercard');
-							cb();
-							return;
+							console.log('error with update screen shots');
+							console.log(err);
 						}
 						cb && cb();
 					});
@@ -84,6 +85,7 @@ var profileBuilder = function (job, callback) {
 					xboxApiObject.updateXboxOneData(userId, function (err, res) {
 						if (err) {
 							console.log('error with update x1 games');
+							console.log(err);
 						}
 						cb();
 					});
@@ -92,6 +94,7 @@ var profileBuilder = function (job, callback) {
 					xboxApiObject.updateXbox360Data(userId, function (err, res) {
 						if (err) {
 							console.log('error with update 360 games');
+							console.log(err);
 						}
 						cb();
 					});
@@ -123,6 +126,7 @@ var profileBuilder = function (job, callback) {
 					updateBadges(userId, function(err, res) {
 						if (err) {
 							console.log('err updating badges');
+							console.log(err);
 						}
 						cb();
 					});
@@ -131,6 +135,7 @@ var profileBuilder = function (job, callback) {
 					welcomeEmailSend(userId, function (err, res) {
 						if (err) {
 							console.log('error sending welcome email');
+							console.log(err);
 						}
 						cb();
 					});
@@ -157,20 +162,15 @@ var dirtyUpdateUserStats = function (job, callback) {
 			xboxApiObject.dirtyUpdateUserStats(user._id, function (err, res) {
 				if (err) {
 					console.log('error on xbox api dirty user update');
-					asyncCb && asyncCb();
-					return;
+					console.log(err);
 				}
 				createAndBuild(user._id, function (err, res) {
 					if (err) {
 						console.log(err);
-						asyncCb && asyncCb();
-						return;
 					}
 					updateBadges(user._id, function (err, res) {
 						if (err) {
 							console.log(err);
-							asyncCb && asyncCb();
-							return;
 						}
 						contestFunctions.updateUserEntries(user._id, function(err) {
 							asyncCb && asyncCb();

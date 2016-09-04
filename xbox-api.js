@@ -81,21 +81,20 @@ xboxApiObject.updateXboxOneData = function(userId, callback) {
 				async.series([
 					function(callback) {
 						//callback();
-						xboxApiPrivate._updateXboxOneAchievementsData(userId, gameId, function(err, result) {
+						xboxApiPrivate._updateXboxOneGameData(userId, game, gameId, function(err, result) {
 							if (err) {
 								callback(err, null);
-								console.log('error in x1 game achi data for: ' + game.name);
+								console.log('error in x1 game data for: ' + game.name);
 								return;
 							}
 							callback();
 						});
 					},
 					function(callback) {
-						//callback();
-						xboxApiPrivate._updateXboxOneGameData(userId, game, gameId, function(err, result) {
+						xboxApiPrivate._updateXboxOneAchievementsData(userId, gameId, function(err, result) {
 							if (err) {
 								callback(err, null);
-								console.log('error in x1 game data for: ' + game.name);
+								console.log('error in x1 game achi data for: ' + game.name);
 								return;
 							}
 							callback();
@@ -193,22 +192,22 @@ xboxApiObject.updateXbox360Data = function(userId, callback) {
 				async.series([
 					function(callback) {
 						//callback();
-						xboxApiPrivate._updateXbox360AchievementsData(userId, gameId, function(err, result) {
+						xboxApiPrivate._updateXbox360GameData(userId, game, gameId, function(err, result) {
 							if (err) {
 								callback(err, null);
-								console.log('error in x360 achi data for: ' + game.name);
 								return;
+								console.log('error in update x360 game data for: ' + game.name);
 							}
 							callback();
 						});
 					},
 					function(callback) {
 						//callback();
-						xboxApiPrivate._updateXbox360GameData(userId, game, gameId, function(err, result) {
+						xboxApiPrivate._updateXbox360AchievementsData(userId, gameId, function(err, result) {
 							if (err) {
 								callback(err, null);
+								console.log('error in x360 achi data for: ' + game.name);
 								return;
-								console.log('error in update x360 game data for: ' + game.name);
 							}
 							callback();
 						});
@@ -469,7 +468,6 @@ xboxApiObject.updateXboxProfile = function(userId, callback) {
 					callback && callback();
 				});
 			});
-			console.log('updated user gamercard');
 		});
 	});
 }
@@ -515,12 +513,13 @@ xboxApiObject.updateGamercard = function(userId, callback) {
 					callback({ reason: 'error setting user gamercard', data: err }, null);
 					return;
 				}
-				slugifyGamertag.slugifyGamercardGamertag(userId, result, function(err) {
-					if (err) {
-						console.log(err);
-					}
-					callback && callback();
-				});
+				callback();
+				// slugifyGamertag.slugifyGamercardGamertag(userId, result, function(err) {
+				// 	if (err) {
+				// 		console.log(err);
+				// 	}
+				// 	callback && callback();
+				// });
 			});
 			console.log('update gamercard scan finished for: ' + userId + ' at: ' + moment().format());
 		});
@@ -606,8 +605,6 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 							xboxApiObject.updateGamercard(userId, function(err, res) {
 								if (err) {
 									console.log('error with update gamercard for: ' + userId + ' at: ' + moment().format());
-									cb();
-									return;
 								}
 								cb && cb();
 							});
@@ -616,8 +613,6 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 							xboxApiObject.updateXboxProfile(userId, function(err, res) {
 								if (err) {
 									console.log('error with update xbox profile for: ' + userId + ' at: ' + moment().format());
-									cb();
-									return;
 								}
 								cb && cb();
 							});
@@ -626,8 +621,6 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 							xboxApiObject.updateXboxPresence(userId, function(err, res) {
 								if (err) {
 									console.log('error with update xbox presence for: ' + userId + ' at: ' + moment().format());
-									cb();
-									return;
 								}
 								cb && cb();
 							});
@@ -636,8 +629,6 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 							xboxApiObject.updateRecentActivity(userId, function(err, res) {
 								if (err) {
 									console.log('error with update xbox recent activity for: ' + userId + ' at: ' + moment().format());
-									cb();
-									return;
 								}
 								cb && cb();
 							});
@@ -646,8 +637,6 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 							xboxApiObject.updateVideoClips(userId, function(err, res) {
 								if (err) {
 									console.log('error with update xbox video clips for: ' + userId + ' at: ' + moment().format());
-									cb();
-									return;
 								}
 								cb && cb();
 							});
@@ -656,8 +645,6 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 							xboxApiObject.updateScreenShots(userId, function(err, res) {
 								if (err) {
 									console.log('error with update xbox screen shots for: ' + userId + ' at: ' + moment().format());
-									cb();
-									return;
 								}
 								cb && cb();
 							});
@@ -676,14 +663,6 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 									console.log(err);
 								}
 								cb && cb();
-							});
-						},
-						function(cb) {
-							updateBadges(userId, function(err, res) {
-								if (err) {
-									console.log('error with update user badges for: ' + userId + ' at: ' + moment().format());
-								}
-								cb();
 							});
 						}
 					], function(err) {

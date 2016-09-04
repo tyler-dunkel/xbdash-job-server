@@ -8,9 +8,8 @@ var xboxApiCaller = function(url, callback) {
 			'X-AUTH': 'e9b6206816485c97bd0b0844073723988a848b3f'
 		}
 	};
-	console.log('the args are: ' + arguments[2]);
+	console.log('this url has been tried: ' + arguments[2] + ' times: ' + url);
 	var retries = typeof arguments[2] === 'number' ? arguments[2] + 1 : 0;
-	console.log(retries);
 	https.get(xbUrl, function (res) {
 		var body = '';
 		res.on('data', function(data) {
