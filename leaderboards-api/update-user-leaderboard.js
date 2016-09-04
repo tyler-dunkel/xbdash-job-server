@@ -1,5 +1,6 @@
 var async = require('async');
-var dailyCount = require('./daily-count.js');
+var moment = require('moment');
+var timeFrameCounts = require('./timeframe-counts.js');
 var completedGameCount = require('./count-completed-games.js');
 var countFunctions = require('./count-functions.js');
 var updateRanks = require('./rank-functions.js');
@@ -8,7 +9,6 @@ var db = require('../db.js');
 module.exports = function(user, topCallback) {
 	var userLeaderboards = db.collection('userleaderboards');
 	var userAchievements = db.collection('userachievements');
-
 	userLeaderboards.find({ userId: user._id }, function(err, userStat) {
 		if (err) {
 			topCallback({ reason: 'error retrieving user stats', data: err }, null);
@@ -20,15 +20,29 @@ module.exports = function(user, topCallback) {
 		}
 		userAchievements.count({ userId: user._id }, function(err, achiCount) {
 			if (err || achiCount < 1) {
+				console.log(achiCount);
 				console.log('user does not have any achievements ' + user._id);
 				topCallback && topCallback();
 				return;
 			} else {
+				console.log('starting leaderboard update for: ' + user._id + ' at: ' + moment().format());
 				async.series([
 					function(cb) {
 						async.parallel([
 							function(callback) {
-								dailyCount(user, function() {
+								console.log('daily count');
+								timeFrameCounts.dailyCount(user, function() {
+									callback();
+								});
+							},
+							function(callback) {
+								console.log('weekly count');
+								timeFrameCounts.weeklyCount(user, function() {
+									callback();
+								});
+							},
+							function(callback) {
+								timeFrameCounts.monthlyCount(user, function() {
 									callback();
 								});
 							},
@@ -55,11 +69,12 @@ module.exports = function(user, topCallback) {
 							}
 						], function(err, result) {
 							if (err) {
-								console.log('error in finishing counting functions');
+								console.log('error in finishing leaderboardcounting functions for: ' + user._id + ' at: ' + moment().format());
+								console.log(err);
 								cb(err, null);
 								return;
 							}
-							console.log('all counting functions done');
+							console.log('all leaderboard counting functions for: ' + user._id + ' done at: ' + moment().format());
 							cb && cb();
 						});
 					},
@@ -73,6 +88,36 @@ module.exports = function(user, topCallback) {
 							},
 							function(callback) {
 								updateRanks.dailyRank(function() {
+									//console.log('daily callback fired');
+									callback();
+								});
+							},
+							function(callback) {
+								updateRanks.dailyAchievementRank(function() {
+									//console.log('daily callback fired');
+									callback();
+								});
+							},
+							function(callback) {
+								updateRanks.weeklyRank(function() {
+									//console.log('daily callback fired');
+									callback();
+								});
+							},
+							function(callback) {
+								updateRanks.weeklyAchievementRank(function() {
+									//console.log('daily callback fired');
+									callback();
+								});
+							},
+							function(callback) {
+								updateRanks.monthlyRank(function() {
+									//console.log('daily callback fired');
+									callback();
+								});
+							},
+							function(callback) {
+								updateRanks.monthlyAchievementRank(function() {
 									//console.log('daily callback fired');
 									callback();
 								});
@@ -121,18 +166,19 @@ module.exports = function(user, topCallback) {
 							}
 						], function(err, result) {
 							if (err) {
-								console.log('error in finishing ranking functions');
+								console.log('error in finishing ranking functions for: ' + user._id + ' at: ' + moment().format());
+								console.log(err);
 								cb(err, null);
 								return;
 							}
-							console.log('all ranking functions done');
+							console.log('all leaderboard ranking functions for: ' + user._id + ' done at: ' + moment().format());
 							var date = new Date();
 							userLeaderboards.update({ userId: user._id }, { $set: { updated: date } });
 							cb && cb();
 						});
 					}
 				], function(err, results){
-					console.log('calling top callback');
+					console.log('ending leaderboard update for: ' + user._id + ' at: ' + moment().format());
 					topCallback && topCallback();
 				});
 			}

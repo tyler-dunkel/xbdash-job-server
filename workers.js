@@ -2,15 +2,18 @@ var randomstring = require("randomstring");
 var xboxApiObject = require('./xbox-api.js');
 var async = require('async');
 var createAndBuild = require('./leaderboards-api/create-and-build.js');
+var contestFunctions = require('./contests-api/contestFunctions.js');
 var updateBadges = require('./badge-api/badges.js');
 var welcomeEmailSend = require('./mailer-welcome.js');
+var moment = require('moment');
 var db = require('./db.js');
 
 var profileBuilder = function (job, callback) {
 	if (job) {
 		var userId = job.data.userId;
 		var users = db.collection('users');
-		console.log(userId);
+		
+		console.log('starting build user profile job for: ' + userId + ' at: ' + moment().format());
 		users.findOne({
 			_id: userId
 		}, function (err, user) {
@@ -25,15 +28,16 @@ var profileBuilder = function (job, callback) {
 					xboxApiObject.updateGamercard(userId, function (err, res) {
 						if (err) {
 							console.log('error with update gamercard');
+							console.log(err);
 						}
-						console.log('update gamercard done, moving to x1');
 						cb();
 					});
 				},
 				function (cb) {
 					xboxApiObject.updateXboxProfile(userId, function (err, res) {
 						if (err) {
-							console.log('error with update gamercard');
+							console.log('error with update xbox profile');
+							console.log(err);
 						}
 						cb && cb();
 					});
@@ -41,9 +45,9 @@ var profileBuilder = function (job, callback) {
 				function (cb) {
 					xboxApiObject.updateXboxPresence(userId, function (err, res) {
 						if (err) {
-							console.log('error with update gamercard');
-							cb();
-							return;
+							console.log('error with update xbox presence');
+							console.log(err);
+
 						}
 						cb && cb();
 					});
@@ -51,9 +55,9 @@ var profileBuilder = function (job, callback) {
 				function (cb) {
 					xboxApiObject.updateRecentActivity(userId, function (err, res) {
 						if (err) {
-							console.log('error with update gamercard');
-							cb();
-							return;
+							console.log('error with update recent activity');
+							console.log(err);
+
 						}
 						cb && cb();
 					});
@@ -61,9 +65,9 @@ var profileBuilder = function (job, callback) {
 				function (cb) {
 					xboxApiObject.updateVideoClips(userId, function (err, res) {
 						if (err) {
-							console.log('error with update gamercard');
-							cb();
-							return;
+							console.log('error with update video clips');
+							console.log(err);
+
 						}
 						cb && cb();
 					});
@@ -71,9 +75,8 @@ var profileBuilder = function (job, callback) {
 				function (cb) {
 					xboxApiObject.updateScreenShots(userId, function (err, res) {
 						if (err) {
-							console.log('error with update gamercard');
-							cb();
-							return;
+							console.log('error with update screen shots');
+							console.log(err);
 						}
 						cb && cb();
 					});
@@ -82,8 +85,8 @@ var profileBuilder = function (job, callback) {
 					xboxApiObject.updateXboxOneData(userId, function (err, res) {
 						if (err) {
 							console.log('error with update x1 games');
+							console.log(err);
 						}
-						console.log('update xbox 1 done, moving to x360');
 						cb();
 					});
 				},
@@ -91,8 +94,8 @@ var profileBuilder = function (job, callback) {
 					xboxApiObject.updateXbox360Data(userId, function (err, res) {
 						if (err) {
 							console.log('error with update 360 games');
+							console.log(err);
 						}
-						console.log('done with xbox360 games');
 						cb();
 					});
 				},
@@ -116,7 +119,6 @@ var profileBuilder = function (job, callback) {
 						if (err) {
 							console.log(err);
 						}
-						console.log('done with build leaderboard');
 						cb();
 					});
 				},
@@ -124,6 +126,7 @@ var profileBuilder = function (job, callback) {
 					updateBadges(userId, function(err, res) {
 						if (err) {
 							console.log('err updating badges');
+							console.log(err);
 						}
 						cb();
 					});
@@ -132,6 +135,7 @@ var profileBuilder = function (job, callback) {
 					welcomeEmailSend(userId, function (err, res) {
 						if (err) {
 							console.log('error sending welcome email');
+							console.log(err);
 						}
 						cb();
 					});
@@ -141,6 +145,7 @@ var profileBuilder = function (job, callback) {
 					if (err) {
 						console.log('error in ending job');
 					}
+					console.log('ending build user profile job for: ' + userId + ' at: ' + moment().format());
 					callback();
 				});
 			});
@@ -151,33 +156,32 @@ var profileBuilder = function (job, callback) {
 var dirtyUpdateUserStats = function (job, callback) {
 	if (job) {
 		var users = db.collection('users');
+		console.log('starting dirty stat job at: ' + moment().format());
+
 		var processUser = function (user, asyncCb) {
 			xboxApiObject.dirtyUpdateUserStats(user._id, function (err, res) {
 				if (err) {
 					console.log('error on xbox api dirty user update');
-					asyncCb && asyncCb();
-					return;
+					console.log(err);
 				}
 				createAndBuild(user._id, function (err, res) {
 					if (err) {
 						console.log(err);
-						asyncCb && asyncCb();
-						return;
 					}
 					updateBadges(user._id, function (err, res) {
 						if (err) {
 							console.log(err);
-							asyncCb && asyncCb();
-							return;
 						}
-						console.log('calling async cb');
-						asyncCb && asyncCb();
+						contestFunctions.updateUserEntries(user._id, function(err) {
+							asyncCb && asyncCb();
+						});
 					});
 				});
 			});
 		}
+
 		var q = async.queue(processUser, 1);
-		// change back later***
+
 		users.find({
 			'gamertagScanned.status': 'true',
 			'gamercard.gamerscore': {
@@ -202,16 +206,78 @@ var dirtyUpdateUserStats = function (job, callback) {
 			});
 		});
 		q.drain = function (err) {
-			console.log('queue drained');
-			job.done("dirty user job is done");
-			callback && callback();
+			console.log('ending dirty stat job at: ' + moment().format());
+			job.done && job.done({}, {}, function (err, res) {
+				callback && callback();
+			});
 		}
+	}
+}
+
+var chooseContestWinner = function(job, callback) {
+	if (job) {
+		var xbdContests = db.collection('xbdcontests'),
+			userContestEntries = db.collection('usercontestentries'),
+			contestId = job.data.contestId;
+
+		xbdContests.findOne({_id: contestId}, function(err, contest) {
+			
+			var processEntry = function(entry, asyncCb) {
+				if (entry) {
+					if (entry.contestType === 'referral') {
+						asyncCb && asyncCb();
+						return;
+					}
+					if (entry.contestType === 'timeAttack') {
+						contestFunctions.scanTimeAttack(entry, contest, function(err) {
+							if (err) {
+								console.log('there was an error scanning this daily contest entry');
+								console.log(err);
+							}
+							asyncCb && asyncCb();
+						});
+					}
+					if (entry.contestType === 'completeGame' || entry.contestType === 'completeAchievements') {
+						contestFunctions.scanCompleteObjective(entry, contest, function(err) {
+							if (err) {
+								console.log('there was an error scanning this daily contest entry');
+								console.log(err);
+							}
+							asyncCb && asyncCb();
+						});
+					} 
+				} else {
+					asyncCb();
+				}
+			}
+
+			var q = async.queue(processEntry, 1);
+
+			userContestEntries.find({contestToken: contest.contestToken}, function(err, entries) {
+				entries.forEach(function(entry) {
+					q.push(entry, function(err) {
+						if (err) {
+							console.log(err);
+						}
+					});
+				});
+			});
+
+			q.drain = function(err) {
+				contestFunctions.chooseWinner(contest, function(err) {
+					job.done && job.done({}, {}, function (err, res) {
+						callback && callback();
+					});
+				});
+			}
+		});
 	}
 }
 
 var clearDailyRanks = function (job, callback) {
 	if (job) {
 		var userLeaderboards = db.collection('userleaderboards');
+		console.log('starting clear daily rank job at: ' + moment().format());
 		userLeaderboards.update({}, {
 				$set: {
 					'dailyRank.value': 0,
@@ -224,7 +290,7 @@ var clearDailyRanks = function (job, callback) {
 				if (err) {
 					console.log(err);
 				}
-				console.log('daily ranks cleared');
+				console.log('ending clear daily rank job at: ' + moment().format());
 				job.done && job.done({}, {}, function (err, res) {
 					callback && callback();
 				});
@@ -232,8 +298,70 @@ var clearDailyRanks = function (job, callback) {
 	}
 }
 
+var updateGameClips = function(job, callback) {
+	if (job) {
+		console.log('starting update game clips function at: ' + moment().format());
+		var users = db.collection('users');
+
+		var _updateClipFunc = function(user, cb) {
+			var users = db.collection('users');
+			console.log('starting update clip function for: ' + user._id + ' at: ' + moment().format());
+			async.series([
+				function(callback) {
+					xboxApiObject.updateVideoClips(user._id, function(err) {
+						callback();
+					});
+				},
+				function(callback) {
+					xboxApiObject.updateRecentActivity(user._id, function(err) {
+						callback();
+					});
+				},
+				function(callback) {
+					xboxApiObject.updateXboxPresence(user._id, function(err) {
+						callback();
+					});
+				},
+				function(callback) {
+					users.update({_id: user._id}, {$set: {'gamertagScanned.status': 'true', lastClipUpdate: new Date()}}, function(err) {
+						if (err) {
+							console.log(err);
+						}
+						callback();
+					});
+				}
+			], function(err) {
+				console.log('ending update clip function for: ' + user._id + ' at: ' + moment().format());
+				cb();
+			});
+		}
+		users.find({
+			'gamertagScanned.status': 'true',
+			'gamercard.gamerscore': {
+				$gt: 0
+			}
+		}).sort({
+			'lastClipUpdate': 1
+		}).limit(20).toArray(function(err, userDocs) {
+			userDocs.forEach(function(userDoc) {
+				users.update({_id: userDoc._id}, {$set: {'gamertagScanned.status': 'updating'}}, function(err) {
+					if (err) {
+						console.log(err);
+					}
+				});
+			});
+			async.eachLimit(userDocs, 1, _updateClipFunc, function(err) {
+				job.done && job.done({}, {}, function (err, res) {
+					callback && callback();
+				});
+			});
+		});
+	}
+}
+
 module.exports = {
 	profileBuilder: profileBuilder,
 	dirtyUpdateUserStats: dirtyUpdateUserStats,
-	clearDailyRanks: clearDailyRanks
+	clearDailyRanks: clearDailyRanks,
+	updateGameClips: updateGameClips
 }

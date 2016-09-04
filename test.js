@@ -127,14 +127,65 @@ var insertNotification = require('./insert-notification');
 var _ = require('underscore');
 var db = require('./db.js');
 
-var notifications = db.collection('notifications');
-var userId = 'numKGua7JywHbnPBS';
-// var msg = 'testing message';
-// insertNotification(userId, msg);
-
-xboxApiObject.updateVideoClips(userId, function(err) {
-	console.log('done');
+db.collection('users').find({gamertagSlug: {$exists: 0}, 'gamertagScanned.status': 'true'}).toArray(function(err, docs) {
+	var theFunc = function(user, cb) {
+		xboxApiObject.updateXboxProfile(user._id, function(err, res) {
+			xboxApiObject.updateXboxPresence(user._id, function(err, res) {
+				xboxApiObject.updateRecentActivity(user._id, function(err, res) {
+					if (err) {
+					}
+					cb && cb();
+				});
+			});
+		});
+	}
+	async.eachSeries(docs, theFunc, function(err) {
+		console.log('done');
+	});
 });
+
+// var updateUserLeaderboard = require('./leaderboards-api/update-user-leaderboard.js');
+// db.collection('users').findOne({ _id: 'wSeyBTBWGa2oZbdPc' }, function(err, user) {
+//     updateUserLeaderboard(user, function(err ,res) {
+//         if (err) {
+//             console.log(err);
+//             return;
+//         }
+//         console.log(res);
+//     });
+// });
+
+// var contests = db.collection('xbdcontests');
+// var userId = 'numKGua7JywHbnPBS';
+// // var msg = 'testing message';
+// // insertNotification(userId, msg);
+
+// var id = randomstring.generate(17);
+// var obj = {
+// 	"_id": id,
+//     "status" : "waiting",
+//     "rules" : [ 
+//         "<strong><em>Get an extra entry</em></strong> into this month's contest for each friend you invite that signs up through your link below.", 
+//         "Only <strong><em>verified emails qualify</em></strong> as an entry to this contest.", 
+//         "1 grand prize winner will receive a customized controller to their liking with engraving. New Xbox Design Lab controllers ship in September."
+//     ],
+//     "prizes" : [ 
+//         {
+//             "title" : "Customized Design Xbox One Controller (by the Xbox&reg; Design Lab)",
+//             "imageUrl" : "http://res.cloudinary.com/xbdash/image/upload/v1467373849/contests/new-controller-banner.jpg",
+//             "isPremium" : false
+//         }
+//     ],
+//     "contestToken" : "julyDirect",
+//     "entries" : [],
+//     "startDate" : new Date(),
+//     "endDate" : new Date('2016-08-01T03:59:59.000Z'),
+//     "awardDate" : new Date('2016-08-01T16:00:00.000Z'),
+//     "title" : "July 2016 Custom Xbox&reg; One Controller Contest",
+//     "description" : "Xbox&reg; recently released their Xbox&reg; Design Lab! With the Design Lab, you can personalize your controller and they ship in mid-September if orders are placed before the end of August. Get a chance to win a controller of your design courtesy of XBdash!"
+// }
+
+// contests.insert(obj);
 
 // notifications.find({}, function(err, docs) {
 // 	if (docs) {
@@ -179,7 +230,58 @@ xboxApiObject.updateVideoClips(userId, function(err) {
 // 	});
 // });
 // 
-// 
+// var gameDetails = db.collection('gamedetails');
+// var xbdGames = db.collection('xbdgames');
+// var xbdAchievements = db.collection('xbdachievements');
+// var userAchievements = db.collection('userachievements');
+
+// xbdGames.find({}, function(err, docs) {
+// 	docs.forEach(function(doc) {
+// 		gameDetails.find({gameId: doc._id}).toArray(function(err, gameDetailDocs) {
+// 			if (gameDetailDocs.length > 1) {
+// 				console.log('game has more than one game detail');
+// 				console.log(doc.name);
+// 				// gameDetails.remove({gameId: doc._id}, {justOne: true}, function() {
+// 				// 	console.log('removing one for this game' + doc.name);
+// 				// });
+// 				xbdAchievements.find({gameId: doc._id}).sort({name: -1}).toArray(function(err, achiDocs) {
+// 					// var func = function(achi, callback) {
+
+// 					// }
+
+// 					// async.eachSeries(achiDocs, func, function(err) {
+
+// 					// });
+// 					for (var i=0; i < achiDocs.length; i++) {
+// 						console.log(achiDocs[i].name);
+// 						if (i !== achiDocs.length - 1) {
+// 							if (true) {
+// 								var one = 0;
+// 								var two = 0;
+
+// 								async.series([
+// 									function(cb) {
+// 										if (achiDocs[i+1]) {
+// 											gameDetails.remove({_id: gameDetailDocs[1]._id}, function(err) {
+// 												cb();
+// 											});
+// 										} else {
+// 											cb();
+// 										}
+// 									}
+// 								], function(err) {
+// 									console.log('done');
+// 								});
+// 							}
+// 						}
+// 					}
+// 				});
+// 			}
+// 		});
+// 	});
+// });
+// var users = db.collection('users');
+// var userId = 'sZHEe2XfccoJj3p8b';
 
 
 /* BEGIN: user build functions */
@@ -230,13 +332,13 @@ xboxApiObject.updateVideoClips(userId, function(err) {
 // 						console.log('done creating and building');
 
 // 						console.log('all profile build jobs are done');
-// 						welcomeEmailSend(userId, function(err, res) {
-// 							if (err) {
-// 								console.log('error sending welcome email');
-// 								return;
-// 							}
-// 							console.log('welcome email sent');
-// 						});
+// 						// welcomeEmailSend(userId, function(err, res) {
+// 						// 	if (err) {
+// 						// 		console.log('error sending welcome email');
+// 						// 		return;
+// 						// 	}
+// 						// 	console.log('welcome email sent');
+// 						// });
 // 					});
 // 				});
 // 		    });

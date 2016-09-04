@@ -30,6 +30,12 @@ var jobRunToCompleted = function(callback) {
 					console.log('updated gamertag status to true');
 					cb && cb();
 				});
+		},
+		function(cb) {
+			cb();
+			// jobsCollection.remove({type: 'clearDailyRanksJob', status: 'waiting'}, function() {
+			// 	cb && cb();
+			// });
 		}
 	], function(err, res){
 		callback && callback();

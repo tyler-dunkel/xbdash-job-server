@@ -36,22 +36,18 @@ var countByTier = function(user, callback) {
 		xbdAchievements.findOne({ _id: userAchi.achievementId }, function(err, doc) {
 			if (doc && doc.userPercentage) {
 				if (doc.userPercentage >= 1 && doc.userPercentage <= 10) {
-					//console.log('legendary plus one');
 					legendaryCount++;
 					asyncCallback();
 				}
 				else if (doc.userPercentage >= 31 && doc.userPercentage <= 60) {
-					//console.log('rare plus one');
 					rareCount++;
 					asyncCallback();
 				}
 				else if (doc.userPercentage >= 11 && doc.userPercentage <= 30) {
-					//console.log('epic plus one');
 					epicCount++;
 					asyncCallback();
 				}
 				else if (doc.userPercentage && doc.userPercentage >= 61) {
-					//console.log('common plus one');
 					commonCount++;
 					asyncCallback();
 					//commonCount = commonCount + 1;
@@ -59,7 +55,8 @@ var countByTier = function(user, callback) {
 					asyncCallback();
 				}
 			} else {
-				console.log('no userPer');
+				console.log('this achievement has no user percentage and could be a challenge');
+				console.log(doc);
 				asyncCallback();
 			}
 		});
@@ -76,8 +73,7 @@ var countByTier = function(user, callback) {
 	});
 
 	q.drain = function() {
-		console.log('draining the queue for achievement leaderbaord');
-		console.log("common count is: " + commonCount + " Legendary Count is: " + legendaryCount);
+		console.log("ending the achievement count functions for + " + user._id);
 		userLeaderboards.update({ userId: user._id }, { $set: { 'legendaryAchievements.count': legendaryCount, 
 			'commonAchievements.count': commonCount, 'epicAchievements.count': epicCount, 'rareAchievements.count': rareCount }
 			 }, function() {

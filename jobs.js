@@ -5,8 +5,10 @@ var jobRunToCompleted = require('./settings-reset.js');
 var Job = require('meteor-job');
 var DDPlogin = require('ddp-login');
 var later = require('later');
+var moment = require('moment');
 var workers = require('./workers.js');
 var db = require('./db.js');
+var jobsCollection = db.collection('xbdjobscollection.jobs');
 
 if (process.env.STATE === 'prod') {
 	var ddp = new DDP({
@@ -38,24 +40,62 @@ if (!ddp) {
 }
 
 Job.setDDP(ddp);
+later.date.UTC();
 
 ddp.connect(function (err, wasReconnect) {
 	if (err) throw err;
 	if (wasReconnect) {
 		console.log('connection reestablished');
-		jobRunToCompleted(function(err, res) {
-			if (err) {
-				console.log('error sending welcome email');
-				return;
-			}
-			console.log('all jobs and users set back to default');
+		jobsCollection.findOne({'type': 'clearDailyRanksJob', 'status': {
+			$in: ['waiting', 'ready', 'running']}}, function(err, job) {
+				if (!job) {
+					var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
+						.priority('normal')
+						.repeat({
+							schedule: later.parse.text('at 12:15am')
+						})
+						.save(function (err, result) {
+							if (err) return;
+							if (!err && result) {
+								console.log('clear daily ranks job saved with ID: ' + result);
+							}
+						});
+				}
+		});
+		jobsCollection.findOne({'type': 'updateGameClips', 'status': {
+			$in: ['waiting', 'ready', 'running']}}, function(err, job) {
+				if (!job) {
+					var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
+						.priority('normal')
+						.repeat({repeats: Job.forever})
+						.save(function (err, result) {
+							if (err) return;
+							if (!err && result) {
+								console.log('updateGameClips job saved with ID: ' + result);
+							}
+						});
+				}
+		});
+		jobsCollection.count({'type': 'dirtyUserStatsJob', 'status': {
+			$in: ['waiting', 'ready', 'running']}}, function(err, count) {
+				if (count < 4) {
+					var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
+						.priority('normal')
+						.repeat({repeats: Job.forever})
+						.save(function (err, result) {
+							if (err) return;
+							if (!err && result) {
+								console.log('dirty user stats job saved with ID: ' + result);
+							}
+						});
+				}
 		});
 	}
 	DDPlogin(ddp, {
 		env: 'METEOR_TOKEN',
 		method: 'email', 
-		account: 'kguirao87@gmail.com',
-		pass: '121212',
+		account: 'tyler.dunkel@gmail.com',
+		pass: 'Tjd11034',
 		retry: 5
 	}, function (err, token) {
 		if (err) {
@@ -65,39 +105,59 @@ ddp.connect(function (err, wasReconnect) {
 
 		console.log('connected to xbdash prod');
 
-		jobRunToCompleted(function(err, res) {
-			if (err) {
-				console.log('error sending welcome email');
-				return;
-			}
-			console.log('all jobs and users set back to default');
+		jobsCollection.findOne({'type': 'clearDailyRanksJob', 'status': {
+			$in: ['waiting', 'ready', 'running']}}, function(err, job) {
+				if (!job) {
+					console.log('creating a new clear daily rank job on startup at: ' + moment().format());
+					var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
+						.priority('normal')
+						.repeat({
+							schedule: later.parse.text('at 12:15am')
+						})
+						.save(function (err, result) {
+							if (err) return;
+							if (!err && result) {
+								console.log('clear daily ranks job saved with ID: ' + result);
+							}
+						});
+				}
+		});
+		jobsCollection.findOne({'type': 'updateGameClips', 'status': {
+			$in: ['waiting', 'ready', 'running']}}, function(err, job) {
+				if (!job) {
+					var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
+						.priority('normal')
+						.repeat({repeats: Job.forever})
+						.save(function (err, result) {
+							if (err) return;
+							if (!err && result) {
+								console.log('updateGameClips job saved with ID: ' + result);
+							}
+						});
+				}
+		});
+		jobsCollection.count({'type': 'dirtyUserStatsJob', 'status': {
+			$in: ['waiting', 'ready', 'running']}}, function(err, count) {
+				if (count < 4) {
+					console.log('creating a new dirty stats job on startup at: ' + moment().format());
+					console.log('this dirty stat job was created because we want 4 and have: ' + String(count));
+					var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
+						.priority('normal')
+						.repeat({repeats: Job.forever})
+						.save(function (err, result) {
+							if (err) return;
+							if (!err && result) {
+								console.log('dirty user stats job saved with ID: ' + result);
+							}
+						});
+				}
 		});
 
-		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
-			.priority('normal')
-			.repeat({repeats: Job.forever})
-			.save(function (err, result) {
-				if (err) return;
-				if (!err && result) {
-					console.log('dirty user stats job saved with ID: ' + result);
-				}
-			});
-
-		var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
-			.priority('normal')
-			.repeat({
-				schedule: later.parse.text('at 00:15 am')
-			})
-			.save(function (err, result) {
-				if (err) return;
-				if (!err && result) {
-					console.log('clear daily ranks job saved with ID: ' + result);
-				}
-			});
-
 		var profileBuilderWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
+		var chooseContestWinnerWorker = Job.processJobs('xbdjobscollection', 'chooseContestWinner', { workTimeout: 600000 }, workers.chooseContestWinner);
 		var dirtyUpdateUserStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', { workTimeout: 600000 }, workers.dirtyUpdateUserStats);
 		var clearDailyRanksWorker = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', { workTimeout: 600000 }, workers.clearDailyRanks);
+		var updateGameClipsWorker = Job.processJobs('xbdjobscollection', 'updateGameClips', {workTimeout: 600000}, workers.updateGameClips);
 	});
 });
 
