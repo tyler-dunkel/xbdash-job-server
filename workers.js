@@ -189,7 +189,7 @@ var dirtyUpdateUserStats = function (job, callback) {
 			}
 		}).sort({
 			'gamertagScanned.lastUpdate': 1
-		}).limit(5).toArray(function (err, userDocs) {
+		}).limit(20).toArray(function (err, userDocs) {
 			userDocs.forEach(function (user) {
 				if (!user || !user.gamercard) {
 					return;
