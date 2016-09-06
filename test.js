@@ -126,7 +126,25 @@ var jobRunToCompleted = require('./settings-reset.js');
 var insertNotification = require('./insert-notification');
 var _ = require('underscore');
 var db = require('./db.js');
+var moment = require('moment');
 
+
+// var userLeaderboards = db.collection('userleaderboards');
+// console.log('starting clear daily rank job at: ' + moment().format());
+// userLeaderboards.update({}, {
+// 	$set: {
+// 		'dailyRank.value': 0,
+// 		'dailyRank.rank': 0
+// 	}
+// }, {
+// 	multi: true
+// },
+// function (err) {
+// 	if (err) {
+// 		console.log(err);
+// 	}
+// 	console.log('ending clear daily rank job at: ' + moment().format());
+// });
 db.collection('xbdjobscollection.jobs').remove({}, function(err) {
 	console.log('done');
 });
