@@ -52,7 +52,7 @@ ddp.connect(function (err, wasReconnect) {
 					var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
 						.priority('normal')
 						.repeat({
-							schedule: later.parse.text('at 12:15am')
+							schedule: later.parse.text('at 5:15am')
 						})
 						.save(function (err, result) {
 							if (err) return;
@@ -62,34 +62,24 @@ ddp.connect(function (err, wasReconnect) {
 						});
 				}
 		});
-		jobsCollection.findOne({'type': 'updateGameClips', 'status': {
-			$in: ['waiting', 'ready', 'running']}}, function(err, job) {
-				if (!job) {
-					var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
-						.priority('normal')
-						.repeat({repeats: Job.forever})
-						.save(function (err, result) {
-							if (err) return;
-							if (!err && result) {
-								console.log('updateGameClips job saved with ID: ' + result);
-							}
-						});
+		var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
+			.priority('normal')
+			.repeat({repeats: Job.forever})
+			.save(function (err, result) {
+				if (err) return;
+				if (!err && result) {
+					console.log('updateGameClips job saved with ID: ' + result);
 				}
-		});
-		jobsCollection.count({'type': 'dirtyUserStatsJob', 'status': {
-			$in: ['waiting', 'ready', 'running']}}, function(err, count) {
-				if (count < 4) {
-					var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
-						.priority('normal')
-						.repeat({repeats: Job.forever})
-						.save(function (err, result) {
-							if (err) return;
-							if (!err && result) {
-								console.log('dirty user stats job saved with ID: ' + result);
-							}
-						});
+			});
+		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
+			.priority('normal')
+			.repeat({repeats: Job.forever})
+			.save(function (err, result) {
+				if (err) return;
+				if (!err && result) {
+					console.log('dirty user stats job saved with ID: ' + result);
 				}
-		});
+			});
 	}
 	DDPlogin(ddp, {
 		env: 'METEOR_TOKEN',
@@ -112,7 +102,7 @@ ddp.connect(function (err, wasReconnect) {
 					var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
 						.priority('normal')
 						.repeat({
-							schedule: later.parse.text('at 12:15am')
+							schedule: later.parse.text('at 5:15am')
 						})
 						.save(function (err, result) {
 							if (err) return;
@@ -122,36 +112,24 @@ ddp.connect(function (err, wasReconnect) {
 						});
 				}
 		});
-		jobsCollection.findOne({'type': 'updateGameClips', 'status': {
-			$in: ['waiting', 'ready', 'running']}}, function(err, job) {
-				if (!job) {
-					var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
-						.priority('normal')
-						.repeat({repeats: Job.forever})
-						.save(function (err, result) {
-							if (err) return;
-							if (!err && result) {
-								console.log('updateGameClips job saved with ID: ' + result);
-							}
-						});
+		var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
+			.priority('normal')
+			.repeat({repeats: Job.forever})
+			.save(function (err, result) {
+				if (err) return;
+				if (!err && result) {
+					console.log('updateGameClips job saved with ID: ' + result);
 				}
-		});
-		jobsCollection.count({'type': 'dirtyUserStatsJob', 'status': {
-			$in: ['waiting', 'ready']}}, function(err, count) {
-				if (count < 4) {
-					console.log('creating a new dirty stats job on startup at: ' + moment().format());
-					console.log('this dirty stat job was created because we want 4 and have: ' + String(count));
-					var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
-						.priority('normal')
-						.repeat({repeats: Job.forever})
-						.save(function (err, result) {
-							if (err) return;
-							if (!err && result) {
-								console.log('dirty user stats job saved with ID: ' + result);
-							}
-						});
+			});
+		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
+			.priority('normal')
+			.repeat({repeats: Job.forever})
+			.save(function (err, result) {
+				if (err) return;
+				if (!err && result) {
+					console.log('dirty user stats job saved with ID: ' + result);
 				}
-		});
+			});
 
 		var profileBuilderWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
 		var chooseContestWinnerWorker = Job.processJobs('xbdjobscollection', 'chooseContestWinner', { workTimeout: 600000 }, workers.chooseContestWinner);

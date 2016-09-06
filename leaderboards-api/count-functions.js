@@ -35,7 +35,7 @@ var countByTier = function(user, callback) {
 	var processAcheivement = function(userAchi, asyncCallback) {
 		xbdAchievements.findOne({ _id: userAchi.achievementId }, function(err, doc) {
 			if (doc && doc.userPercentage) {
-				if (doc.userPercentage >= 1 && doc.userPercentage <= 10) {
+				if (doc.userPercentage >= 0 && doc.userPercentage <= 10) {
 					legendaryCount++;
 					asyncCallback();
 				}
