@@ -277,7 +277,7 @@ var chooseContestWinner = function(job, callback) {
 var clearDailyRanks = function (job, callback) {
 	if (job) {
 		var userLeaderboards = db.collection('userleaderboards');
-		console.log('starting clear daily rank job at: ' + moment().format());
+		console.log('starting clear daily rank job at: ' + moment.utc().format());
 		userLeaderboards.update({}, {
 				$set: {
 					'dailyRank.value': 0,
@@ -290,7 +290,7 @@ var clearDailyRanks = function (job, callback) {
 				if (err) {
 					console.log(err);
 				}
-				console.log('ending clear daily rank job at: ' + moment().format());
+				console.log('ending clear daily rank job at: ' + moment.utc().format());
 				job.done && job.done({}, {}, function (err, res) {
 					callback && callback();
 				});

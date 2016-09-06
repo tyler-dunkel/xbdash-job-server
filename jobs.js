@@ -52,7 +52,7 @@ ddp.connect(function (err, wasReconnect) {
 					var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
 						.priority('normal')
 						.repeat({
-							schedule: later.parse.text('at 5:15am')
+							schedule: later.parse.text('at 05:15am')
 						})
 						.save(function (err, result) {
 							if (err) return;
@@ -64,7 +64,7 @@ ddp.connect(function (err, wasReconnect) {
 		});
 		var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
 			.priority('normal')
-			.repeat({repeats: Job.forever})
+			.repeat({repeats: Job.forever, wait: 500})
 			.save(function (err, result) {
 				if (err) return;
 				if (!err && result) {
@@ -73,7 +73,7 @@ ddp.connect(function (err, wasReconnect) {
 			});
 		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
 			.priority('normal')
-			.repeat({repeats: Job.forever})
+			.repeat({repeats: Job.forever, wait: 500})
 			.save(function (err, result) {
 				if (err) return;
 				if (!err && result) {
@@ -102,7 +102,7 @@ ddp.connect(function (err, wasReconnect) {
 					var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
 						.priority('normal')
 						.repeat({
-							schedule: later.parse.text('at 5:15am')
+							schedule: later.parse.text('at 05:15am')
 						})
 						.save(function (err, result) {
 							if (err) return;
@@ -114,7 +114,7 @@ ddp.connect(function (err, wasReconnect) {
 		});
 		var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
 			.priority('normal')
-			.repeat({repeats: Job.forever})
+			.repeat({repeats: Job.forever, wait: 500})
 			.save(function (err, result) {
 				if (err) return;
 				if (!err && result) {
@@ -123,7 +123,7 @@ ddp.connect(function (err, wasReconnect) {
 			});
 		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
 			.priority('normal')
-			.repeat({repeats: Job.forever})
+			.repeat({repeats: Job.forever, wait: 500})
 			.save(function (err, result) {
 				if (err) return;
 				if (!err && result) {
