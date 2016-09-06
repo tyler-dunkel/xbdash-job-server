@@ -9,7 +9,10 @@ var slugifyXboxProfileGamertag = function(userId, xboxProfile, cb) {
 			cb && cb();
 			return;
 		}
-		console.log(xboxProfile.Gamertag);
+		if (!xboxProfile || !xboxProfile.Gamertag) {
+			cb && cb();
+			return;
+		}
 		var gamertagSlug = slugify(xboxProfile.Gamertag, { lowercase: true });
 		users.update({ _id: userId }, { $set: { gamertagSlug: gamertagSlug } }, function(err) {
 			if (err) {
@@ -27,7 +30,10 @@ var slugifyGamercardGamertag = function(userId, gamercard, cb) {
 			cb && cb();
 			return;
 		}
-		console.log(gamercard.gamertag);
+		if (!gamercard || !gamercard.gamertag) {
+			cb && cb();
+			return;
+		}
 		var gamertagSlug = slugify(gamercard.gamertag, { lowercase: true });
 		users.update({ _id: userId }, { $set: { gamertagSlug: gamertagSlug } }, function(err) {
 			if (err) {
