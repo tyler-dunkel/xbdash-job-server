@@ -137,7 +137,7 @@ ddp.connect(function (err, wasReconnect) {
 				}
 		});
 		jobsCollection.count({'type': 'dirtyUserStatsJob', 'status': {
-			$in: ['waiting', 'ready', 'running']}}, function(err, count) {
+			$in: ['waiting', 'ready']}}, function(err, count) {
 				if (count < 4) {
 					console.log('creating a new dirty stats job on startup at: ' + moment().format());
 					console.log('this dirty stat job was created because we want 4 and have: ' + String(count));
