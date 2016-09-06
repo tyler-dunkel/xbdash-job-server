@@ -127,22 +127,25 @@ var insertNotification = require('./insert-notification');
 var _ = require('underscore');
 var db = require('./db.js');
 
-db.collection('users').find({gamertagSlug: {$exists: 0}, 'gamertagScanned.status': 'true'}).toArray(function(err, docs) {
-	var theFunc = function(user, cb) {
-		xboxApiObject.updateXboxProfile(user._id, function(err, res) {
-			xboxApiObject.updateXboxPresence(user._id, function(err, res) {
-				xboxApiObject.updateRecentActivity(user._id, function(err, res) {
-					if (err) {
-					}
-					cb && cb();
-				});
-			});
-		});
-	}
-	async.eachSeries(docs, theFunc, function(err) {
-		console.log('done');
-	});
+db.collection('xbdjobscollection.jobs').remove({}, function(err) {
+	console.log('done');
 });
+// db.collection('users').find({gamertagSlug: {$exists: 0}, 'gamertagScanned.status': 'true'}).toArray(function(err, docs) {
+// 	var theFunc = function(user, cb) {
+// 		xboxApiObject.updateXboxProfile(user._id, function(err, res) {
+// 			xboxApiObject.updateXboxPresence(user._id, function(err, res) {
+// 				xboxApiObject.updateRecentActivity(user._id, function(err, res) {
+// 					if (err) {
+// 					}
+// 					cb && cb();
+// 				});
+// 			});
+// 		});
+// 	}
+// 	async.eachSeries(docs, theFunc, function(err) {
+// 		console.log('done');
+// 	});
+// });
 
 // var updateUserLeaderboard = require('./leaderboards-api/update-user-leaderboard.js');
 // db.collection('users').findOne({ _id: 'wSeyBTBWGa2oZbdPc' }, function(err, user) {
