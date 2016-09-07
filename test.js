@@ -129,25 +129,25 @@ var db = require('./db.js');
 var moment = require('moment');
 
 
-// var userLeaderboards = db.collection('userleaderboards');
-// console.log('starting clear daily rank job at: ' + moment().format());
-// userLeaderboards.update({}, {
-// 	$set: {
-// 		'dailyRank.value': 0,
-// 		'dailyRank.rank': 0
-// 	}
-// }, {
-// 	multi: true
-// },
-// function (err) {
-// 	if (err) {
-// 		console.log(err);
-// 	}
-// 	console.log('ending clear daily rank job at: ' + moment().format());
-// });
-db.collection('xbdjobscollection.jobs').remove({}, function(err) {
-	console.log('done');
+var userLeaderboards = db.collection('userleaderboards');
+console.log('starting clear daily rank job at: ' + moment().format());
+userLeaderboards.update({}, {
+	$set: {
+		'dailyRank.value': 0,
+		'dailyRank.rank': 0
+	}
+}, {
+	multi: true
+},
+function (err) {
+	if (err) {
+		console.log(err);
+	}
+	console.log('ending clear daily rank job at: ' + moment().format());
 });
+// db.collection('xbdjobscollection.jobs').remove({}, function(err) {
+// 	console.log('done');
+// });
 // db.collection('users').find({gamertagSlug: {$exists: 0}, 'gamertagScanned.status': 'true'}).toArray(function(err, docs) {
 // 	var theFunc = function(user, cb) {
 // 		xboxApiObject.updateXboxProfile(user._id, function(err, res) {
