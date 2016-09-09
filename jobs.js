@@ -52,7 +52,7 @@ ddp.connect(function (err, wasReconnect) {
 					var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
 						.priority('normal')
 						.repeat({
-							schedule: later.parse.text('at 12:15am')
+							schedule: later.parse.cron('15 0 * * *')
 						})
 						.save(function (err, result) {
 							if (err) return;
@@ -102,7 +102,7 @@ ddp.connect(function (err, wasReconnect) {
 					var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
 						.priority('normal')
 						.repeat({
-							schedule: later.parse.text('at 12:15am')
+							schedule: later.parse.cron('15 0 * * *')
 						})
 						.save(function (err, result) {
 							if (err) return;
