@@ -359,9 +359,20 @@ var updateGameClips = function(job, callback) {
 	}
 }
 
+var removeCompleteJobsWorker = function(job, callback) {
+	console.log('started remove complete jobs worker function at: ' + moment().format());
+	db.collection('xbdjobscollection.jobs').remove({}, function(err) {
+		job.done && job.done({}, {}, function (err, res) {
+			callback && callback();
+			console.log('ended remove complete jobs worker function at: ' + moment().format());
+		});
+	});
+}
+
 module.exports = {
 	profileBuilder: profileBuilder,
 	dirtyUpdateUserStats: dirtyUpdateUserStats,
 	clearDailyRanks: clearDailyRanks,
-	updateGameClips: updateGameClips
+	updateGameClips: updateGameClips,
+	removeCompleteJobsWorker: removeCompleteJobsWorker
 }

@@ -135,7 +135,7 @@ ddp.connect(function (err, wasReconnect) {
 		var chooseContestWinnerWorker = Job.processJobs('xbdjobscollection', 'chooseContestWinner', { workTimeout: 600000 }, workers.chooseContestWinner);
 		var dirtyUpdateUserStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', { workTimeout: 6000000 }, workers.dirtyUpdateUserStats);
 		var clearDailyRanksWorker = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', { workTimeout: 600000 }, workers.clearDailyRanks);
-		var updateGameClipsWorker = Job.processJobs('xbdjobscollection', 'updateGameClips', {workTimeout: 6000000 }, workers.updateGameClips);
+		//var updateGameClipsWorker = Job.processJobs('xbdjobscollection', 'updateGameClips', {workTimeout: 6000000 }, workers.updateGameClips);
 	});
 });
 

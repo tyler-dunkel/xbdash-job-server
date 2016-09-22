@@ -1,0 +1,338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8"> <!-- utf-8 works for most cases -->
+	<meta name="viewport" content="width=device-width"> <!-- Forcing initial-scale shouldn't be necessary -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Use the latest (edge) version of IE rendering engine -->
+	<title>Welcome to XBdash!</title>
+	<!-- Web Font / @font-face : BEGIN -->
+	<!-- NOTE: If web fonts are not required, lines 9 - 26 can be safely removed. -->
+	
+	<!-- Desktop Outlook chokes on web font references and defaults to Times New Roman, so we force a safe fallback font. -->
+	<!--[if mso]>
+		<style>
+			* {
+				font-family: sans-serif !important;
+			}
+		</style>
+	<![endif]-->
+
+	<!-- Web Font / @font-face : END -->
+	<!-- CSS Reset -->
+	<style>
+		/* What it does: Remove spaces around the email design added by some email clients. */
+		/* Beware: It can remove the padding / margin and add a background color to the compose a reply window. */
+		html,
+		body {
+			margin: 0 auto !important;
+			padding: 0 !important;
+			height: 100% !important;
+			width: 100% !important;
+		}
+		/* What it does: Stops email clients resizing small text. */
+		* {
+			-ms-text-size-adjust: 100%;
+			-webkit-text-size-adjust: 100%;
+		}
+		/* What it does: Centers email on Android 4.4 */
+		div[style*="margin: 16px 0"] {
+			margin:0 !important;
+		}
+		/* What it does: Stops Outlook from adding extra spacing to tables. */
+		table,
+		td {
+			mso-table-lspace: 0pt !important;
+			mso-table-rspace: 0pt !important;
+		}
+		/* What it does: Fixes webkit padding issue. Fix for Yahoo mail table alignment bug. Applies table-layout to the first 2 tables then removes for anything nested deeper. */
+		table {
+			border-spacing: 0 !important;
+			border-collapse: collapse !important;
+			table-layout: fixed !important;
+			margin: 0 auto !important;
+		}
+		table table table {
+			table-layout: auto; 
+		}
+		/* What it does: Uses a better rendering method when resizing images in IE. */
+		img {
+			-ms-interpolation-mode:bicubic;
+		}
+		/* What it does: A work-around for iOS meddling in triggered links. */
+		.mobile-link--footer a,
+		a[x-apple-data-detectors] {
+			color:inherit !important;
+			text-decoration: underline !important;
+		}
+	</style>
+	
+	<!-- Progressive Enhancements -->
+	<style>
+		/* What it does: Hover styles for buttons */
+		.button-td,
+		.button-a {
+			transition: all 100ms ease-in;
+		}
+		.button-td:hover,
+		.button-a:hover {
+			background: #555555 !important;
+			border-color: #555555 !important;
+		}
+		/* Media Queries */
+		@media screen and (max-width: 480px) {
+			/* What it does: Forces elements to resize to the full width of their container. Useful for resizing images beyond their max-width. */
+			.fluid,
+			.fluid-centered {
+				width: 100% !important;
+				max-width: 100% !important;
+				height: auto !important;
+				margin-left: auto !important;
+				margin-right: auto !important;
+			}
+			/* And center justify these ones. */
+			.fluid-centered {
+				margin-left: auto !important;
+				margin-right: auto !important;
+			}
+			/* What it does: Forces table cells into full-width rows. */
+			.stack-column,
+			.stack-column-center {
+				display: block !important;
+				width: 100% !important;
+				max-width: 100% !important;
+				direction: ltr !important;
+			}
+			/* And center justify these ones. */
+			.stack-column-center {
+				text-align: center !important;
+			}
+			/* What it does: Generic utility class for centering. Useful for images, buttons, and nested tables. */
+			.center-on-narrow {
+				text-align: center !important;
+				display: block !important;
+				margin-left: auto !important;
+				margin-right: auto !important;
+				float: none !important;
+			}
+			table.center-on-narrow {
+				display: inline-block !important;
+			}
+		}
+	</style>
+</head>
+<body width="100%" bgcolor="#eceff3" style="margin: 0;">
+	<center style="width: 100%; background: #eceff3;">
+		<!-- Visually Hidden Preheader Text : BEGIN -->
+		<div style="display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family: sans-serif;">
+			Your dashboard is ready!
+		</div>
+		<!-- Visually Hidden Preheader Text : END -->
+		<!--	
+			Set the email width. Defined in two places:
+			1. max-width for all clients except Desktop Windows Outlook, allowing the email to squish on narrow but never go wider than 680px.
+			2. MSO tags for Desktop Windows Outlook enforce a 680px width.
+			Note: The Fluid and Responsive templates have a different width (600px). The hybrid grid is more "fragile", and I've found that 680px is a good width. Change with caution.  
+		-->
+		<div style="max-width: 680px; margin: auto;">
+			<!--[if mso]>
+			<table cellspacing="0" cellpadding="0" border="0" width="680" align="center">
+			<tr>
+			<td>
+			<![endif]-->
+
+			<!-- Email Header : BEGIN -->
+			<table cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px;" role="presentation">
+				<tr>
+					<td style="padding: 40px 0; text-align: center">
+						<img src="https://www.xbdash.com/img/emails/xbdash-logo-green.png" width="250" height="50" alt="XBdash" border="0">
+					</td>
+				</tr>
+			</table>
+			<!-- Email Header : END -->
+			
+			<!-- Email Body : BEGIN -->
+			<table cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px;" role="presentation">
+
+				<!-- 1 Column Text + Button : BEGIN -->
+				<tr>
+					<td bgcolor="#ffffff">
+						<table cellspacing="0" cellpadding="0" border="0" width="100%">
+							<tr>
+								<td style="padding: 30px 20px; text-align: center; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
+									<strong>Thanks again for joining the XBdash community!</strong>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<!-- 1 Column Text + Button : BEGIN -->
+
+				<!-- Clear Spacer : BEGIN -->
+				<tr>
+					<td height="30" style="font-size: 0; line-height: 0;">
+						&nbsp;
+					</td>
+				</tr>
+				<!-- Clear Spacer : END -->
+
+				<!-- 1 Column Text + Button : BEGIN -->
+				<tr>
+					<td bgcolor="#ffffff">
+						<table cellspacing="0" cellpadding="0" border="0" width="100%">
+							<tr>
+								<td style="padding: 30px 20px; text-align: left; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
+									<div style="font-size: 18px; text-align: center"><b>About Us</b></div>
+									<br>
+									Our backstory is as transparent as it can get!
+									<br /><br />
+									We are a startup team of 3 software engineers (1 in North New Jersey and 2 in Chicago) who love the Xbox gaming community. We wanted to create a new and intuitive platform to help the achievement/gamerscore hunters.
+									<br /><br />
+									It would be great if you can refer some of your friends to join our community.
+									<br /><br />
+									Your unique referral link below helps your friends sign up and doubles as a way for you to get an extra entry into this month's contest. Every friend you refer that verifies their email, gives you an extra entry which increases your chances of winning!
+									<br /><br />
+									If you have any questions, please feel free to email contact@xbdash.com!
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<!-- 1 Column Text + Button : BEGIN -->
+
+				<!-- Clear Spacer : BEGIN -->
+				<tr>
+					<td height="30" style="font-size: 0; line-height: 0;">
+						&nbsp;
+					</td>
+				</tr>
+				<!-- Clear Spacer : END -->
+
+				<!-- 1 Column Text + Button : BEGIN -->
+				<tr>
+					<td bgcolor="#ffffff">
+						<table cellspacing="0" cellpadding="0" border="0" width="100%">
+							<tr>
+								<td>
+									<table cellspacing="0" cellpadding="0" border="0" width="100%">
+										<tr>
+											<td style="padding: 40px 22px; text-align: center; font-family: sans-serif; font-size: 14px; mso-height-rule: exactly; line-height: 24px; color: #555555;">
+												<div style="font-size: 18px; text-align: center"><b>Your Referral Link</b></div>
+												<br>
+												<div style="font-size: 16px; padding: 20px; background: #eeeeee; color: #000000">
+													https://www.xbdash.com/contests?referraltoken={{referralToken}}
+												</div>
+												<br>
+												<table cellspacing="0" cellpadding="0" border="0" width="100%">
+													<tr>
+														<td>
+															<table cellspacing="0" cellpadding="0" border="0" align="center" style="margin: auto">
+																<tr>
+																	<td style="border-radius: 3px; background: #3b5998; text-align: center;" class="button-td">
+																		<a href="https://www.facebook.com/dialog/feed?app_id=109259765831650&link=https%3A%2F%2Fwww.xbdash.com%2Fcontests%3Freferraltoken%3D{{referralToken}}&name=I%20entered%20to%20win%20a%20FREE%20engraved%20%23Xbox%20controller%20in%20the%20%23XBdash%20July%20%23Contest!&description=Manage%20your%20Xbox%20achievements%2C%20work%20together%20with%20other%20Xbox%C2%AE%20gamers%20to%20unlock%20them%2C%20and%20complete%20games%20together.&redirect_uri=https%3A%2F%2Fwww.xbdash.com%2Fcontests%3Freferraltoken%3D{{referralToken}}&picture=https://www.xbdash.com/img/contests/july-contest-banner.jpg" style="background: #3b5998; border: 15px solid #3b5998; font-family: sans-serif; font-size: 13px; line-height: 1.1; text-align: center; text-decoration: none; display: block; border-radius: 3px; font-weight: bold;" class="button-a">
+																			<span style="color:#ffffff">Share on Facebook</span>
+																		</a>
+																	</td>
+																</tr>
+															</table>
+														</td>
+														<td>
+															<table cellspacing="0" cellpadding="0" border="0" align="center" style="margin: auto">
+																<tr>
+																	<td style="border-radius: 3px; background: #4099FF; text-align: center;" class="button-td">
+																		<a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fwww.xbdash.com%2Fcontests%3Freferraltoken%3D{{referralToken}}&text=I%20entered%20to%20win%20a%20FREE%20engraved%20%23Xbox%20controller%20in%20the%20%23XBdash%20July%20%23Contest!%20%23gaming%20%23gamer%20%23destiny%20%23halo5&via=xboxdash" style="background: #4099FF; border: 15px solid #4099FF; font-family: sans-serif; font-size: 13px; line-height: 1.1; text-align: center; text-decoration: none; display: block; border-radius: 3px; font-weight: bold;" class="button-a">
+																			<span style="color:#ffffff">Share on Twitter</span>
+																		</a>
+																	</td>
+																</tr>
+															</table>
+														</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+
+				<!-- Clear Spacer : BEGIN -->
+				<tr>
+					<td height="30" style="font-size: 0; line-height: 0;">
+						&nbsp;
+					</td>
+				</tr>
+				<!-- Clear Spacer : END -->
+
+			</table>
+			<!-- Email Body : END -->
+		  
+			<!-- Email Footer : BEGIN -->
+			<table cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 680px;">
+				<tr>
+					<td height="10"></td>
+				</tr>
+				<tr>
+					<td align="center">
+						<table width="120" border="0" align="center" cellpadding="0" cellspacing="0">
+							<tr>
+								<td align="center" style="line-height: 0px;">
+									<a href="https://facebook.com/xboxdash" target="_blank">
+										<img style="display:block; line-height:0px; font-size:0px; border:0px;" src="https://www.xbdash.com/img/emails/facebook.png" width="8" height="16" alt="Like us on Facebook"/>
+									</a>
+								</td>
+								<td width="10"></td>
+								<td align="center" style="line-height: 0px;">
+									<a href="https://twitter.com/xboxdash" target="_blank">
+										<img style="display:block; line-height:0px; font-size:0px; border:0px;" src="https://www.xbdash.com/img/emails/twitter.png" width="16" height="13" alt="Follow us on Twitter"/>
+									</a>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td height="10"></td>
+				</tr>
+				<tr>
+					<td class="footer-link" align="center" style="font-family: 'Open sans', Arial, sans-serif; color:#7f8c8d; font-size:11px; line-height: 36px;">
+						<a href="https://www.xbdash.com/privacy-policy" target="_blank">Privacy Policy</a>
+						<span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+						<a href="https://www.xbdash.com/terms-conditions" target="_blank">Terms &amp; Conditions</a>
+					</td>
+				</tr>
+				<tr>
+					<td class="footer-link" align="center" style="font-family: 'Open sans', Arial, sans-serif; color:#7f8c8d; font-size:11px;">
+						<p style="padding-right: 70px; padding-left: 70px; margin: 0 auto; text-align: center;">
+							You've received this message because you've registered at <a href="https://www.xbdash.com/" target="_blank">XBdash.com</a>.
+							<br />
+							If you would like to stop receiving these messages, please <unsubscribe style="color:#888888; text-decoration:underline;"><a href="%tag_unsubscribe_url%">click here</a></unsubscribe>.
+							<br/><br/>
+
+							Add <a href="mailto:contact@email.xbdash.com/" target="_blank" style="color: #7f8c8d !important;text-decoration: none;"><u>contact@email.xbdash.com</u></a> to your address book to ensure delivery of XBdash emails.<br><br>
+
+							XBdash, 78 Franklin St, Tenafly, NJ 07670
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="footer-link" align="center" style="font-family: 'Open sans', Arial, sans-serif; color:#7f8c8d; font-size:11px; line-height: 36px;">
+						<p>2016 &copy; XBdash. All rights reserved.</p>
+					</td>
+				</tr>
+				<tr>
+					<td height="30"></td>
+				</tr>
+			</table>
+			<!-- Email Footer : END -->
+
+			<!--[if mso]>
+			</td>
+			</tr>
+			</table>
+			<![endif]-->
+		</div>
+	</center>
+</body>
+</html>
