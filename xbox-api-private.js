@@ -223,6 +223,7 @@ xboxApiPrivate._updateXboxOneGameDetails = function(userId, game, gameId, callba
 					gameId: gameId,
 					gameGenre: result.Items[0].Genres,
 					gameArt: result.Items[0].Images,
+					gameDeveloperName: result.Items[0].DeveloperName,
 					gamePublisherName: result.Items[0].PublisherName,
 					gameParentalRating: result.Items[0].ParentalRating,
 					gameAllTimePlayCount: result.Items[0].AllTimePlayCount,

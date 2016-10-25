@@ -625,46 +625,46 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 								cb && cb();
 							});
 						},
-						function(cb) {
-							xboxApiObject.updateRecentActivity(userId, function(err, res) {
-								if (err) {
-									console.log('error with update xbox recent activity for: ' + userId + ' at: ' + moment().format());
-								}
-								cb && cb();
-							});
-						},
-						function(cb) {
-							xboxApiObject.updateVideoClips(userId, function(err, res) {
-								if (err) {
-									console.log('error with update xbox video clips for: ' + userId + ' at: ' + moment().format());
-								}
-								cb && cb();
-							});
-						},
-						function(cb) {
-							xboxApiObject.updateScreenShots(userId, function(err, res) {
-								if (err) {
-									console.log('error with update xbox screen shots for: ' + userId + ' at: ' + moment().format());
-								}
-								cb && cb();
-							});
-						},
-						function(cb) {
-							xboxApiPrivate._dirtyCheckXboxOneGames(user, function(err, result) {
-								if (err) {
-									console.log(err);
-								}
-								cb && cb();
-							});
-						},
-						function(cb) {
-							xboxApiPrivate._dirtyCheckXbox360Games(user, function(err, result) {
-								if (err) {
-									console.log(err);
-								}
-								cb && cb();
-							});
-						}
+						// function(cb) {
+						// 	xboxApiObject.updateRecentActivity(userId, function(err, res) {
+						// 		if (err) {
+						// 			console.log('error with update xbox recent activity for: ' + userId + ' at: ' + moment().format());
+						// 		}
+						// 		cb && cb();
+						// 	});
+						// },
+						// function(cb) {
+						// 	xboxApiObject.updateVideoClips(userId, function(err, res) {
+						// 		if (err) {
+						// 			console.log('error with update xbox video clips for: ' + userId + ' at: ' + moment().format());
+						// 		}
+						// 		cb && cb();
+						// 	});
+						// },
+						// function(cb) {
+						// 	xboxApiObject.updateScreenShots(userId, function(err, res) {
+						// 		if (err) {
+						// 			console.log('error with update xbox screen shots for: ' + userId + ' at: ' + moment().format());
+						// 		}
+						// 		cb && cb();
+						// 	});
+						// },
+						// function(cb) {
+						// 	xboxApiPrivate._dirtyCheckXboxOneGames(user, function(err, result) {
+						// 		if (err) {
+						// 			console.log(err);
+						// 		}
+						// 		cb && cb();
+						// 	});
+						// },
+						// function(cb) {
+						// 	xboxApiPrivate._dirtyCheckXbox360Games(user, function(err, result) {
+						// 		if (err) {
+						// 			console.log(err);
+						// 		}
+						// 		cb && cb();
+						// 	});
+						// }
 					], function(err) {
 						users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
 							if (err) {

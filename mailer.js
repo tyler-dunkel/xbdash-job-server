@@ -42,12 +42,12 @@ var welcomeEmailSend = function(userId, cb) {
 							cb && cb(err, null);
 							return;
 						}
-						var welcomeEmail = nunjucks.render('welcome-email.html', {
-							fName: user.gamercard.gamertag,
-							aCount: userAchievementsCount,
-							atCount: userTotalAchievements,
-							gCount: userGamesCount,
-							gtCount: userTotalGames
+						var welcomeEmail = nunjucks.render('welcome-email-user-only.html', {
+							fName: user.gamercard.gamertag
+							// aCount: userAchievementsCount,
+							// atCount: userTotalAchievements,
+							// gCount: userGamesCount,
+							// gtCount: userTotalGames
 						});
 
 						if (user.services) {

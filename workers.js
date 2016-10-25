@@ -52,53 +52,53 @@ var profileBuilder = function (job, callback) {
 						cb && cb();
 					});
 				},
-				function (cb) {
-					xboxApiObject.updateRecentActivity(userId, function (err, res) {
-						if (err) {
-							console.log('error with update recent activity');
-							console.log(err);
+				// function (cb) {
+				// 	xboxApiObject.updateRecentActivity(userId, function (err, res) {
+				// 		if (err) {
+				// 			console.log('error with update recent activity');
+				// 			console.log(err);
 
-						}
-						cb && cb();
-					});
-				},
-				function (cb) {
-					xboxApiObject.updateVideoClips(userId, function (err, res) {
-						if (err) {
-							console.log('error with update video clips');
-							console.log(err);
+				// 		}
+				// 		cb && cb();
+				// 	});
+				// },
+				// function (cb) {
+				// 	xboxApiObject.updateVideoClips(userId, function (err, res) {
+				// 		if (err) {
+				// 			console.log('error with update video clips');
+				// 			console.log(err);
 
-						}
-						cb && cb();
-					});
-				},
-				function (cb) {
-					xboxApiObject.updateScreenShots(userId, function (err, res) {
-						if (err) {
-							console.log('error with update screen shots');
-							console.log(err);
-						}
-						cb && cb();
-					});
-				},
-				function (cb) {
-					xboxApiObject.updateXboxOneData(userId, function (err, res) {
-						if (err) {
-							console.log('error with update x1 games');
-							console.log(err);
-						}
-						cb();
-					});
-				},
-				function (cb) {
-					xboxApiObject.updateXbox360Data(userId, function (err, res) {
-						if (err) {
-							console.log('error with update 360 games');
-							console.log(err);
-						}
-						cb();
-					});
-				},
+				// 		}
+				// 		cb && cb();
+				// 	});
+				// },
+				// function (cb) {
+				// 	xboxApiObject.updateScreenShots(userId, function (err, res) {
+				// 		if (err) {
+				// 			console.log('error with update screen shots');
+				// 			console.log(err);
+				// 		}
+				// 		cb && cb();
+				// 	});
+				// },
+				// function (cb) {
+				// 	xboxApiObject.updateXboxOneData(userId, function (err, res) {
+				// 		if (err) {
+				// 			console.log('error with update x1 games');
+				// 			console.log(err);
+				// 		}
+				// 		cb();
+				// 	});
+				// },
+				// function (cb) {
+				// 	xboxApiObject.updateXbox360Data(userId, function (err, res) {
+				// 		if (err) {
+				// 			console.log('error with update 360 games');
+				// 			console.log(err);
+				// 		}
+				// 		cb();
+				// 	});
+				// },
 				function (cb) {
 					users.update({
 						_id: userId
@@ -114,23 +114,23 @@ var profileBuilder = function (job, callback) {
 						cb();
 					});
 				},
-				function (cb) {
-					createAndBuild(userId, function (err, res) {
-						if (err) {
-							console.log(err);
-						}
-						cb();
-					});
-				},
-				function (cb) {
-					updateBadges(userId, function(err, res) {
-						if (err) {
-							console.log('err updating badges');
-							console.log(err);
-						}
-						cb();
-					});
-				},
+				// function (cb) { // builds user leaderboard entry
+				// 	createAndBuild(userId, function (err, res) {
+				// 		if (err) {
+				// 			console.log(err);
+				// 		}
+				// 		cb();
+				// 	});
+				// },
+				// function (cb) { // builds user badges
+				// 	updateBadges(userId, function(err, res) {
+				// 		if (err) {
+				// 			console.log('err updating badges');
+				// 			console.log(err);
+				// 		}
+				// 		cb();
+				// 	});
+				// },
 				function (cb) {
 					welcomeEmailSend(userId, function (err, res) {
 						if (err) {
@@ -168,14 +168,14 @@ var dirtyUpdateUserStats = function (job, callback) {
 					if (err) {
 						console.log(err);
 					}
-					updateBadges(user._id, function (err, res) {
-						if (err) {
-							console.log(err);
-						}
-						contestFunctions.updateUserEntries(user._id, function(err) {
+					// updateBadges(user._id, function (err, res) {
+					// 	if (err) {
+					// 		console.log(err);
+					// 	}
+					// 	contestFunctions.updateUserEntries(user._id, function(err) {
 							asyncCb && asyncCb();
-						});
-					});
+					// 	});
+					// });
 				});
 			});
 		}
