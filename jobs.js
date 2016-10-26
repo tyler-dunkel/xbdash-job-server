@@ -10,18 +10,18 @@ var workers = require('./workers.js');
 var db = require('./db.js');
 var jobsCollection = db.collection('xbdjobscollection.jobs');
 
-if (process.env.STATE === 'prod') {
-	var ddp = new DDP({
-		host: 'www.xbdash.com',
-		port: 3000,
-		ssl: true,
-		autoReconnect : true,
-		autoReconnectTimer : 500,
-		ddpVersion : '1',
-		url: 'wss://www.xbdash.com/websocket',
-		use_ejson: true
-	});
-}
+// if (process.env.STATE === 'prod') {
+// 	var ddp = new DDP({
+// 		host: 'www.xbdash.com',
+// 		port: 3000,
+// 		ssl: true,
+// 		autoReconnect : true,
+// 		autoReconnectTimer : 500,
+// 		ddpVersion : '1',
+// 		url: 'wss://www.xbdash.com/websocket',
+// 		use_ejson: true
+// 	});
+// }
 
 if (process.env.STATE === 'dev') {
 	var ddp = new DDP({
@@ -84,8 +84,8 @@ ddp.connect(function (err, wasReconnect) {
 	DDPlogin(ddp, {
 		env: 'METEOR_TOKEN',
 		method: 'email', 
-		account: 'tyler.dunkel@gmail.com',
-		pass: 'Tjd11034',
+		account: 'kggraphix@gmail.com',
+		pass: '121212',
 		retry: 5
 	}, function (err, token) {
 		if (err) {

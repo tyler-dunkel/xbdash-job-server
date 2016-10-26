@@ -7,7 +7,7 @@ var db = mongoJS(meteorUrl);
 var migrate = function() {
 	var xbdNews = db.collection('xbdnews');
 
-	xbdNews.update({}, { $set: { source: "polygon" } }, { multi: true }, function(err, res) {
+	xbdNews.update({}, { $set: { "type": "news", "featuredImage": "https://www.xbdash.com/img/news-default.jpg", "gameId": [] } }, { multi: true }, function(err, res) {
 	});
 }
 
