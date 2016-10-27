@@ -10,18 +10,18 @@ var workers = require('./workers.js');
 var db = require('./db.js');
 var jobsCollection = db.collection('xbdjobscollection.jobs');
 
-// if (process.env.STATE === 'prod') {
-// 	var ddp = new DDP({
-// 		host: 'www.xbdash.com',
-// 		port: 3000,
-// 		ssl: true,
-// 		autoReconnect : true,
-// 		autoReconnectTimer : 500,
-// 		ddpVersion : '1',
-// 		url: 'wss://www.xbdash.com/websocket',
-// 		use_ejson: true
-// 	});
-// }
+if (process.env.STATE === 'prod') {
+	var ddp = new DDP({
+		host: 'www.xbdash.com',
+		port: 3000,
+		ssl: true,
+		autoReconnect : true,
+		autoReconnectTimer : 500,
+		ddpVersion : '1',
+		url: 'wss://www.xbdash.com/websocket',
+		use_ejson: true
+	});
+}
 
 if (process.env.STATE === 'dev') {
 	var ddp = new DDP({
@@ -84,8 +84,8 @@ ddp.connect(function (err, wasReconnect) {
 	DDPlogin(ddp, {
 		env: 'METEOR_TOKEN',
 		method: 'email', 
-		account: 'kggraphix@gmail.com',
-		pass: '121212',
+		account: 'tyler.dunkel@gmail.com',
+		pass: 'Tjd11034',
 		retry: 5
 	}, function (err, token) {
 		if (err) {
@@ -135,7 +135,7 @@ ddp.connect(function (err, wasReconnect) {
 		// var chooseContestWinnerWorker = Job.processJobs('xbdjobscollection', 'chooseContestWinner', { workTimeout: 600000 }, workers.chooseContestWinner);
 		var dirtyUpdateUserStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', { workTimeout: 6000000 }, workers.dirtyUpdateUserStats);
 		// var clearDailyRanksWorker = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', { workTimeout: 600000 }, workers.clearDailyRanks);
-		//var updateGameClipsWorker = Job.processJobs('xbdjobscollection', 'updateGameClips', {workTimeout: 6000000 }, workers.updateGameClips);
+		// var updateGameClipsWorker = Job.processJobs('xbdjobscollection', 'updateGameClips', {workTimeout: 6000000 }, workers.updateGameClips);
 	});
 });
 
