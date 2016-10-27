@@ -46,31 +46,31 @@ ddp.connect(function (err, wasReconnect) {
 	if (err) throw err;
 	if (wasReconnect) {
 		console.log('connection reestablished');
-		jobsCollection.findOne({'type': 'clearDailyRanksJob', 'status': {
-			$in: ['waiting', 'ready', 'running']}}, function(err, job) {
-				if (!job) {
-					var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
-						.priority('normal')
-						.repeat({
-							schedule: later.parse.cron('15 0 * * *')
-						})
-						.save(function (err, result) {
-							if (err) return;
-							if (!err && result) {
-								console.log('clear daily ranks job saved with ID: ' + result);
-							}
-						});
-				}
-		});
-		var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
-			.priority('normal')
-			.repeat({repeats: Job.forever, wait: 500})
-			.save(function (err, result) {
-				if (err) return;
-				if (!err && result) {
-					console.log('updateGameClips job saved with ID: ' + result);
-				}
-			});
+		// jobsCollection.findOne({'type': 'clearDailyRanksJob', 'status': {
+		// 	$in: ['waiting', 'ready', 'running']}}, function(err, job) {
+		// 		if (!job) {
+		// 			var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
+		// 				.priority('normal')
+		// 				.repeat({
+		// 					schedule: later.parse.cron('15 0 * * *')
+		// 				})
+		// 				.save(function (err, result) {
+		// 					if (err) return;
+		// 					if (!err && result) {
+		// 						console.log('clear daily ranks job saved with ID: ' + result);
+		// 					}
+		// 				});
+		// 		}
+		// });
+		// var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
+		// 	.priority('normal')
+		// 	.repeat({repeats: Job.forever, wait: 500})
+		// 	.save(function (err, result) {
+		// 		if (err) return;
+		// 		if (!err && result) {
+		// 			console.log('updateGameClips job saved with ID: ' + result);
+		// 		}
+		// 	});
 		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
 			.priority('normal')
 			.repeat({repeats: Job.forever, wait: 500})
@@ -95,32 +95,32 @@ ddp.connect(function (err, wasReconnect) {
 
 		console.log('connected to xbdash prod');
 
-		jobsCollection.findOne({'type': 'clearDailyRanksJob', 'status': {
-			$in: ['waiting', 'ready', 'running']}}, function(err, job) {
-				if (!job) {
-					console.log('creating a new clear daily rank job on startup at: ' + moment().format());
-					var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
-						.priority('normal')
-						.repeat({
-							schedule: later.parse.cron('15 0 * * *')
-						})
-						.save(function (err, result) {
-							if (err) return;
-							if (!err && result) {
-								console.log('clear daily ranks job saved with ID: ' + result);
-							}
-						});
-				}
-		});
-		var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
-			.priority('normal')
-			.repeat({repeats: Job.forever, wait: 500})
-			.save(function (err, result) {
-				if (err) return;
-				if (!err && result) {
-					console.log('updateGameClips job saved with ID: ' + result);
-				}
-			});
+		// jobsCollection.findOne({'type': 'clearDailyRanksJob', 'status': {
+		// 	$in: ['waiting', 'ready', 'running']}}, function(err, job) {
+		// 		if (!job) {
+		// 			console.log('creating a new clear daily rank job on startup at: ' + moment().format());
+		// 			var clearDailyRanksJob = new Job('xbdjobscollection', 'clearDailyRanksJob', {})
+		// 				.priority('normal')
+		// 				.repeat({
+		// 					schedule: later.parse.cron('15 0 * * *')
+		// 				})
+		// 				.save(function (err, result) {
+		// 					if (err) return;
+		// 					if (!err && result) {
+		// 						console.log('clear daily ranks job saved with ID: ' + result);
+		// 					}
+		// 				});
+		// 		}
+		// });
+		// var updateGameClipsJob = new Job('xbdjobscollection', 'updateGameClips', {})
+		// 	.priority('normal')
+		// 	.repeat({repeats: Job.forever, wait: 500})
+		// 	.save(function (err, result) {
+		// 		if (err) return;
+		// 		if (!err && result) {
+		// 			console.log('updateGameClips job saved with ID: ' + result);
+		// 		}
+		// 	});
 		var dirtyUserStatsJob = new Job('xbdjobscollection', 'dirtyUserStatsJob', {})
 			.priority('normal')
 			.repeat({repeats: Job.forever, wait: 500})
@@ -132,9 +132,9 @@ ddp.connect(function (err, wasReconnect) {
 			});
 
 		var profileBuilderWorker = Job.processJobs('xbdjobscollection', 'buildUserProfileJob', workers.profileBuilder);
-		var chooseContestWinnerWorker = Job.processJobs('xbdjobscollection', 'chooseContestWinner', { workTimeout: 600000 }, workers.chooseContestWinner);
+		// var chooseContestWinnerWorker = Job.processJobs('xbdjobscollection', 'chooseContestWinner', { workTimeout: 600000 }, workers.chooseContestWinner);
 		var dirtyUpdateUserStatsWorker = Job.processJobs('xbdjobscollection', 'dirtyUserStatsJob', { workTimeout: 6000000 }, workers.dirtyUpdateUserStats);
-		var clearDailyRanksWorker = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', { workTimeout: 600000 }, workers.clearDailyRanks);
+		// var clearDailyRanksWorker = Job.processJobs('xbdjobscollection', 'clearDailyRanksJob', { workTimeout: 600000 }, workers.clearDailyRanks);
 		//var updateGameClipsWorker = Job.processJobs('xbdjobscollection', 'updateGameClips', {workTimeout: 6000000 }, workers.updateGameClips);
 	});
 });
