@@ -468,6 +468,7 @@ xboxApiPrivate._updateXbox360GameDetails = function(userId, game, gameId, callba
 						gameId: gameId,
 						gameGenre: result.Items[0].Genres,
 						gameArt: result.Items[0].Images,
+						gameDeveloperName: result.Items[0].DeveloperName,
 						gamePublisherName: result.Items[0].PublisherName,
 						gameParentalRating: result.Items[0].ParentalRating, // undefined
 						gameAllTimePlayCount: result.Items[0].AllTimePlayCount, // undefined
@@ -487,6 +488,7 @@ xboxApiPrivate._updateXbox360GameDetails = function(userId, game, gameId, callba
 						gameId: gameId,
 						gameGenre: [{ Name: "Miscellaneous" }],
 						gameArt: [{ Url: "/img/game-default.png" }],
+						gameDeveloperName: "Microsoft",
 						gamePublisherName: "Games for Windows",
 						gameParentalRating: "Everyone",
 						gameAllTimePlayCount: 0,
