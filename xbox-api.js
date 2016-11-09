@@ -649,22 +649,22 @@ xboxApiObject.dirtyUpdateUserStats = function(userId, callback) {
 						// 		cb && cb();
 						// 	});
 						// },
-						// function(cb) {
-						// 	xboxApiPrivate._dirtyCheckXboxOneGames(user, function(err, result) {
-						// 		if (err) {
-						// 			console.log(err);
-						// 		}
-						// 		cb && cb();
-						// 	});
-						// },
-						// function(cb) {
-						// 	xboxApiPrivate._dirtyCheckXbox360Games(user, function(err, result) {
-						// 		if (err) {
-						// 			console.log(err);
-						// 		}
-						// 		cb && cb();
-						// 	});
-						// }
+						function(cb) {
+							xboxApiPrivate._dirtyCheckXboxOneGames(user, function(err, result) {
+								if (err) {
+									console.log(err);
+								}
+								cb && cb();
+							});
+						},
+						function(cb) {
+							xboxApiPrivate._dirtyCheckXbox360Games(user, function(err, result) {
+								if (err) {
+									console.log(err);
+								}
+								cb && cb();
+							});
+						}
 					], function(err) {
 						users.update({ _id: userId }, { $set: { 'gamertagScanned.status': 'true', 'gamertagScanned.lastUpdate': new Date() } }, function(err, res) {
 							if (err) {
