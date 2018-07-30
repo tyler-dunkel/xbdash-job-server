@@ -5,7 +5,7 @@ var xboxApiCaller = function(url, callback) {
 		host: 'xboxapi.com',
 		path: '/v2/' + url,
 		headers: {
-			'X-AUTH': 'e9b6206816485c97bd0b0844073723988a848b3f'
+			'X-AUTH': 'REPLACEME'
 		}
 	};
 	console.log('this url has been tried: ' + arguments[2] + ' times: ' + url);

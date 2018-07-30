@@ -145,7 +145,7 @@ var moment = require('moment');
 // 	}
 // 	console.log('ending clear daily rank job at: ' + moment().format());
 // });
-db.collection('xbdjobscollection.jobs').remove({}, function(err) {
+db.collection('users').update({'gamertagScanned.status': 'updating'}, {$set: {'gamertagScanned.status': 'true'}}, {multi: true}, function(err) {
 	console.log('done');
 });
 // db.collection('users').find({gamertagSlug: {$exists: 0}, 'gamertagScanned.status': 'true'}).toArray(function(err, docs) {
